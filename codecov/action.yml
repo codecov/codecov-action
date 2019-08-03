@@ -1,0 +1,14 @@
+name: 'Codecov'
+description: 'Upload coverage to Codecov'
+# inputs: 
+#   who-to-greet: # id of input
+#     description: 'Who to greet'
+#     required: true
+#     default: 'World'
+# outputs:
+#   time: # id of output
+#     description: 'The time we did the greeting'
+branding:
+  color: 'red' # optional, decorates the entry in the GitHub Marketplace
+  icon: 'umbrella'
+runs: './entrypoint.js'
