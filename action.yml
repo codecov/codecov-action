@@ -13,7 +13,7 @@ inputs:
     default: ''
   token:
     description: 'Set the private repository token (defaults to environment variable CODECOV_TOKEN)'
-    default: ${{secrets.CODECOV_TOKEN}}  
+    default: ${secrets.CODECOV_TOKEN}  
 branding:
   color: 'red' 
   icon: 'umbrella'
