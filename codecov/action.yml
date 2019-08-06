@@ -1,14 +1,28 @@
-name: 'Codecov'
-description: 'Upload coverage to Codecov'
-# inputs: 
-#   who-to-greet: # id of input
-#     description: 'Who to greet'
-#     required: true
-#     default: 'World'
-# outputs:
-#   time: # id of output
-#     description: 'The time we did the greeting'
+name: 'Codecov Github Action'
+description: 'Github action that uploads coverage reports for this repository to codecov.io'
+author: 'Ib @ Codecov'
+inputs: 
+  conf:
+    description: 'Used to specify the location of the .codecov.yml config file'
+    default: '.codecov.yml'
+  file:
+    description: 'Path to the code coverage data file to upload'
+    default: ''
+  flags:
+    description: 'Flag the upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
+    default: ''
+  token:
+    description: 'Set the private repository token (defaults to environment variable CODECOV_TOKEN)'
+    default: ${{secrets.CODECOV_TOKEN}}  
 branding:
-  color: 'red' # optional, decorates the entry in the GitHub Marketplace
+  color: 'red' 
   icon: 'umbrella'
-runs: './entrypoint.js'
+runs:
+  using: 'node12'
+  main: |
+      curl -s https://codecov.io/bash | bash -s -- \
+        -f ${{inputs.file}} \
+        -t ${{inputs.token}} \
+        -y ${{inputs.conf}} \
+        -F ${{inputs.flags}} \
+        -Z || echo 'Codecov upload failed'
