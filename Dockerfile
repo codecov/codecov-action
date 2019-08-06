@@ -5,6 +5,6 @@ COPY . /app
 
 RUN apk add --no-cache curl bash git
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]
