@@ -2,4 +2,6 @@
 
 set -eu
 
-bash <(curl -s https://codecov.io/bash)
+echo $1
+
+#bash <(curl -s https://codecov.io/bash) -t $1
