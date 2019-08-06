@@ -12,7 +12,7 @@ inputs:
     description: 'Flag the upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     default: ''
   token:
-    description: 'Set the private repository token (defaults to environment variable CODECOV_TOKEN)'
+    description: 'Set the private repository token (defaults to secret CODECOV_TOKEN)'
     default: '{{secrets.CODECOV_TOKEN}}'
 branding:
   color: 'red' 
