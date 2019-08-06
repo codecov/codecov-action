@@ -4,7 +4,7 @@ author: 'Ib @ Codecov'
 inputs: 
   conf:
     description: 'Used to specify the location of the .codecov.yml config file'
-    default: '.codecov.yml'
+    default: 'codecov.yml'
   file:
     description: 'Path to the code coverage data file to upload'
     default: ''
@@ -13,7 +13,7 @@ inputs:
     default: ''
   token:
     description: 'Set the private repository token (defaults to secret CODECOV_TOKEN)'
-    default: '{{secrets.CODECOV_TOKEN}}'
+    default: ${{ secrets.CODECOV_TOKEN }}
 branding:
   color: 'red' 
   icon: 'umbrella'
@@ -22,4 +22,3 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.token }}
-  #plugin: 'checkout'
