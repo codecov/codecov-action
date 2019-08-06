@@ -19,4 +19,5 @@ branding:
   icon: 'umbrella'
 runs:
   using: 'node12'
-  main: 'entrypoint.sh'
+  main: 'main.js'
+  #plugin: 'checkout'
