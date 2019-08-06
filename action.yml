@@ -19,10 +19,4 @@ branding:
   icon: 'umbrella'
 runs:
   using: 'node12'
-  main: |
-      curl -s https://codecov.io/bash | bash -s -- \
-      #   -f ${inputs.file} \
-      #   -t ${inputs.token} \
-      #   -y ${inputs.conf} \
-      #   -F ${inputs.flags} \
-      #   -Z || echo 'Codecov upload failed'
+  main: 'entrypoint.sh'
