@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Exit if any subcommand fails
 set -eu
 
-echo "hello $1"
+echo "hello $2"
 
-# execute codecov global
-bash <(curl -s https://codecov.io/bash)
+bash <(curl -s https://codecov.io/bash) 
