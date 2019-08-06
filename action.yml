@@ -13,11 +13,13 @@ inputs:
     default: ''
   token:
     description: 'Set the private repository token (defaults to environment variable CODECOV_TOKEN)'
-    default: ${CODECOV_TOKEN}  
+    default: 'chicken'
 branding:
   color: 'red' 
   icon: 'umbrella'
 runs:
-  using: 'node12'
-  main: 'main.js'
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.token }}
   #plugin: 'checkout'
