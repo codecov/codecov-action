@@ -8,6 +8,9 @@ inputs:
   file:
     description: 'Path to coverage file to upload'
     required: false
+  flags:
+    description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
+    required: false
 branding:
   color: 'red' 
   icon: 'umbrella'
@@ -17,3 +20,4 @@ runs:
   args:
     - ${{ inputs.token }}
     - ${{ inputs.file }}
+    - ${{ inputs.flags }}
