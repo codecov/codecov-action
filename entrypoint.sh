@@ -4,6 +4,11 @@ set -eu
 
 
 
+if [ "x$1" == "x"  ] || [ "x$2" == "x"  ];                                                                
+then
+    echo "both variables are null"
+fi
+
 if [ -z "$1" ] || [ -z "$2" ]; then
   echo 'Need 2 parameter are not empty'
 fi
