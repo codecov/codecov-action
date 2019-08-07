@@ -12,9 +12,10 @@ steps:
 - uses: actions/checkout@master
 - uses: actions/codecov-action@v0.2
   with:
-    token: ${{secrets.CODECOV_TOKEN}}
+    token: ${{secrets.CODECOV_TOKEN}} #optional
+    file: ./coverage.xml #optional
 ```
->**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is not required for public repositories. 
+>**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is *not* required for public repositories. 
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -42,6 +43,7 @@ jobs:
       uses: codecov/codecov-action@v0.2
       with:
         token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage.xml
 ```
 
 ## Arguments
@@ -49,6 +51,7 @@ jobs:
 | Argument  | Description |
 | :---:     |     :---:   | 
 | `token`  | Used to authorize coverage report uploads  |
+| `file`  | Location of the coverage report |
 
 
 ## License 
