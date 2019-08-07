@@ -10,9 +10,9 @@ Inside your `.github/workflows/workflow.yml` file:
 ```yaml
 steps:
 - uses: actions/checkout@master
-- uses: actions/codecov-action@v0.2
+- uses: actions/codecov-action@v0.3
   with:
-    token: ${{secrets.CODECOV_TOKEN}} #optional
+    token: ${{secrets.CODECOV_TOKEN}} #for private repos
     file: ./coverage.xml #optional
 ```
 >**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is *not* required for public repositories. 

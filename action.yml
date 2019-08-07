@@ -1,12 +1,12 @@
 name: 'Codecov'
 description: 'GitHub action that uploads coverage reports for your repository to codecov.io'
-author: 'Ib @ Codecov'
+author: 'Ibrahim Ali @ Codecov'
 inputs: 
   token:
     description: 'Set the repository token'
     required: false 
   file:
-    description: 'Path to coverage file'
+    description: 'Path to coverage file to upload'
     required: false
 branding:
   color: 'red' 
