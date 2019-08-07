@@ -1,4 +1,4 @@
-<p align="center"><img  src="./codecov-logo.png"  /></p>
+<!-- <p align="center"><img  src="./codecov-logo.png"  /></p> -->
 
 # Codecov Github Action
 ### Easily upload coverage reports to Codecov from Github Actions 
