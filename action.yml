@@ -1,9 +1,9 @@
-name: 'Codecov Github Action'
+name: 'Codecov'
 description: 'Github action that uploads coverage reports for this repository to codecov.io'
 author: 'Ib @ Codecov'
 inputs: 
   conf:
-    description: 'Used to specify the location of the .codecov.yml config file'
+    description: 'Used to specify the location of the codecov.yml config file'
     default: 'codecov.yml'
   file:
     description: 'Path to the code coverage data file to upload'
@@ -12,7 +12,7 @@ inputs:
     description: 'Flag the upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     default: ''
   token:
-    description: 'Set the private repository token (defaults to secret CODECOV_TOKEN)'
+    description: 'Set the private repository token 
 branding:
   color: 'red' 
   icon: 'umbrella'

@@ -2,10 +2,9 @@
 
 set -eu
 
-if [ -z "$1" ]
+if [ $# -eq 0 ]
   then
-    echo "No token supplied"
-    exit
+    echo "No arguments supplied"
 fi
 
 bash <(curl -s https://codecov.io/bash) -t $1
