@@ -2,8 +2,6 @@
 
 set -eu
 
-#echo $1
-
 if [ -z "$1" ]
   then
     echo "No token supplied"
