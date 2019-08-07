@@ -1,7 +1,26 @@
-## Things to put in readme
+## Codecov Github Action
+### Easily upload coverage reports to Codecov from Github Actions 
 
-* A detailed description of what the action does.
-* Environment variables the action uses.
-* Secrets the action uses. Production secrets should not be stored in the API during the limited public beta period.
-* Required arguments.
-* Optional arguments.
+## Usage
+
+Inside your `.github/workflows/workflow.yml` file:
+
+```yaml
+steps:
+- uses: actions/checkout@master
+- uses: actions/codecov-action@v1
+  with:
+    token: ${{secrets.CODECOV_TOKEN}}
+```
+>**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io 
+
+## Arguments
+
+| Argument  | Description |
+| :---:     |     :---:   | 
+| `token`  | Used to authorize coverage report uploads  |
+
+
+## License 
+
+The code in this project is released under the MIT License

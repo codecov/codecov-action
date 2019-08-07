@@ -1,9 +1,10 @@
 name: 'Codecov'
-description: 'Github action that uploads coverage reports for this repository to codecov.io'
+description: 'Github action that uploads coverage reports for your repository to codecov.io'
 author: 'Ib @ Codecov'
 inputs: 
   token:
-    description: 'Set the repository token' 
+    description: 'Set the repository token'
+    required: true 
 branding:
   color: 'red' 
   icon: 'umbrella'
