@@ -10,7 +10,7 @@ This repo is a GitHub Action, meaning it integrates with the GitHub Actions CI/C
 
 ## PRs and Support
 
-Feel free to clone, modify code and request a PR to this repository. All PRs will be reviewed by the Codecov team. If your PR has been sitting for a while, ping us at hello@codecov.io 
+Feel free to clone, modify code and request a PR to this repository. All PRs will be reviewed by the Codecov team. If your PR has been sitting for a while or if you have any questions, ping us at support@codecov.io 
 
 ## Improvements
 
