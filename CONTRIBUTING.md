@@ -11,13 +11,3 @@ This repo is a GitHub Action, meaning it integrates with the GitHub Actions CI/C
 ## PRs and Support
 
 Feel free to clone, modify code and request a PR to this repository. All PRs will be reviewed by the Codecov team. If your PR has been sitting for a while or if you have any questions, ping us at support@codecov.io 
-
-## Improvements
-
-Here's a list of things that would extend the functionality of this Action:
-
-* **Specify file path**:     Currently, there's no way to specify a file path to a coverage report. This would have to be a user input that gets passed through to the Docker container
-* **Codecov YAML location**: No way to indicate a path to the `codecov.yml` file. Obtain from user input.
-* **Upload flags**: Cannot currently specify any flags. Obtain from user input.
-
-This is primarily an effort in bash scripting and getting the information above from a user through to make a correct curl call. Thank you ahead of time OS community members!
