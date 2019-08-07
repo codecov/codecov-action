@@ -8,6 +8,10 @@ The following is a set of guidelines for contributing to this repository, which 
 
 This repo is a GitHub Action, meaning it integrates with the GitHub Actions CI/CD pipeline. It's mean to take formatted reports with code coverage stats and upload them to codecov.io. What's essentially happening in the background is that Actions is spinning up a Linux Docker container with the contents of this repository. Inside that container, we then call a shell scipt that runs Codecov's Bash uploader. 
 
+## PRs and Support
+
+Feel free to clone, modify code and request a PR to this repository. All PRs will be reviewed by the Codecov team. If your PR has been sitting for a while, ping  support at support@codecov.io 
+
 ## Improvements
 
 Here's a list of things that would extend the functionality of this Action:
@@ -16,4 +20,6 @@ Here's a list of things that would extend the functionality of this Action:
 * **Codecov YAML location**: No way to indicate a path to the `codecov.yml` file. Obtain from user input.
 * **Upload flags**: Cannot currently specify any flags. Obtain from user input.
 
-This is primarily an effort in bash scripting and getting the information above from a user through to make a correct curl call
+This is primarily an effort in bash scripting and getting the information above from a user through to make a correct curl call. 
+
+Thank you ahead of time OS community members!
