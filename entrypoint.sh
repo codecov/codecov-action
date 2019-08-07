@@ -2,6 +2,14 @@
 
 set -eu
 
+
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+  echo 'Need 2 parameter are not empty'
+fi
+
+echo $INPUT_FILE
+echo $1
 echo $2
 
 if [ $# -eq 0 ]
