@@ -14,6 +14,7 @@ steps:
   with:
     token: ${{secrets.CODECOV_TOKEN}} #for private repos
     file: ./coverage.xml #optional
+    flags: unittests #optional
 ```
 >**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is *not* required for public repositories. 
 
@@ -44,14 +45,16 @@ jobs:
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./coverage.xml
+        flags: unittests
 ```
 
 ## Arguments
 
-| Argument  | Description |
+| Input  | Description |
 | :---:     |     :---:   | 
 | `token`  | Used to authorize coverage report uploads  |
 | `file`  | Location of the coverage report |
+| `flags`  | Flag upload to group coverage metrics |
 
 
 ## License 
