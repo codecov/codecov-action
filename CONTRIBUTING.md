@@ -20,6 +20,4 @@ Here's a list of things that would extend the functionality of this Action:
 * **Codecov YAML location**: No way to indicate a path to the `codecov.yml` file. Obtain from user input.
 * **Upload flags**: Cannot currently specify any flags. Obtain from user input.
 
-This is primarily an effort in bash scripting and getting the information above from a user through to make a correct curl call. 
-
-Thank you ahead of time OS community members!
+This is primarily an effort in bash scripting and getting the information above from a user through to make a correct curl call. Thank you ahead of time OS community members!
