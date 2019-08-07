@@ -12,7 +12,7 @@ inputs:
     description: 'Flag the upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     default: ''
   token:
-    description: 'Set the private repository token 
+    description: 'Set the private repository token' 
 branding:
   color: 'red' 
   icon: 'umbrella'
