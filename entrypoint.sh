@@ -3,6 +3,7 @@
 set -eu
 
 
+echo $INPUT_FILE
 
 if [ "x$1" == "x"  ] || [ "x$2" == "x"  ];                                                                
 then
@@ -13,7 +14,7 @@ if [ -z "$1" ] || [ -z "$2" ]; then
   echo 'Need 2 parameter are not empty'
 fi
 
-echo $INPUT_FILE
+
 echo $1
 echo $2
 
