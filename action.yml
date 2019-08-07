@@ -5,6 +5,9 @@ inputs:
   token:
     description: 'Set the repository token'
     required: false 
+  file:
+    description: 'Path to coverage file'
+    required: false
 branding:
   color: 'red' 
   icon: 'umbrella'
@@ -13,3 +16,4 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.token }}
+    - ${{ inputs.file }}

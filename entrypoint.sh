@@ -2,6 +2,8 @@
 
 set -eu
 
+echo $2
+
 if [ $# -eq 0 ]
   then
     bash <(curl -s https://codecov.io/bash)
