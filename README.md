@@ -1,4 +1,6 @@
-## Codecov Github Action
+<div style="text-align:center"><img src="./codecov-logo.png" /></div>
+
+# Codecov Github Action
 ### Easily upload coverage reports to Codecov from Github Actions 
 
 ## Usage
