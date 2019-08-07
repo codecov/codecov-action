@@ -10,7 +10,7 @@ Inside your `.github/workflows/workflow.yml` file:
 ```yaml
 steps:
 - uses: actions/checkout@master
-- uses: actions/codecov-action@v0.3
+- uses: actions/codecov-action@v0.4
   with:
     token: ${{secrets.CODECOV_TOKEN}} #for private repos
     file: ./coverage.xml #optional
@@ -41,7 +41,7 @@ jobs:
         pytest --cov=./ --cov-report=xml
 
     - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@v0.2
+      uses: codecov/codecov-action@v0.4
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./coverage.xml
