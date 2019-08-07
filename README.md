@@ -14,7 +14,7 @@ steps:
   with:
     token: ${{secrets.CODECOV_TOKEN}}
 ```
->**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io 
+>**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is not required for public repositories. 
 
 ## Arguments
 

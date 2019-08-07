@@ -4,7 +4,7 @@ author: 'Ib @ Codecov'
 inputs: 
   token:
     description: 'Set the repository token'
-    required: true 
+    required: false 
 branding:
   color: 'red' 
   icon: 'umbrella'
