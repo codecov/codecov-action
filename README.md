@@ -1,5 +1,7 @@
-# Codecov GitHub Action
-### Easily upload coverage reports to Codecov from GitHub Actions 
+# Codecov GitHub Action 
+
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1.0.0-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
+### Easily upload coverage reports to Codecov from GitHub Actions  
 
 ## Usage
 
