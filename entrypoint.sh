@@ -54,6 +54,6 @@ elif [ "x$INPUT_NAME" != "x" ]
 then
   bash <(curl -s https://codecov.io/bash) -n $INPUT_NAME
 else
-  echo "error"
+  echo "Please provide valid arguments"
   exit 1
 fi
