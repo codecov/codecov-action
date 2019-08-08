@@ -5,7 +5,7 @@
 
 ## Usage
 
-To integrate Codecov with your Actions pipline, specify the name of this repository with a tag number as a 'step' within your 'workflow.yml' file. Optionally, you can choose to include up to four different inputs to customize the upload context.
+To integrate Codecov with your Actions pipline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. Optionally, you can choose to include up to four different inputs to customize the upload context.
 
 Inside your `.github/workflows/workflow.yml` file:
 
