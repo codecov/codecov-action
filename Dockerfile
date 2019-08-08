@@ -1,5 +1,4 @@
 # Codecov @codecov
-# Ibrahim Ali @ibrahim0814
 
 FROM alpine:3.10
 
