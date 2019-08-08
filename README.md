@@ -3,7 +3,7 @@
 
 ## Usage
 
-To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. This Action also requires you to provide an upload token from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, store it as a `secret`). Optionally, you can choose to include three additional inputs to customize the upload context.
+To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, store it as a `secret`). Optionally, you can choose to include three additional inputs to customize the upload context.
 
 Inside your `.github/workflows/workflow.yml` file:
 
@@ -17,7 +17,7 @@ steps:
     flags: unittests #optional
     name: codecov-umbrella #optional
 ```
->**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on [codecov.io](https://www.codecov.io). 
+>**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). 
 
 ## Arguments
 
