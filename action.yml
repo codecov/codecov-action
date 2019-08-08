@@ -1,9 +1,9 @@
 name: 'Codecov'
-description: 'GitHub action that uploads coverage reports for your repository to codecov.io'
-author: 'Ibrahim Ali @ Codecov'
+description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
+author: 'Ibrahim Ali <@ibrahim0814> | Codecov'
 inputs: 
   name:
-    description: 'User defined upload name. Visible in Codecov's UI'
+    description: 'User defined upload name. Visible in Codecov UI'
     required: false 
   token:
     description: 'Set the repository token'
