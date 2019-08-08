@@ -54,7 +54,7 @@ jobs:
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
-| `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
+| `token`  | Used to authorize coverage report uploads  | *Required only for private repos* |
 | `file`  | Location of the coverage report | Optional
 | `flags`  | Flag upload under a certain group name | Optional
 | `name`  | Custom defined name for the upload | Optional
