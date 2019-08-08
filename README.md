@@ -23,7 +23,7 @@ steps:
 
 ## Arguments
 
-Codecov's Action currently supports four inputs from the user: `token`, `file`, `flags`, and `name`.  These inputs  help users contexualize more information about their upload on [codecov.io](https://www.codecov.io). 
+Codecov's Action currently supports four inputs from the user: `token`, `file`, `flags`, and `name`.  These inputs  help users contextualize more information about their upload on [codecov.io](https://www.codecov.io). 
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
