@@ -59,7 +59,7 @@ jobs:
 ```
 ## Contributing
 
-If you want to contribute code to this repository, check out [CONTRIBUTING](CONTRIBUTING.md).
+Contributions are welcome! Check out the [Contribution Guide](CONTRIBUTING.md).
 
 ## License 
 
