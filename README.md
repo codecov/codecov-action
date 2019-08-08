@@ -17,7 +17,7 @@ steps:
     token: ${{secrets.CODECOV_TOKEN}} #for private repos
     file: ./coverage.xml #optional
     flags: unittests #optional
-    name: codecov-1 #optional
+    name: codecov-umbrella #optional
 ```
 >**Note**: This assumes that you've set your Codecov token inside Settings > Secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on [codecov.io](https://www.codecov.io). A token is *not* required for public repositories. 
 
@@ -57,7 +57,7 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./coverage.xml
         flags: unittests
-        name: codecov-1 
+        name: codecov-umbrella 
 ```
 
 ## License 
