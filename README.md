@@ -3,7 +3,7 @@
 
 ## Usage
 
-To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. It also requires you to provide an upload token input. Optionally, you can choose to include an additional 3 different inputs to customize the upload context.
+To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. It also requires you to provide an upload token from [codecov.io](https://www.codecov.io). Optionally, you can choose to include an additional three inputs to customize the upload context.
 
 Inside your `.github/workflows/workflow.yml` file:
 
