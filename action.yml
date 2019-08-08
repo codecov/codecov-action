@@ -1,6 +1,3 @@
-# Codecov @codecov
-# Ibrahim Ali @ibrahim0814
-
 name: 'Codecov'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
 author: 'Ibrahim Ali <@ibrahim0814> | Codecov'
