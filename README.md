@@ -21,7 +21,7 @@ steps:
 
 ## Arguments
 
-Codecov's Action currently supports four inputs from the user: `token`, `file`, `flags`, and `name`.  These inputs, along with their description and usage context are listed in the table below: 
+Codecov's Action currently supports four inputs from the user: `token`, `file`, `flags`, and `name`.  These inputs, along with their descriptions and usage contexts, are listed in the table below: 
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
