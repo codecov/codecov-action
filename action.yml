@@ -21,8 +21,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    #- ${{ inputs.name }}
-    #- ${{ inputs.token }}
-    #- ${{ inputs.file }}
-    #- ${{ inputs.flags }}
+    - ${{ inputs.name }}
+    - ${{ inputs.token }}
+    - ${{ inputs.file }}
+    - ${{ inputs.flags }}
    
