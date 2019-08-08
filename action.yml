@@ -20,9 +20,9 @@ branding:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  # args:
-  #   - ${{ inputs.name }}
-  #   - ${{ inputs.token }}
-  #   - ${{ inputs.file }}
-  #   - ${{ inputs.flags }}
+  args:
+    #- ${{ inputs.name }}
+    - ${{ inputs.token }}
+    #- ${{ inputs.file }}
+    #- ${{ inputs.flags }}
    
