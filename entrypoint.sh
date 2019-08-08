@@ -4,6 +4,8 @@
 
 set -eu
 
+ci_env="git/hg"
+
 if [ $# -eq 0 ]
 then
   echo "Please provide an upload token from codecov.io"
