@@ -27,7 +27,7 @@ Codecov's Action currently supports four inputs from the user: `token`, `file`, 
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required only for private repos* |
 | `file`  | Location of the coverage report | Optional
-| `flags`  | Flag upload under a certain group name | Optional
+| `flags`  | Flag upload under a certain group | Optional
 | `name`  | Custom defined name for the upload | Optional
 
 ### Example `workflow.yml` with Codecov Action
