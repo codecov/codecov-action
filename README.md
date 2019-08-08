@@ -19,6 +19,15 @@ steps:
 ```
 >**Note**: This assumes that you've set your Codecov token inside settings > secrets as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on codecov.io. A token is *not* required for public repositories. 
 
+## Arguments
+
+| Input  | Description | Usage |
+| :---:     |     :---:   |    :---:   |
+| `token`  | Used to authorize coverage report uploads  | *Required only for private repos* |
+| `file`  | Location of the coverage report | Optional
+| `flags`  | Flag upload under a certain group name | Optional
+| `name`  | Custom defined name for the upload | Optional
+
 ### Example `workflow.yml` with Codecov Action
 
 ```yaml
@@ -49,16 +58,6 @@ jobs:
         flags: unittests
         name: codecov-1 
 ```
-
-## Arguments
-
-| Input  | Description | Usage |
-| :---:     |     :---:   |    :---:   |
-| `token`  | Used to authorize coverage report uploads  | *Required only for private repos* |
-| `file`  | Location of the coverage report | Optional
-| `flags`  | Flag upload under a certain group name | Optional
-| `name`  | Custom defined name for the upload | Optional
-
 
 ## License 
 
