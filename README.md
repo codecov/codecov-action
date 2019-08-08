@@ -62,4 +62,4 @@ jobs:
 
 ## License 
 
-The code in this project is released under the [MIT License](LICENSE)
+The code in this project is released under the [MIT License](LICENSE).
