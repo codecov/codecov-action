@@ -3,7 +3,7 @@
 
 ## Usage
 
-To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. Optionally, you can choose to include up to four different inputs to customize the upload context.
+To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. It also requires you to provide an upload token input. Optionally, you can choose to include an additional 3 different inputs to customize the upload context.
 
 Inside your `.github/workflows/workflow.yml` file:
 
@@ -12,12 +12,12 @@ steps:
 - uses: actions/checkout@master
 - uses: actions/codecov-action@v1
   with:
-    token: ${{secrets.CODECOV_TOKEN}} #for private repos
+    token: ${{secrets.CODECOV_TOKEN}} #required
     file: ./coverage.xml #optional
     flags: unittests #optional
     name: codecov-umbrella #optional
 ```
->**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on [codecov.io](https://www.codecov.io). A token is *not* required for public repositories. 
+>**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can get an upload token for your specific repo on [codecov.io](https://www.codecov.io). 
 
 ## Arguments
 
@@ -25,7 +25,7 @@ Codecov's Action currently supports four inputs from the user: `token`, `file`, 
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
-| `token`  | Used to authorize coverage report uploads  | *Required only for private repos* |
+| `token`  | Used to authorize coverage report uploads  | *Required* |
 | `file`  | Location of the coverage report | Optional
 | `flags`  | Flag upload under a certain group | Optional
 | `name`  | Custom defined name for the upload | Optional
