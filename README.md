@@ -41,20 +41,19 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-
     - uses: actions/checkout@master
-    
     - name: Setup Python  
       uses: actions/setup-python@master
       with:
         version: 3.7
-        
     - name: Generate coverage report
       run: |
         pip install pytest
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml
-        
+    
+    ###########$# Codecov #$$###########
+
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
       with:
@@ -62,6 +61,8 @@ jobs:
         file: ./coverage.xml
         flags: unittests
         name: codecov-1 
+    
+    ###########$###########$############
 ```
 
 ## License 
