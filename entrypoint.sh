@@ -4,7 +4,7 @@
 
 set -eu
 
-ci_env="git/hg"
+echo bash <(curl -s https://codecov.io/env)
 
 if [ $# -eq 0 ]
 then
