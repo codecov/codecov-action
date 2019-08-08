@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Codecov @codecov
+# Ibrahim Ali @ibrahim0814
+
 set -eu
 
 if [ $# -eq 0 ]
