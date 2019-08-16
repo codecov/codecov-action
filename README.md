@@ -12,7 +12,7 @@ Inside your `.github/workflows/workflow.yml` file:
 ```yaml
 steps:
 - uses: actions/checkout@master
-- uses: actions/codecov-action@v1.0.0
+- uses: codecov/codecov-action@v1.0.0
   with:
     token: ${{secrets.CODECOV_TOKEN}} #required
     file: ./coverage.xml #optional
