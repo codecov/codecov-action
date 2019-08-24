@@ -1,11 +1,11 @@
 # Codecov @codecov
 
-FROM alpine:3.10
+FROM ubuntu:latest
 
 WORKDIR /app
 COPY . /app
 
-RUN apk add --no-cache curl bash git
+RUN apt update && apt install -y curl
 
 RUN chmod +x /app/entrypoint.sh
 
