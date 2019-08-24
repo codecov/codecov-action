@@ -5,7 +5,7 @@ FROM ubuntu:latest
 WORKDIR /app
 COPY . /app
 
-# RUN apk add --no-cache curl bash git
+RUN sudo apt update && sudo apt install -y curl
 
 RUN chmod +x /app/entrypoint.sh
 
