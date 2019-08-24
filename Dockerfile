@@ -1,6 +1,6 @@
 # Codecov @codecov
 
-FROM alpine:3.10
+FROM ubuntu:latest
 
 WORKDIR /app
 COPY . /app
