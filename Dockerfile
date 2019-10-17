@@ -1,12 +1,15 @@
 # Codecov @codecov
 
-FROM ubuntu:latest
+FROM debian:stretch-slim
 
-WORKDIR /app
-COPY . /app
+RUN apt-get update && apt-get install -y \
+		ca-certificates \
+		curl \
+		git \
+		mercurial \
+	--no-install-recommends && rm -r /var/lib/apt/lists/*
 
-RUN apt update && apt install -y curl git mercurial
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN chmod +x /app/entrypoint.sh
-
-ENTRYPOINT [ "/app/entrypoint.sh" ]
+ENTRYPOINT ["/entrypoint.sh"]
