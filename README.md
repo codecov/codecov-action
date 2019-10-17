@@ -1,6 +1,6 @@
 # Codecov GitHub Action 
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1.0.2-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1.0.3-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
 ### Easily upload coverage reports to Codecov from GitHub Actions  
 
 ## Usage
@@ -12,7 +12,7 @@ Inside your `.github/workflows/workflow.yml` file:
 ```yaml
 steps:
 - uses: actions/checkout@master
-- uses: codecov/codecov-action@v1.0.2
+- uses: codecov/codecov-action@v1.0.3
   with:
     token: ${{secrets.CODECOV_TOKEN}} #required
     file: ./coverage.xml #optional
@@ -52,7 +52,7 @@ jobs:
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml
     - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@v1.0.2
+      uses: codecov/codecov-action@v1.0.3
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./coverage.xml
