@@ -7,7 +7,7 @@ inputs:
     required: false 
   token:
     description: 'Repository upload token - get it from codecov.io'
-    required: false 
+    required: true 
   file:
     description: 'Path to coverage file to upload'
     required: false
