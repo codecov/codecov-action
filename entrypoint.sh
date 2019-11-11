@@ -10,11 +10,13 @@ if [ "x$INPUT_FILE" != 'x' ]; then
 		-t "$INPUT_TOKEN" \
 		-n "$INPUT_NAME" \
 		-F "$INPUT_FLAGS" \
+		-B "$INPUT_BRANCH" \
 		-Z || echo 'Codecov upload failed'
 else
 	curl -s https://codecov.io/bash | bash -s -- \
 		-t "$INPUT_TOKEN" \
 		-n "$INPUT_NAME" \
 		-F "$INPUT_FLAGS" \
+		-B "$INPUT_BRANCH" \
 		-Z || echo 'Codecov upload failed'
 fi

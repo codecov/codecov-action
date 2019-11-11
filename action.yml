@@ -14,6 +14,9 @@ inputs:
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
+  branch:
+    description: 'Branch associated with this report'
+    required: false
 branding:
   color: 'red' 
   icon: 'umbrella'
@@ -25,4 +28,5 @@ runs:
     - ${{ inputs.token }}
     - ${{ inputs.file }}
     - ${{ inputs.flags }}
+    - ${{ inputs.branch }}
    
