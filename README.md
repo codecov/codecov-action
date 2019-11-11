@@ -33,6 +33,7 @@ Codecov's Action currently supports four inputs from the user: `token`, `file`, 
 | `name`  | Custom defined name for the upload | Optional
 
 ### Example `workflow.yml` with Codecov Action
+> **Note**: This is a Docker based action and will only run on Linux based systems (e.g Ubuntu). Windows and macOS builds are currently not supported.
 
 ```yaml
 name: Example workflow for Codecov
