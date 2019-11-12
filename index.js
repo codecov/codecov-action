@@ -22,7 +22,7 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
 
-  const command = `curl <(bash https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
+  const command = `bash <(curl https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
   exec(command, (err, stdout, stderr) => {
     if (err) {
       //some err occurred
