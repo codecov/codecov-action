@@ -19,4 +19,4 @@ branding:
   icon: 'umbrella'
 runs:
   using: 'node12'
-  image: 'index.js'
+  main: 'index.js'
