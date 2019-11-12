@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-
+const request = require('request');
 
 const { exec } = require('child_process');
 
@@ -21,6 +21,15 @@ try {
   // Get the JSON webhook payload for the event that triggered the workflow
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
+
+
+  request('http://codecov.io/bash',  (error, response, body) => {
+    console.log('error:', error); 
+    console.log('statusCode:', response && response.statusCode); 
+    console.log('body:', body); 
+
+  });
+  
 
   const command = `bash <(curl -s https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
   exec(command, (err, stdout, stderr) => {
