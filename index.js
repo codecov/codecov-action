@@ -44,17 +44,17 @@ try {
   });
   
 
-  const command = `bash <(curl -s https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
-  exec(command, (err, stdout, stderr) => {
-    if (err) {
-      //some err occurred
-      console.error(err)
-    } else {
-     // the *entire* stdout and stderr (buffered)
-     console.log(`stdout: ${stdout}`);
-     console.log(`stderr: ${stderr}`);
-    }
-  });
+//   const command = `bash <(curl -s https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
+//   exec(command, (err, stdout, stderr) => {
+//     if (err) {
+//       //some err occurred
+//       console.error(err)
+//     } else {
+//      // the *entire* stdout and stderr (buffered)
+//      console.log(`stdout: ${stdout}`);
+//      console.log(`stderr: ${stderr}`);
+//     }
+//   });
 
 } catch (error) {
   core.setFailed(error.message);
