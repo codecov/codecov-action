@@ -1,0 +1,29 @@
+{
+  "name": "action",
+  "version": "1.0.0",
+  "description": "GitHub Action that uploads coverage reports for your repository to codecov.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codecov/codecov-action.git"
+  },
+  "keywords": [
+    "codecov",
+    "codecov github action",
+    "actions",
+    "ci/cd"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codecov/codecov-action/issues"
+  },
+  "homepage": "https://github.com/codecov/codecov-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.0",
+    "@actions/github": "^1.1.0"
+  }
+}

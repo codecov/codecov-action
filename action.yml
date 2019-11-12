@@ -18,11 +18,5 @@ branding:
   color: 'red' 
   icon: 'umbrella'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.name }}
-    - ${{ inputs.token }}
-    - ${{ inputs.file }}
-    - ${{ inputs.flags }}
-   
+  using: 'node12'
+  image: 'index.js'
