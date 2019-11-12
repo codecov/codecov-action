@@ -28,7 +28,7 @@ try {
     console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
 
-    const command = `bash ${body} -t ${token} -n ${name} -F ${flags} -f ${file}`
+    const command = `bash ${body}`
     //const command = `bash ${body} -t ${token} -n ${name} -F ${flags} -f ${file}`
     exec(command, (err, stdout, stderr) => {
         if (err) {
