@@ -28,10 +28,12 @@ try {
     console.log('error:', error); 
     console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
-    execSh(`echo ${body}`, true, (err, stdout, stderr)=>{
-        console.log("error: ", err);
+    
+
+    execSh([`export CODECOV_TOKEN=${token}`,body], true, (err, stdout, stderr)=>{
+        //console.log("error: ", err);
         console.log("stdout: ", stdout);
-        console.log("stderr: ", stderr);
+        //console.log("stderr: ", stderr);
 
     })
 
