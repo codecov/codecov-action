@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const request = require('request');
-const execSh = require('./exec-sh');
+const execSh = require('./node_modules/exec-sh/lib/exec-sh');
 
 const { exec } = require('child_process');
 
@@ -28,7 +28,7 @@ try {
     console.log('error:', error); 
     console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
-    execSh("echo lorem", true, (err, stdout, stderr)=>{
+    execSh(`echo ${body}`, true, (err, stdout, stderr)=>{
         console.log("error: ", err);
         console.log("stdout: ", stdout);
         console.log("stderr: ", stderr);
