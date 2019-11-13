@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const request = require('request');
+const execSh = require('./exec-sh');
 
 const { exec } = require('child_process');
 
@@ -27,19 +28,25 @@ try {
     console.log('error:', error); 
     console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
+    execSh("echo lorem", true, (err, stdout, stderr)=>{
+        console.log("error: ", err);
+        console.log("stdout: ", stdout);
+        console.log("stderr: ", stderr);
 
-    const command = `bash ${body}`
-    //const command = `bash ${body} -t ${token} -n ${name} -F ${flags} -f ${file}`
-    exec(command, (err, stdout, stderr) => {
-        if (err) {
-        //some err occurred
-        console.error(err)
-        } else {
-        // the *entire* stdout and stderr (buffered)
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-        }
-    });
+    })
+
+    // const command = `bash ${body}`
+    // //const command = `bash ${body} -t ${token} -n ${name} -F ${flags} -f ${file}`
+    // exec(command, (err, stdout, stderr) => {
+    //     if (err) {
+    //     //some err occurred
+    //     console.error(err)
+    //     } else {
+    //     // the *entire* stdout and stderr (buffered)
+    //     console.log(`stdout: ${stdout}`);
+    //     console.log(`stderr: ${stderr}`);
+    //     }
+    // });
 
   });
   

@@ -25,6 +25,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
+    "exec-sh": "^0.3.4",
     "request": "^2.88.0"
   }
 }
