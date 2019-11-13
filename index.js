@@ -28,14 +28,22 @@ try {
     //console.log('error:', error); 
     //console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
-    token = token.toString()
+    // token = token.toString()
 
-    execSh([`export CODECOV_TOKEN=${token}`, body], true, (err, stdout, stderr)=>{
+    // execSh([`export CODECOV_TOKEN=${token}`, body], true, (err, stdout, stderr)=>{
+    //     //console.log("error: ", err);
+    //     console.log("stdout: ", stdout);
+    //     //console.log("stderr: ", stderr);
+
+    // })
+
+    execSh(body, true, (err, stdout, stderr)=>{
         //console.log("error: ", err);
         console.log("stdout: ", stdout);
         //console.log("stderr: ", stderr);
 
     })
+
 
     // const command = `bash ${body}`
     // //const command = `bash ${body} -t ${token} -n ${name} -F ${flags} -f ${file}`
