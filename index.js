@@ -10,7 +10,7 @@ try {
   const name = core.getInput('name');
   console.log(`Name: ${name}`);
   
-  const token = core.getInput('token');
+  let token = core.getInput('token');
   console.log(`Token: ${token}`);
 
   const flags = core.getInput('flags');
@@ -28,7 +28,7 @@ try {
     //console.log('error:', error); 
     //console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
-    
+    token = token.toString()
 
     execSh([`export CODECOV_TOKEN=${token}`, body], true, (err, stdout, stderr)=>{
         //console.log("error: ", err);
