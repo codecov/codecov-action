@@ -19,10 +19,5 @@ branding:
   icon: 'umbrella'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.name }}
-    - ${{ inputs.token }}
-    - ${{ inputs.file }}
-    - ${{ inputs.flags }}
+  main: 'index.js'
    
