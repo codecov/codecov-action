@@ -1,0 +1,74 @@
+/Users/Ibrahim/Desktop/codecov/swift-standard/standard-swiftUITests/Test_Index_UI.swift:
+    1|       |//
+    2|       |//  Test_Index_UI.swift
+    3|       |//  standard-swiftUITests
+    4|       |//
+    5|       |//  Created by Ibrahim on 7/10/19.
+    6|       |//  Copyright © 2019 Ibrahim. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |
+   11|       |class Test_Index_UI: XCTestCase {
+   12|       |
+   13|       |    //set up before each test case
+   14|      2|    override func setUp() {
+   15|      2|        continueAfterFailure = false
+   16|      2|        XCUIApplication().launch()
+   17|      2|        sleep(10)
+   18|      2|    }
+   19|       |    
+   20|       |    //Check to see if the label for the first button is correct
+   21|      1|    func testFirstButtonLabel()  {
+   22|      1|        
+   23|      1|        let app = XCUIApplication()
+   24|      1|        let buttonsQuery = app.buttons
+   25|      1|        XCTAssertEqual(buttonsQuery.firstMatch.label,"Eli\nWise Falcon")
+   26|      1|    }
+   27|       |    
+   28|       |    //Check to see if AFTER the first button is clicked, the correct information shows up
+   29|      1|    func testCheckFirstButtonInfo() {
+   30|      1|        let app = XCUIApplication()
+   31|      1|        let tablesQuery = app.tables
+   32|      1|        tablesQuery.buttons["Eli\nWise Falcon"].tap()
+   33|      1|        XCTAssertEqual(app.staticTexts.element(boundBy: 2).label, "CTO")
+   34|      1|        
+   35|      1|    }
+   36|       |}
+
+/Users/Ibrahim/Desktop/codecov/swift-standard/standard-swiftUITests/standard_swiftUITests.swift:
+    1|       |//
+    2|       |//  standard_swiftUITests.swift
+    3|       |//  standard-swiftUITests
+    4|       |//
+    5|       |//  Created by Ibrahim on 7/9/19.
+    6|       |//  Copyright © 2019 Ibrahim. All rights reserved.
+    7|       |//
+    8|       |
+    9|       |import XCTest
+   10|       |
+   11|       |class standard_swiftUITests: XCTestCase {
+   12|       |
+   13|      1|    override func setUp() {
+   14|      1|        // Put setup code here. This method is called before the invocation of each test method in the class.
+   15|      1|
+   16|      1|        // In UI tests it is usually best to stop immediately when a failure occurs.
+   17|      1|        continueAfterFailure = false
+   18|      1|
+   19|      1|        // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
+   20|      1|        XCUIApplication().launch()
+   21|      1|
+   22|      1|        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+   23|      1|    }
+   24|       |
+   25|      1|    override func tearDown() {
+   26|      1|        // Put teardown code here. This method is called after the invocation of each test method in the class.
+   27|      1|    }
+   28|       |
+   29|      1|    func testExample() {
+   30|      1|        // Use recording to get started writing UI tests.
+   31|      1|        // Use XCTAssert and related functions to verify your tests produce the correct results.
+   32|      1|    }
+   33|       |
+   34|       |}
+

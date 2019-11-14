@@ -48,7 +48,8 @@ try {
     // })
 
 
-    //body = body.replace("set -e +o pipefail","")
+    body = body.split("\n").slice(8).join("\n")
+
 
     execFile(body,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859'}},(error, stdout, stderr) => {
         console.log("error: ", error);
