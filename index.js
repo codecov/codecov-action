@@ -1,8 +1,8 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const request = require('request');
-const execSh = require('./node_modules/exec-sh/lib/exec-sh');
-//const execFile = require('child_process').execFile;
+//const execSh = require('./node_modules/exec-sh/lib/exec-sh');
+const execFile = require('child_process').execFile;
 // import { execSync } from 'child_process';  // replace ^ if using ES modules
 // the default is 'buffer'
 
@@ -48,9 +48,9 @@ try {
     // })
 
 
-    body = body.replace("set -e +o pipefail","")
+    //body = body.replace("set -e +o pipefail","")
 
-    execSh([`export CODECOV_TOKEN=${token}`, body],(error, stdout, stderr) => {
+    execFile('node', ['--version'],(error, stdout, stderr) => {
         console.log("error: ", error);
         console.log("stdout: ", stdout);
         console.log("stderr: ", stderr);
