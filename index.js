@@ -47,6 +47,8 @@ try {
 
     // })
 
+    body.replace("set -e +o pipefail","")
+
     execSh([`export CODECOV_TOKEN=${token}`, body],(error, stdout, stderr) => {
         console.log("error: ", error);
         console.log("stdout: ", stdout);
