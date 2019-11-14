@@ -47,20 +47,12 @@ try {
 
     // })
 
-    bodyCopy = body
     body = body.split("\n").slice(8).join("\n")
 
-
-    execFile(bodyCopy,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859'}},(error, stdout, stderr) => {
+    
+    execFile(body,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA }},(error, stdout, stderr) => {
         //console.log("error: ", error);
         console.log('using original')
-        console.log("stdout: ", stdout);
-        console.log("stderr: ", stderr);
-    });  
-
-    execFile(body,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859'}},(error, stdout, stderr) => {
-        //console.log("error: ", error);
-        console.log('using spliced')
         console.log("stdout: ", stdout);
         console.log("stderr: ", stderr);
     });  
