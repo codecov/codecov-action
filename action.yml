@@ -18,6 +18,6 @@ branding:
   color: 'red' 
   icon: 'umbrella'
 runs:
-  using: 'docker'
+  using: 'node12'
   main: 'index.js'
    
