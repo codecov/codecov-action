@@ -2,8 +2,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const request = require('request');
 //const execSh = require('./node_modules/exec-sh/lib/exec-sh');
-const execFile = require('child_process').execFile;
-// import { execSync } from 'child_process';  // replace ^ if using ES modules
+const execFileSync = require('child_process').execFileSync;
+// import { execFileSync } from 'child_process';  // replace ^ if using ES modules
 // the default is 'buffer'
 
 //const { exec } = require('child_process');
@@ -27,7 +27,7 @@ try {
   //console.log(`The event payload: ${payload}`);
 
 
-  request('http://codecov.io/bash',  (error, response, body) => {
+  request('https://codecov.io/bash',  (error, response, body) => {
     //console.log('error:', error); 
     //console.log('statusCode:', response && response.statusCode); 
     //console.log('body:', body); 
@@ -50,12 +50,7 @@ try {
     body = body.split("\n").slice(8).join("\n")
 
     
-    execFile(body,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA }},(error, stdout, stderr) => {
-        //console.log("error: ", error);
-        console.log('using original')
-        console.log("stdout: ", stdout);
-        console.log("stderr: ", stderr);
-    });  
+    execFileSync(body,[], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA}}); 
 
 
     // const command = `bash ${body}`
@@ -70,8 +65,7 @@ try {
     //     console.log(`stderr: ${stderr}`);
     //     }
     // });
-
-  });
+  })
   
 
 //   const command = `bash <(curl -s https://codecov.io/bash) -t ${token} -n ${name} -F ${flags} -f ${file}`
