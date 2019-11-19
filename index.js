@@ -4,9 +4,18 @@ const request = require('request');
 
 const exec = require('@actions/exec');
 
+const tmp = require('tmp');
+
+const temp = require('temp')
+const fs   = require('fs')
+const util = require('util')
+const path = require('path')
+ 
+
+
 
 //const execSh = require('./node_modules/exec-sh/lib/exec-sh');
-const execFileSync = require('child_process').execFileSync;
+//const execFileSync = require('child_process').execFileSync;
 // import { execFileSync } from 'child_process';  // replace ^ if using ES modules
 // the default is 'buffer'
 
@@ -30,21 +39,7 @@ try {
   //const payload = JSON.stringify(github.context.payload, undefined, 2)
   //console.log(`The event payload: ${payload}`);
 
-  let myOutput = '';
-  let myError = '';
-
-  const options = {};
-  options.listeners = {
-    stdout: (data) => {
-      myOutput += data.toString();
-    },
-    stderr: (data) => {
-      myError += data.toString();
-    }
-  };
-  options.env = {CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA};
-
-  exec.exec('bash', ['bash.sh'], options);
+ 
 
   //execFileSync('bash',['bash.sh'], {shell: true, env:{CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA}}); 
 
@@ -70,6 +65,26 @@ try {
     // })
 
     //body = body.replace("#!/usr/bin/env bash", "#!/bin/sh")
+    let myOutput = '';
+    let myError = '';
+    fs.writeFile('codecov.sh', body, function(err) {
+      if (err) throw err;
+      const options = {};
+      options.listeners = {
+        stdout: (data) => {
+          myOutput += data.toString();
+        },
+        stderr: (data) => {
+          myError += data.toString();
+        }
+      };
+      options.env = {CODECOV_TOKEN: 'e0f9f29c-c2e4-4dd3-b440-0c2bc6937859', GITHUB_ACTION: process.env.GITHUB_ACTION, GITHUB_REF: process.env.GITHUB_REF, GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, GITHUB_SHA: process.env.GITHUB_SHA};
+      
+      exec.exec('bash', ['codecov.sh'], options);
+      
+    });
+  
+    
 
     
    
