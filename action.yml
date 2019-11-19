@@ -14,15 +14,13 @@ inputs:
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
+  yml:
+    description: 'Specify the location of the .codecov.yml config file'
+    required: false
 branding:
   color: 'red' 
   icon: 'umbrella'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.name }}
-    - ${{ inputs.token }}
-    - ${{ inputs.file }}
-    - ${{ inputs.flags }}
+  using: 'node12'
+  main: 'dist/index.js'
    

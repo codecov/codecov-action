@@ -1,0 +1,26 @@
+{
+  "name": "test2",
+  "version": "1.0.0",
+  "description": "[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1.0.3-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov) ### Easily upload coverage reports to Codecov from GitHub Actions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codecov/codecov-action.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codecov/codecov-action/issues"
+  },
+  "homepage": "https://github.com/codecov/codecov-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.0",
+    "@actions/exec": "^1.0.1",
+    "fs": "0.0.1-security",
+    "request": "^2.88.0"
+  }
+}
