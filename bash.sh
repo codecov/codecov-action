@@ -1,3 +1,9 @@
+#!usr/bin/env bash
+# Apache License Version 2.0, January 2004
+# https://github.com/codecov/codecov-bash/blob/master/LICENSE
+
+
+set -e +o pipefail
 VERSION="20191111-ecb75bd"
 
 url="https://codecov.io"
