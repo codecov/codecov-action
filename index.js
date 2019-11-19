@@ -1,56 +1,72 @@
-const core = require('@actions/core');
-const request = require('request');
-const exec = require('@actions/exec');
-const fs   = require('fs')
- 
+const core = require("@actions/core");
+const exec = require("@actions/exec");
+const request = require("request");
+const fs = require("fs");
+
 try {
 
-  const name = core.getInput('name');
-  console.log(`Name: ${name}`);
-  
-  let token = core.getInput('token');
-  console.log(`Token: ${token}`);
+  const name = core.getInput("name");
+  const token = core.getInput("token");
+  const flags = core.getInput("flags");
+  const file = core.getInput("file");
+  const yml = core.getInput("yml");
 
-  const flags = core.getInput('flags');
-  console.log(`Flags: ${flags}`);
+  request("https://codecov.io/bash", (error, response, body) => {
+    if (error) throw error;
 
-  const file = core.getInput('file');
-  console.log(`File: ${file}`);
-
-  request('https://codecov.io/bash',  (error, response, body) => {
-    if (error) throw error
-    let myOutput = '';
-    let myError = '';
-    fs.writeFile('codecov.sh', body, (err) => {
+    fs.writeFile("codecov.sh", body, err => {
       if (err) throw err;
+
+      let output = "";
+      let execError = "";
       const options = {};
       options.listeners = {
-        stdout: (data) => {
-          myOutput += data.toString();
+        stdout: data => {
+          output += data.toString();
         },
-        stderr: (data) => {
-          myError += data.toString();
+        stderr: data => {
+          execError += data.toString();
         }
       };
 
       options.env = {
-        CODECOV_TOKEN: `${token}`, 
-        GITHUB_ACTION: process.env.GITHUB_ACTION, 
-        GITHUB_REF: process.env.GITHUB_REF, 
-        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY, 
+        CODECOV_TOKEN: `${token}`,
+        GITHUB_ACTION: process.env.GITHUB_ACTION,
+        GITHUB_REF: process.env.GITHUB_REF,
+        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
         GITHUB_SHA: process.env.GITHUB_SHA
       };
 
-      if (file){
-        exec.exec('bash', ['codecov.sh', '-f', `${file}`, '-n', `${name}`, '-F', `${flags}`], options);
-      }else{
-        exec.exec('bash', ['codecov.sh','-n', `${name}`, '-F', `${flags}`], options);
-      }      
-      
+      if (file) {
+        exec
+          .exec(
+            "bash",
+            ["codecov.sh", "-f", `${file}`, "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
+            options
+          )
+          .then(() => {
+            unlinkFile()
+          });
+      } else {
+        exec
+          .exec(
+            "bash",
+            ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
+            options
+          )
+          .then(() => {
+            unlinkFile()
+          });
+      }
+
+      const unlinkFile = () => {
+        fs.unlink("codecov.sh", err => {
+          if (err) throw err;
+        });
+      }
+
     });
-  
-  })
-  
+  });
 } catch (error) {
   core.setFailed(error.message);
 }

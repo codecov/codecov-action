@@ -20,13 +20,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/exec": "^1.0.1",
-    "@actions/github": "^1.1.0",
-    "core-util-is": "^1.0.2",
-    "exec-sh": "^0.3.4",
     "fs": "0.0.1-security",
-    "path": "^0.12.7",
-    "request": "^2.88.0",
-    "temp": "^0.9.1",
-    "tmp": "^0.1.0"
+    "request": "^2.88.0"
   }
 }
