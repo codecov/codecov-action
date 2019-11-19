@@ -32,7 +32,7 @@ try {
           myError += data.toString();
         }
       };
-      
+
       options.env = {
         CODECOV_TOKEN: `${token}`, 
         GITHUB_ACTION: process.env.GITHUB_ACTION, 
@@ -41,10 +41,10 @@ try {
         GITHUB_SHA: process.env.GITHUB_SHA
       };
 
-      if (file === '' ){
-        exec.exec('bash', ['codecov.sh', '-f', `${file}`, '-n', `${name}`, '-F', `${flags}`, ], options);
+      if (file){
+        exec.exec('bash', ['codecov.sh', '-f', `${file}`, '-n', `${name}`, '-F', `${flags}`], options);
       }else{
-        exec.exec('bash', ['codecov.sh', `${name}`, '-F', `${flags}`, ], options);
+        exec.exec('bash', ['codecov.sh','-n', `${name}`, '-F', `${flags}`], options);
       }      
       
     });
