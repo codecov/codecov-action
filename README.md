@@ -52,7 +52,7 @@ jobs:
     - name: Setup Python  
       uses: actions/setup-python@master
       with:
-        version: 3.7
+        python-version: 3.7
     - name: Generate coverage report
       run: |
         pip install pytest
