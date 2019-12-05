@@ -4,12 +4,13 @@ const request = require("request");
 const fs = require("fs");
 
 try {
-
   const name = core.getInput("name");
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
   const yml = core.getInput("yml");
+  const fail_ci = core.getInput("fail_ci_if_error");
+  fail_ci = fail_ci.toLowerCase();
 
   request("https://codecov.io/bash", (error, response, body) => {
     if (error) throw error;
@@ -37,34 +38,99 @@ try {
         GITHUB_SHA: process.env.GITHUB_SHA
       };
 
-      if (file) {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-f", `${file}`, "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+      if (
+        fail_ci === "yes" ||
+        fail_ci === "y" ||
+        fail_ci === "true" ||
+        fail_ci === "t" ||
+        fail_ci === "1"
+      ) {
+        fail_ci = true;
       } else {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+        fail_ci = false;
+      }
+
+      if (file) {
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`
+              ],
+              options
+            )
+            .then(() => {
+              unlinkFile();
+            });
+        }
+      } else {
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
+              options
+            )
+            .then(() => {
+              unlinkFile();
+            });
+        }
       }
 
       const unlinkFile = () => {
         fs.unlink("codecov.sh", err => {
           if (err) throw err;
         });
-      }
-
+      };
     });
   });
 } catch (error) {
