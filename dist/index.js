@@ -272,7 +272,7 @@ try {
   const flags = core.getInput("flags");
   const file = core.getInput("file");
   const yml = core.getInput("yml");
-  const fail_ci = core.getInput("fail_ci_if_error");
+  let fail_ci = core.getInput("fail_ci_if_error");
   fail_ci = fail_ci.toLowerCase();
 
   request("https://codecov.io/bash", (error, response, body) => {
