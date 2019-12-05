@@ -332,7 +332,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.setFailed(`Action failed with error ${err}`);
+              core.setFailed(`Codecov failed with the following error ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -354,7 +354,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.setFailed(`Action failed with error ${err}`);
+              core.warning(`Codecov encountered the following error: ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -377,7 +377,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.setFailed(`Action failed with error ${err}`);
+              core.setFailed(`Codecov failed with the following error ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -389,7 +389,7 @@ try {
               ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
               options
             ).catch((err)=>{
-              core.setFailed(`Action failed with error ${err}`);
+              core.warning(`Codecov encountered the following error: ${err}`);
             })
             .then(() => {
               unlinkFile();
