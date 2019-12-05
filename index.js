@@ -68,10 +68,12 @@ try {
                 "-Z"
               ],
               options
-            )
+            ).catch((err)=>{
+              core.setFailed(`Action failed with error ${err}`);
+            })
             .then(() => {
               unlinkFile();
-            });
+            })
         } else {
           exec
             .exec(
@@ -88,7 +90,9 @@ try {
                 `${yml}`
               ],
               options
-            )
+            ).catch((err)=>{
+              core.setFailed(`Action failed with error ${err}`);
+            })
             .then(() => {
               unlinkFile();
             });
@@ -109,7 +113,9 @@ try {
                 "-Z"
               ],
               options
-            )
+            ).catch((err)=>{
+              core.setFailed(`Action failed with error ${err}`);
+            })
             .then(() => {
               unlinkFile();
             });
@@ -119,7 +125,9 @@ try {
               "bash",
               ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
               options
-            )
+            ).catch((err)=>{
+              core.setFailed(`Action failed with error ${err}`);
+            })
             .then(() => {
               unlinkFile();
             });
