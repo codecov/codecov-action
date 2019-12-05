@@ -69,7 +69,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.setFailed(`Codecov failed with the following error ${err}`);
+              core.warning(`Codecov encountered the following error: ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -114,7 +114,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.setFailed(`Codecov failed with the following error ${err}`);
+              core.warning(`Codecov encountered the following error: ${err}`);
             })
             .then(() => {
               unlinkFile();
