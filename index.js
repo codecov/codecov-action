@@ -102,6 +102,11 @@ try {
               ],
               options
             )
+            .catch(err => {
+              core.warning(
+                `Codecov error warning: ${err.message}`
+              );
+            })
             .then(() => {
               unlinkFile();
             });
@@ -138,6 +143,11 @@ try {
               ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
               options
             )
+            .catch(err => {
+              core.warning(
+                `Codecov error warning: ${err.message}`
+              );
+            })
             .then(() => {
               unlinkFile();
             });
@@ -145,7 +155,7 @@ try {
       }
 
       const unlinkFile = () => {
-        fs.unlink("codeco.sh", err => {
+        fs.unlink("codecov.sh", err => {
           if (err && fail_ci) {
             throw err;
           } else if (err) {
