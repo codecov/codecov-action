@@ -331,12 +331,15 @@ try {
                 "-Z"
               ],
               options
-            ).catch((err)=>{
-              core.setFailed(`Codecov failed with the following error ${err}`);
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
             })
             .then(() => {
               unlinkFile();
-            })
+            });
         } else {
           exec
             .exec(
@@ -353,7 +356,8 @@ try {
                 `${yml}`
               ],
               options
-            ).then(() => {
+            )
+            .then(() => {
               unlinkFile();
             });
         }
@@ -373,8 +377,11 @@ try {
                 "-Z"
               ],
               options
-            ).catch((err)=>{
-              core.setFailed(`Codecov failed with the following error ${err}`);
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
             })
             .then(() => {
               unlinkFile();
@@ -385,7 +392,8 @@ try {
               "bash",
               ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
               options
-            ).then(() => {
+            )
+            .then(() => {
               unlinkFile();
             });
         }
