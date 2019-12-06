@@ -69,7 +69,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.warning(`Codecov encountered the following error: ${err}`);
+              core.setFailed(`Codecov failed with the following error ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -90,10 +90,7 @@ try {
                 `${yml}`
               ],
               options
-            ).catch((err)=>{
-              core.warning(`Codecov encountered the following error: ${err}`);
-            })
-            .then(() => {
+            ).then(() => {
               unlinkFile();
             });
         }
@@ -114,7 +111,7 @@ try {
               ],
               options
             ).catch((err)=>{
-              core.warning(`Codecov encountered the following error: ${err}`);
+              core.setFailed(`Codecov failed with the following error ${err}`);
             })
             .then(() => {
               unlinkFile();
@@ -125,10 +122,7 @@ try {
               "bash",
               ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
               options
-            ).catch((err)=>{
-              core.warning(`Codecov encountered the following error: ${err}`);
-            })
-            .then(() => {
+            ).then(() => {
               unlinkFile();
             });
         }
