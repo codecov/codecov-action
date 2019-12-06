@@ -25,12 +25,6 @@ try {
   }
 
   request("https://codecov.io/bas", (error, response, body) => {
-    if (error && fail_ci) {
-      throw error;
-    } else if (error) {
-      core.warning(error);
-    }
-
     fs.writeFile("codecov.sh", body, err => {
       if (err && fail_ci) {
         throw err;
@@ -154,6 +148,12 @@ try {
         });
       };
     });
+  }).catch(err => {
+    if (fail_ci) {
+      core.setFailed(err.message);
+    } else {
+      core.warning(err.message);
+    }
   });
 } catch (error) {
   if (fail_ci) {
