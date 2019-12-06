@@ -103,9 +103,7 @@ try {
               options
             )
             .catch(err => {
-              core.warning(
-                `Codecov warning: ${err.message}`
-              );
+              core.warning(`Codecov warning: ${err.message}`);
             })
             .then(() => {
               unlinkFile();
@@ -144,9 +142,7 @@ try {
               options
             )
             .catch(err => {
-              core.warning(
-                `Codecov warning: ${err.message}`
-              );
+              core.warning(`Codecov warning: ${err.message}`);
             })
             .then(() => {
               unlinkFile();
