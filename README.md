@@ -21,7 +21,7 @@ steps:
     flags: unittests #optional
     name: codecov-umbrella #optional
     yml: ./codecov.yml #optional
-    fail_ci_if_error: yes #optional (default = no)
+    fail_ci_if_error: true #optional (default = false)
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). 
 
@@ -36,7 +36,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.) | Optional
 | `name`  | Custom defined name for the upload | Optional
 | `yml`  | Path to codecov.yml config file | Optional
-| `fail_ci_if_error`  | Specify whether CI pipeline should fail if there are errors related to Codecov. *Defaults to no*. | Optional
+| `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false***. | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -68,7 +68,7 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         yml: ./codecov.yml 
-        fail_ci_if_error: yes
+        fail_ci_if_error: true
 ```
 ## Contributing
 
