@@ -18,7 +18,7 @@ inputs:
     description: 'Specify the location of the .codecov.yml config file'
     required: false
   fail_ci_if_error:
-    description: 'Specify whether or not CI build should fail is something goes wrong with Codecov'
+    description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
 branding:
   color: 'red' 
