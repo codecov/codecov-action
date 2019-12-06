@@ -1,10 +1,11 @@
 {
-  "name": "test2",
-  "version": "1.0.0",
-  "description": "[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1.0.3-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov) ### Easily upload coverage reports to Codecov from GitHub Actions",
+  "name": "codecov-action",
+  "version": "1.0.5",
+  "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/exec": "^1.0.1",
+    "@zeit/ncc": "^0.20.5",
     "fs": "0.0.1-security",
     "request": "^2.88.0"
   }
