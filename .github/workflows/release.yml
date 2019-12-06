@@ -1,0 +1,19 @@
+on: create
+
+name: Release 
+jobs:
+  release:
+    name: Release Codecov GitHub Action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 3
+      - name: Release Action
+        uses: technote-space/release-github-actions@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CREATE_MINOR_VERSION_TAG: false
+          COMMIT_NAME: Release GitHub Action
+          BRANCH_NAME: master 

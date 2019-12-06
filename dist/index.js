@@ -266,19 +266,40 @@ const exec = __webpack_require__(230);
 const request = __webpack_require__(958);
 const fs = __webpack_require__(747);
 
+let fail_ci;
 try {
-
   const name = core.getInput("name");
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
   const yml = core.getInput("yml");
+  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
+
+  if (
+    fail_ci === "yes" ||
+    fail_ci === "y" ||
+    fail_ci === "true" ||
+    fail_ci === "t" ||
+    fail_ci === "1"
+  ) {
+    fail_ci = true;
+  } else {
+    fail_ci = false;
+  }
 
   request("https://codecov.io/bash", (error, response, body) => {
-    if (error) throw error;
+    if (error && fail_ci) {
+      throw error;
+    } else if (error) {
+      core.warning(`Codecov warning: ${error.message}`);
+    }
 
     fs.writeFile("codecov.sh", body, err => {
-      if (err) throw err;
+      if (err && fail_ci) {
+        throw err;
+      } else if (err) {
+        core.warning(`Codecov warning: ${err.message}`);
+      }
 
       let output = "";
       let execError = "";
@@ -301,37 +322,114 @@ try {
       };
 
       if (file) {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-f", `${file}`, "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`
+              ],
+              options
+            )
+            .catch(err => {
+              core.warning(`Codecov warning: ${err.message}`);
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        }
       } else {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
+              options
+            )
+            .catch(err => {
+              core.warning(`Codecov warning: ${err.message}`);
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        }
       }
 
       const unlinkFile = () => {
         fs.unlink("codecov.sh", err => {
-          if (err) throw err;
+          if (err && fail_ci) {
+            throw err;
+          } else if (err) {
+            core.warning(`Codecov warning: ${err.message}`);
+          }
         });
-      }
-
+      };
     });
   });
 } catch (error) {
-  core.setFailed(error.message);
+  if (fail_ci) {
+    core.setFailed(`Codecov failed with the following error: ${error.message}`);
+  } else {
+    core.warning(`Codecov warning: ${error.message}`);
+  }
 }
 
 
@@ -25023,7 +25121,7 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
 /***/ 813:
 /***/ (function(module) {
 
-module.exports = {"_from":"tough-cookie@~2.4.3","_id":"tough-cookie@2.4.3","_inBundle":false,"_integrity":"sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==","_location":"/tough-cookie","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"tough-cookie@~2.4.3","name":"tough-cookie","escapedName":"tough-cookie","rawSpec":"~2.4.3","saveSpec":null,"fetchSpec":"~2.4.3"},"_requiredBy":["/request"],"_resolved":"https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz","_shasum":"53f36da3f47783b0925afa06ff9f3b165280f781","_spec":"tough-cookie@~2.4.3","_where":"/Users/Ibrahim/Desktop/test2/node_modules/request","author":{"name":"Jeremy Stashewsky","email":"jstash@gmail.com"},"bugs":{"url":"https://github.com/salesforce/tough-cookie/issues"},"bundleDependencies":false,"contributors":[{"name":"Alexander Savin"},{"name":"Ian Livingstone"},{"name":"Ivan Nikulin"},{"name":"Lalit Kapoor"},{"name":"Sam Thompson"},{"name":"Sebastian Mayr"}],"dependencies":{"psl":"^1.1.24","punycode":"^1.4.1"},"deprecated":false,"description":"RFC6265 Cookies and Cookie Jar for node.js","devDependencies":{"async":"^1.4.2","nyc":"^11.6.0","string.prototype.repeat":"^0.2.0","vows":"^0.8.1"},"engines":{"node":">=0.8"},"files":["lib"],"homepage":"https://github.com/salesforce/tough-cookie","keywords":["HTTP","cookie","cookies","set-cookie","cookiejar","jar","RFC6265","RFC2965"],"license":"BSD-3-Clause","main":"./lib/cookie","name":"tough-cookie","repository":{"type":"git","url":"git://github.com/salesforce/tough-cookie.git"},"scripts":{"cover":"nyc --reporter=lcov --reporter=html vows test/*_test.js","test":"vows test/*_test.js"},"version":"2.4.3"};
+module.exports = {"_args":[["tough-cookie@2.4.3","/Users/Ibrahim/Desktop/action"]],"_from":"tough-cookie@2.4.3","_id":"tough-cookie@2.4.3","_inBundle":false,"_integrity":"sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==","_location":"/tough-cookie","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"tough-cookie@2.4.3","name":"tough-cookie","escapedName":"tough-cookie","rawSpec":"2.4.3","saveSpec":null,"fetchSpec":"2.4.3"},"_requiredBy":["/request"],"_resolved":"https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz","_spec":"2.4.3","_where":"/Users/Ibrahim/Desktop/action","author":{"name":"Jeremy Stashewsky","email":"jstash@gmail.com"},"bugs":{"url":"https://github.com/salesforce/tough-cookie/issues"},"contributors":[{"name":"Alexander Savin"},{"name":"Ian Livingstone"},{"name":"Ivan Nikulin"},{"name":"Lalit Kapoor"},{"name":"Sam Thompson"},{"name":"Sebastian Mayr"}],"dependencies":{"psl":"^1.1.24","punycode":"^1.4.1"},"description":"RFC6265 Cookies and Cookie Jar for node.js","devDependencies":{"async":"^1.4.2","nyc":"^11.6.0","string.prototype.repeat":"^0.2.0","vows":"^0.8.1"},"engines":{"node":">=0.8"},"files":["lib"],"homepage":"https://github.com/salesforce/tough-cookie","keywords":["HTTP","cookie","cookies","set-cookie","cookiejar","jar","RFC6265","RFC2965"],"license":"BSD-3-Clause","main":"./lib/cookie","name":"tough-cookie","repository":{"type":"git","url":"git://github.com/salesforce/tough-cookie.git"},"scripts":{"cover":"nyc --reporter=lcov --reporter=html vows test/*_test.js","test":"vows test/*_test.js"},"version":"2.4.3"};
 
 /***/ }),
 

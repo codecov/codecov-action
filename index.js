@@ -3,19 +3,40 @@ const exec = require("@actions/exec");
 const request = require("request");
 const fs = require("fs");
 
+let fail_ci;
 try {
-
   const name = core.getInput("name");
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
   const yml = core.getInput("yml");
+  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
+
+  if (
+    fail_ci === "yes" ||
+    fail_ci === "y" ||
+    fail_ci === "true" ||
+    fail_ci === "t" ||
+    fail_ci === "1"
+  ) {
+    fail_ci = true;
+  } else {
+    fail_ci = false;
+  }
 
   request("https://codecov.io/bash", (error, response, body) => {
-    if (error) throw error;
+    if (error && fail_ci) {
+      throw error;
+    } else if (error) {
+      core.warning(`Codecov warning: ${error.message}`);
+    }
 
     fs.writeFile("codecov.sh", body, err => {
-      if (err) throw err;
+      if (err && fail_ci) {
+        throw err;
+      } else if (err) {
+        core.warning(`Codecov warning: ${err.message}`);
+      }
 
       let output = "";
       let execError = "";
@@ -38,35 +59,112 @@ try {
       };
 
       if (file) {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-f", `${file}`, "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-f",
+                `${file}`,
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`
+              ],
+              options
+            )
+            .catch(err => {
+              core.warning(`Codecov warning: ${err.message}`);
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        }
       } else {
-        exec
-          .exec(
-            "bash",
-            ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, '-y', `${yml}`],
-            options
-          )
-          .then(() => {
-            unlinkFile()
-          });
+        if (fail_ci) {
+          exec
+            .exec(
+              "bash",
+              [
+                "codecov.sh",
+                "-n",
+                `${name}`,
+                "-F",
+                `${flags}`,
+                "-y",
+                `${yml}`,
+                "-Z"
+              ],
+              options
+            )
+            .catch(err => {
+              core.setFailed(
+                `Codecov failed with the following error: ${err.message}`
+              );
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        } else {
+          exec
+            .exec(
+              "bash",
+              ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
+              options
+            )
+            .catch(err => {
+              core.warning(`Codecov warning: ${err.message}`);
+            })
+            .then(() => {
+              unlinkFile();
+            });
+        }
       }
 
       const unlinkFile = () => {
         fs.unlink("codecov.sh", err => {
-          if (err) throw err;
+          if (err && fail_ci) {
+            throw err;
+          } else if (err) {
+            core.warning(`Codecov warning: ${err.message}`);
+          }
         });
-      }
-
+      };
     });
   });
 } catch (error) {
-  core.setFailed(error.message);
+  if (fail_ci) {
+    core.setFailed(`Codecov failed with the following error: ${error.message}`);
+  } else {
+    core.warning(`Codecov warning: ${error.message}`);
+  }
 }
