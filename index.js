@@ -24,7 +24,7 @@ try {
     fail_ci = false;
   }
 
-  request("https://codecov.io/bas", (error, response, body) => {
+  request("https://codecov.io/bash", (error, response, body) => {
     if (error && fail_ci) {
       throw error;
     } else if (error) {
@@ -145,7 +145,7 @@ try {
       }
 
       const unlinkFile = () => {
-        fs.unlink("codecov.sh", err => {
+        fs.unlink("codeco.sh", err => {
           if (err && fail_ci) {
             throw err;
           } else if (err) {
