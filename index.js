@@ -28,14 +28,14 @@ try {
     if (error && fail_ci) {
       throw error;
     } else if (error) {
-      core.warning(error);
+      core.warning(`Codecov warning: ${error.message}`);
     }
 
     fs.writeFile("codecov.sh", body, err => {
       if (err && fail_ci) {
         throw err;
       } else if (err) {
-        core.warning(err);
+        core.warning(`Codecov warning: ${err.message}`);
       }
 
       let output = "";
@@ -104,7 +104,7 @@ try {
             )
             .catch(err => {
               core.warning(
-                `Codecov error warning: ${err.message}`
+                `Codecov warning: ${err.message}`
               );
             })
             .then(() => {
@@ -145,7 +145,7 @@ try {
             )
             .catch(err => {
               core.warning(
-                `Codecov error warning: ${err.message}`
+                `Codecov warning: ${err.message}`
               );
             })
             .then(() => {
@@ -159,7 +159,7 @@ try {
           if (err && fail_ci) {
             throw err;
           } else if (err) {
-            core.warning(err);
+            core.warning(`Codecov warning: ${err.message}`);
           }
         });
       };
@@ -167,8 +167,8 @@ try {
   });
 } catch (error) {
   if (fail_ci) {
-    core.setFailed(error.message);
+    core.setFailed(`Codecov failed with the following error: ${error.message}`);
   } else {
-    core.warning(error.message);
+    core.warning(`Codecov warning: ${error.message}`);
   }
 }
