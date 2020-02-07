@@ -55,100 +55,42 @@ try {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
         GITHUB_REF: process.env.GITHUB_REF,
         GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
-        GITHUB_SHA: process.env.GITHUB_SHA
+        GITHUB_SHA: process.env.GITHUB_SHA,
+        GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF
       };
 
+      const execArgs = ["codecov.sh"];
       if (file) {
-        if (fail_ci) {
-          exec
-            .exec(
-              "bash",
-              [
-                "codecov.sh",
-                "-f",
-                `${file}`,
-                "-n",
-                `${name}`,
-                "-F",
-                `${flags}`,
-                "-y",
-                `${yml}`,
-                "-Z"
-              ],
-              options
-            )
-            .catch(err => {
-              core.setFailed(
-                `Codecov failed with the following error: ${err.message}`
-              );
-            })
-            .then(() => {
-              unlinkFile();
-            });
-        } else {
-          exec
-            .exec(
-              "bash",
-              [
-                "codecov.sh",
-                "-f",
-                `${file}`,
-                "-n",
-                `${name}`,
-                "-F",
-                `${flags}`,
-                "-y",
-                `${yml}`
-              ],
-              options
-            )
-            .catch(err => {
-              core.warning(`Codecov warning: ${err.message}`);
-            })
-            .then(() => {
-              unlinkFile();
-            });
-        }
-      } else {
-        if (fail_ci) {
-          exec
-            .exec(
-              "bash",
-              [
-                "codecov.sh",
-                "-n",
-                `${name}`,
-                "-F",
-                `${flags}`,
-                "-y",
-                `${yml}`,
-                "-Z"
-              ],
-              options
-            )
-            .catch(err => {
-              core.setFailed(
-                `Codecov failed with the following error: ${err.message}`
-              );
-            })
-            .then(() => {
-              unlinkFile();
-            });
-        } else {
-          exec
-            .exec(
-              "bash",
-              ["codecov.sh", "-n", `${name}`, "-F", `${flags}`, "-y", `${yml}`],
-              options
-            )
-            .catch(err => {
-              core.warning(`Codecov warning: ${err.message}`);
-            })
-            .then(() => {
-              unlinkFile();
-            });
-        }
+        execArgs.push(
+          "-f", `${file}`
+        );
       }
+
+      execArgs.push(
+        "-n", `${name}`,
+        "-F", `${flags}`,
+        "-y", `${yml}`
+      );
+
+      if (fail_ci) {
+        execArgs.push(
+          "-Z"
+        );
+      }
+
+      exec.exec("bash", execArgs, options)
+        .catch(err => {
+          if (fail_ci) {
+            core.setFailed(
+              `Codecov failed with the following error: ${err.message}`
+            );
+          } else {
+            core.warning(`Codecov warning: ${err.message}`);
+          }
+        })
+        .then(() => {
+          unlinkFile();
+        });;
 
       const unlinkFile = () => {
         fs.unlink("codecov.sh", err => {
