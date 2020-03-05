@@ -50,13 +50,16 @@ try {
       };
 
       options.env = {
-        CODECOV_TOKEN: `${token}`,
         GITHUB_ACTION: process.env.GITHUB_ACTION,
         GITHUB_REF: process.env.GITHUB_REF,
         GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
       };
+
+      if(token){
+        options.env.CODECOV_TOKEN = token
+      }
 
       const execArgs = ["codecov.sh"];
       if (file) {

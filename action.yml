@@ -6,8 +6,8 @@ inputs:
     description: 'User defined upload name. Visible in Codecov UI'
     required: false 
   token:
-    description: 'Repository upload token - get it from codecov.io'
-    required: true 
+    description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
+    required: false 
   file:
     description: 'Path to coverage file to upload'
     required: false
