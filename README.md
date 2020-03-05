@@ -7,7 +7,7 @@
 
 ## Usage
 
-To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, store it as a `secret`). Optionally, you can choose to include up to five additional inputs to customize the upload context.
+To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number as a `step` within your `workflow.yml` file. This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, store it as a `secret`). Optionally, you can choose to include up to four additional inputs to customize the upload context.
 
 Inside your `.github/workflows/workflow.yml` file:
 
@@ -20,14 +20,13 @@ steps:
     file: ./coverage.xml #optional
     flags: unittests #optional
     name: codecov-umbrella #optional
-    yml: ./codecov.yml #optional
     fail_ci_if_error: true #optional (default = false)
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories. 
 
 ## Arguments
 
-Codecov's Action currently supports five inputs from the user: `token`, `file`, `flags`,`name`, `yml`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below: 
+Codecov's Action currently supports five inputs from the user: `token`, `file`, `flags`,`name`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below: 
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
@@ -35,7 +34,6 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `file`  | Path to the coverage report(s) | Optional
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.) | Optional
 | `name`  | Custom defined name for the upload | Optional
-| `yml`  | Path to codecov.yml config file | Optional
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false***. | Optional
 
 ### Example `workflow.yml` with Codecov Action
@@ -67,7 +65,6 @@ jobs:
         file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
-        yml: ./codecov.yml 
         fail_ci_if_error: true
 ```
 ## Contributing

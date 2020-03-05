@@ -9,7 +9,6 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
-  const yml = core.getInput("yml");
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (
@@ -68,8 +67,7 @@ try {
 
       execArgs.push(
         "-n", `${name}`,
-        "-F", `${flags}`,
-        "-y", `${yml}`
+        "-F", `${flags}`
       );
 
       if (fail_ci) {
