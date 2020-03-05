@@ -12,8 +12,8 @@
     "url": "git+https://github.com/codecov/codecov-action.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Ibrahim Ali",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/codecov/codecov-action/issues"
   },
@@ -24,5 +24,6 @@
     "@zeit/ncc": "^0.20.5",
     "fs": "0.0.1-security",
     "request": "^2.88.0"
-  }
+  },
+  "devDependencies": {}
 }

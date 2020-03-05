@@ -1,23 +1,15 @@
 name: Example workflow for Codecov
-on: [push]
+on: [push, pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-   
-#     - name: Setup Python  
-#       uses: actions/setup-python@master
-
-#     - name: Generate coverage report
-#       run: |
-#         pip install pytest
-#         pip install pytest-cov
-#         pytest --cov=./ --cov-report=xml
-
     - name: Upload coverage to Codecov  
       uses: ./
       with:
-        token: ${{secrets.CODECOV_TOKEN}}
+        #commenting out token because tokenless uploads are now supported
+        #token: ${{secrets.CODECOV_TOKEN}}
         flags: unittest
         name: codecov-1
+        file: ./sample-coverage/coverage.xml
