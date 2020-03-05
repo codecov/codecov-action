@@ -63,6 +63,7 @@ try {
       }
 
       const execArgs = ["codecov.sh"];
+      const testExecArgs = ["bash", "<(curl", "-s", "https://codecov.io/bash)"]
       if (file) {
         execArgs.push(
           "-f", `${file}`
@@ -80,7 +81,7 @@ try {
         );
       }
 
-      exec.exec("bash", execArgs, options)
+      exec.exec("bash", testExecArgs, options)
         .catch(err => {
           if (fail_ci) {
             core.setFailed(
