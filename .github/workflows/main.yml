@@ -8,6 +8,7 @@ jobs:
     - name: Upload coverage to Codecov  
       uses: ./
       with:
+        #commenting out token because tokenless uploads are now supported
         #token: ${{secrets.CODECOV_TOKEN}}
         flags: unittest
         name: codecov-1
