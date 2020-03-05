@@ -12,4 +12,3 @@ jobs:
         #token: ${{secrets.CODECOV_TOKEN}}
         flags: unittest
         name: codecov-1
-        file: ./sample-coverage/coverage.xml
