@@ -36,9 +36,9 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
 | `file`  | Path to the coverage report(s) | Optional
-| `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.) | Optional
+| `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
 | `name`  | Custom defined name for the upload | Optional
-| `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false***. | Optional
+| `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
