@@ -63,7 +63,7 @@ try {
       }
 
       const execArgs = ["codecov.sh"];
-      const testExecArgs = ["bash", "<(curl", "-s", "https://codecov.io/bash)"]
+      const testExecArgs = ["<(curl", "-s", "https://codecov.io/bash)"]
       if (file) {
         execArgs.push(
           "-f", `${file}`
