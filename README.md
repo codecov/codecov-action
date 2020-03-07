@@ -3,7 +3,7 @@
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
 ### Easily upload coverage reports to Codecov from GitHub Actions 
 
->The latest release of this Action adds support for tokenless uploads!
+>The latest release of this Action adds support for tokenless uploads from GitHub Actions!
 
 ## Usage
 
