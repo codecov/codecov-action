@@ -63,9 +63,7 @@ try {
         options.env.CODECOV_TOKEN = token
       }
 
-      console.warn('env_vars:', env_vars)
       const env_vars_arg = []
-
       for (let env_var of env_vars.split(",")) {
         let env_var_clean = env_var.trim();
         if (env_var_clean) {
@@ -73,8 +71,6 @@ try {
           env_vars_arg.push(env_var_clean)
         }
       }
-      console.warn('options.env:', options.env)
-      console.warn('env_vars_arg:', env_vars_arg)
 
       const execArgs = ["codecov.sh"];
       if (file) {
