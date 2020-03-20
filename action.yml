@@ -14,6 +14,9 @@ inputs:
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
+  env_vars:
+    description: 'Environment variable to take the upload with, can be multiple separated with commas'
+    required: false
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
