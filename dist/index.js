@@ -2342,7 +2342,7 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
-  const env_vars = core.getInput("env_vars");
+  let env_vars = core.getInput("env_vars");
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (
@@ -2396,11 +2396,18 @@ try {
         options.env.CODECOV_TOKEN = token
       }
 
-      for (let env_var of env_vars.split(',')) {
-        if (env_var) {
-          options.env[env_var] = process.env[env_var]
+      console.warn('env_vars:', env_vars)
+      const env_vars_arg = []
+
+      for (let env_var of env_vars.split(",")) {
+        let env_var_clean = env_var.trim();
+        if (env_var_clean) {
+          options.env[env_var_clean] = process.env[env_var_clean];
+          env_vars_arg.push(env_var_clean)
         }
       }
+      console.warn('options.env:', options.env)
+      console.warn('env_vars_arg:', env_vars_arg)
 
       const execArgs = ["codecov.sh"];
       if (file) {
@@ -2417,6 +2424,12 @@ try {
       if (fail_ci) {
         execArgs.push(
           "-Z"
+        );
+      }
+
+      if (env_vars_arg.length) {
+        execArgs.push(
+          "-e", env_vars_arg.join(",")
         );
       }
 
