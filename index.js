@@ -56,7 +56,7 @@ try {
         GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
-      };
+      });
 
       if(token){
         options.env.CODECOV_TOKEN = token
