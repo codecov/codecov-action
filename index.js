@@ -49,7 +49,7 @@ try {
         }
       };
 
-      options.env = {
+      options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
         GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
         GITHUB_REF: process.env.GITHUB_REF,
