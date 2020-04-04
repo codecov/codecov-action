@@ -2342,7 +2342,7 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
-  let env_vars = core.getInput("env_vars");
+  const env_vars = core.getInput("env_vars");
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (

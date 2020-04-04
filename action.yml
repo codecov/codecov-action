@@ -1,13 +1,13 @@
 name: 'Codecov'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
 author: 'Ibrahim Ali <@ibrahim0814> | Codecov'
-inputs: 
+inputs:
   name:
     description: 'User defined upload name. Visible in Codecov UI'
-    required: false 
+    required: false
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
-    required: false 
+    required: false
   file:
     description: 'Path to coverage file to upload'
     required: false
@@ -15,15 +15,14 @@ inputs:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
   env_vars:
-    description: 'Environment variable to take the upload with, can be multiple separated with commas'
+    description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
     required: false
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
 branding:
-  color: 'red' 
+  color: 'red'
   icon: 'umbrella'
 runs:
   using: 'node12'
   main: 'dist/index.js'
-   
