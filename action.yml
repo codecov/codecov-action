@@ -17,6 +17,9 @@ inputs:
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
+  config:
+    description: 'Path to codecov.yml config file'
+    required: false
 branding:
   color: 'red' 
   icon: 'umbrella'

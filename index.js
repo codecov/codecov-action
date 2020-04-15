@@ -9,6 +9,7 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
+  const config = core.getInput("config");
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (
@@ -66,6 +67,12 @@ try {
       if (file) {
         execArgs.push(
           "-f", `${file}`
+        );
+      }
+
+      if (config) {
+        execArgs.push(
+          "-y", `${config}`
         );
       }
 

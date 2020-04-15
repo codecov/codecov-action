@@ -23,6 +23,7 @@ steps:
     flags: unittests # optional
     name: codecov-umbrella # optional
     fail_ci_if_error: true # optional (default = false)
+    config: ./path/to/codecov.yml # optional
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories. 
 
@@ -35,10 +36,11 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
-| `file`  | Path to the coverage report(s) | Optional
-| `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
-| `name`  | Custom defined name for the upload | Optional
-| `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
+| `file`  | Path to the coverage report(s) | Optional |
+| `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional |
+| `name`  | Custom defined name for the upload | Optional |
+| `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional |
+| `config`  | Path to codecov.yml config file | Optional |
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -70,6 +72,7 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true
+        config: ./path/to/codecov.yml
 ```
 ## Contributing
 
