@@ -9,6 +9,8 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
+  const env_vars = core.getInput("env_vars");
+  
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (
@@ -62,6 +64,15 @@ try {
         options.env.CODECOV_TOKEN = token
       }
 
+      const env_vars_arg = []
+      for (let env_var of env_vars.split(",")) {
+        let env_var_clean = env_var.trim();
+        if (env_var_clean) {
+          options.env[env_var_clean] = process.env[env_var_clean];
+          env_vars_arg.push(env_var_clean)
+        }
+      }
+
       const execArgs = ["codecov.sh"];
       if (file) {
         execArgs.push(
@@ -80,6 +91,12 @@ try {
         );
       }
 
+      if (env_vars_arg.length) {
+        execArgs.push(
+          "-e", env_vars_arg.join(",")
+        );
+      }
+
       exec.exec("bash", execArgs, options)
         .catch(err => {
           if (fail_ci) {
@@ -92,7 +109,7 @@ try {
         })
         .then(() => {
           unlinkFile();
-        });;
+        });
 
       const unlinkFile = () => {
         fs.unlink("codecov.sh", err => {
