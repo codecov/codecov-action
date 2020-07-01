@@ -1,9 +1,7 @@
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const fs = require("fs");
-const request = require("retry-request", {
-  request: require("request")
-});
+const request = require('requestretry');
 
 let fail_ci;
 try {
@@ -27,11 +25,10 @@ try {
     fail_ci = false;
   }
 
-  const retryOpts = {
-    retries: 3
-  };
-
-  request("https://codecov.io/bash", retryOpts, (error, response, body) => {
+  request({
+    url: "https://codecov.io/bash",
+    json: false
+  }, (error, response, body) => {
     if (error && fail_ci) {
       throw error;
     } else if (error) {
