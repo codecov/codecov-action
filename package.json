@@ -21,7 +21,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/exec": "^1.0.1",
-    "@zeit/ncc": "^0.20.5",
+    "@zeit/ncc": "^0.22.3",
     "fs": "0.0.1-security",
     "request": "^2.88.0",
     "retry-request": "^4.1.1"
