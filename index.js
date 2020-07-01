@@ -1,8 +1,8 @@
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const fs = require("fs");
-const request = require('retry-request', {
-  request: require('request')
+const request = require("retry-request", {
+  request: require("request")
 });
 
 let fail_ci;
