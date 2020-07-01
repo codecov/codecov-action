@@ -4,11 +4,13 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Upload coverage to Codecov  
-      uses: ./
-      with:
-        #commenting out token because tokenless uploads are now supported
-        #token: ${{secrets.CODECOV_TOKEN}}
-        flags: unittest
-        name: codecov-1
+      - uses: actions/checkout@master
+      - name: Install dependencies
+        run: npm install
+      - name: Upload coverage to Codecov
+        uses: ./
+        with:
+          #commenting out token because tokenless uploads are now supported
+          #token: ${{secrets.CODECOV_TOKEN}}
+          flags: unittest
+          name: codecov-1
