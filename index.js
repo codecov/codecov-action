@@ -1,7 +1,9 @@
 const core = require("@actions/core");
 const exec = require("@actions/exec");
-const request = require("request");
 const fs = require("fs");
+const request = require('retry-request', {
+  request: require('request')
+});
 
 let fail_ci;
 try {
@@ -10,7 +12,7 @@ try {
   const flags = core.getInput("flags");
   const file = core.getInput("file");
   const env_vars = core.getInput("env_vars");
-  
+
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
   if (
@@ -25,7 +27,11 @@ try {
     fail_ci = false;
   }
 
-  request("https://codecov.io/bash", (error, response, body) => {
+  const retryOpts = {
+    retries: 3
+  };
+
+  request("https://codecov.io/bash", retryOpts, (error, response, body) => {
     if (error && fail_ci) {
       throw error;
     } else if (error) {
