@@ -36,10 +36,12 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
 | `file`  | Path to the coverage report(s) | Optional
+| `directory` | Directory to search for coverage reports. | Optional
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
 | `env_vars`  | Environment variables to tag the upload with. Multiple env variables can be separated with commas (e.g. `OS,PYTHON`) | Optional
 | `name`  | Custom defined name for the upload | Optional
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
+| `path_to_write_report` | Write upload file to path before uploading | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -71,10 +73,12 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
+        directory: ./coverage/reports/
         flags: unittests
         env_vars: OS,PYTHON
         name: codecov-umbrella
         fail_ci_if_error: true
+        path_to_write_report: ./coverage/codecov_report.gz
 ```
 ## Contributing
 
