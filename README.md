@@ -71,6 +71,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
+        files: ./coverage1.xml,./coverage2.xml
         flags: unittests
         env_vars: OS,PYTHON
         name: codecov-umbrella
