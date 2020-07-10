@@ -9,6 +9,7 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
+  const files = core.getInput("files");
   const env_vars = core.getInput("env_vars");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
@@ -81,6 +82,14 @@ try {
         execArgs.push(
           "-f", `${file}`
         );
+      }
+
+      if (files) {
+        files.split(',').forEach(f => {
+          execArgs.push(
+            "-f", `${f}`
+          );
+        });
       }
 
       execArgs.push(
