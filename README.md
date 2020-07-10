@@ -20,6 +20,7 @@ steps:
   with:
     token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
     file: ./coverage.xml # optional
+    files: ./coverage1.xml,./coverage2.xml # optional
     flags: unittests # optional
     name: codecov-umbrella # optional
     fail_ci_if_error: true # optional (default = false)
@@ -36,6 +37,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
 | `file`  | Path to the coverage report(s) | Optional
+| `files`  | Comma-separated paths to the coverage report(s) | Optional
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
 | `env_vars`  | Environment variables to tag the upload with. Multiple env variables can be separated with commas (e.g. `OS,PYTHON`) | Optional
 | `name`  | Custom defined name for the upload | Optional
