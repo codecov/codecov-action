@@ -11,6 +11,8 @@ try {
   const file = core.getInput("file");
   const files = core.getInput("files");
   const env_vars = core.getInput("env_vars");
+  const dir = core.getInput("directory");
+  const write_path = core.getInput("path_to_write_report");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
@@ -92,6 +94,12 @@ try {
         });
       }
 
+      if (dir) {
+        execArgs.push(
+          "-s", `${dir}`
+        );
+      }
+
       execArgs.push(
         "-n", `${name}`,
         "-F", `${flags}`
@@ -106,6 +114,12 @@ try {
       if (env_vars_arg.length) {
         execArgs.push(
           "-e", env_vars_arg.join(",")
+        );
+      }
+
+      if (write_path) {
+        execArgs.push(
+          "-q", `${write_path}`
         );
       }
 

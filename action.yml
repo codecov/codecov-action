@@ -14,8 +14,14 @@ inputs:
   files:
     description: 'Comma-separated list of files to upload'
     required: false
+  directory:
+    description: 'Directory to search for coverage reports.'
+    required: false
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
+    required: false
+  path_to_write_report:
+    description: 'Write upload file to path before uploading'
     required: false
   env_vars:
     description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
