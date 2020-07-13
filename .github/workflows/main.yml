@@ -1,14 +1,19 @@
-name: Example workflow for Codecov
+name: Workflow for Codecov Action
 on: [push, pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests and collect coverage
+        run: yarn run test-all
       - name: Upload coverage to Codecov
         uses: ./
         with:
-          #commenting out token because tokenless uploads are now supported
-          #token: ${{secrets.CODECOV_TOKEN}}
+          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          file: ./coverage/coverage-final.json
           flags: unittest
           name: codecov-1

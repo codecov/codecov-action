@@ -4,7 +4,10 @@
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
+    "test-calculator": "jest --testPathPattern=src/calculator/ --coverage --coverageDirectory=coverage/calculator",
+    "test-index": "jest --testPathPattern=src/index --coverage --coverageDirectory=coverage/index",
+    "test-all": "yarn run test && yarn run test-calculator && yarn run test-index",
     "build": "ncc build index.js"
   },
   "repository": {
@@ -21,10 +24,16 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/exec": "^1.0.1",
+    "@types/jest": "^26.0.4",
     "@zeit/ncc": "^0.22.3",
     "fs": "0.0.1-security",
+    "jest": "^26.1.0",
+    "jest-junit": "^10.0.0",
     "request": "^2.88.0",
-    "requestretry": "^4.1.1"
+    "requestretry": "^4.1.1",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.6",
+    "yarn": "^1.22.4"
   },
   "devDependencies": {}
 }

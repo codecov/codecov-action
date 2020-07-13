@@ -11,6 +11,9 @@ inputs:
   file:
     description: 'Path to coverage file to upload'
     required: false
+  files:
+    description: 'Comma-separated list of files to upload'
+    required: false
   directory:
     description: 'Directory to search for coverage reports.'
     required: false

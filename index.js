@@ -9,6 +9,7 @@ try {
   const token = core.getInput("token");
   const flags = core.getInput("flags");
   const file = core.getInput("file");
+  const files = core.getInput("files");
   const env_vars = core.getInput("env_vars");
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
@@ -83,6 +84,14 @@ try {
         execArgs.push(
           "-f", `${file}`
         );
+      }
+
+      if (files) {
+        files.split(',').forEach(f => {
+          execArgs.push(
+            "-f", `${f}`
+          );
+        });
       }
 
       if (dir) {
