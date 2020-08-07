@@ -1,5 +1,8 @@
 name: Workflow for Codecov Action
-on: [push, pull_request]
+on:
+  push:
+    branches: master
+  pull_request:
 jobs:
   run:
     runs-on: ubuntu-latest
