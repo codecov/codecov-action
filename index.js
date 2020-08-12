@@ -14,6 +14,7 @@ try {
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
   const verbose = core.getInput("verbose");
+  const working_dir = core.getInput("working-directory");
   const xcode_derived_data = core.getInput("xcode_derived_data");
   const xcode_package = core.getInput("xcode_package");
 
@@ -135,6 +136,10 @@ try {
           execArgs.push(
             "-v"
           );
+        }
+
+        if (working_dir) {
+          options.cwd = working_dir;
         }
 
         if (xcode_derived_data) {
