@@ -33,8 +33,6 @@ steps:
 
 Codecov's Action currently supports five inputs from the user: `token`, `file`, `flags`,`name`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below:
 
->**Update**: We've removed the `yml` parameter with the latest release of this action. Please put your custom codecov yaml file at the root of the repo because other locations will no longer be supported in the future.
-
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
@@ -47,6 +45,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `path_to_write_report` | Write upload file to path before uploading | Optional
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
+| `working-directory` | Directory in which to execute `codecov.sh` | Optional
 | `xcode_derived_data` | Custom Derived Data Path for Coverage.profdata and gcov processing | Optional
 | `xcode_package` | Specify packages to build coverage. Uploader will only build these packages. This can significantly reduces time to build coverage reports. -J 'MyAppName' Will match "MyAppName" and "MyAppNameTests" -J '^ExampleApp$' Will match only "ExampleApp" not "ExampleAppTests" | Optional
 
