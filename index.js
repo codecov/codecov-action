@@ -30,7 +30,8 @@ try {
 
   request({
     url: "https://codecov.io/bash",
-    json: false
+    json: false,
+    timeout: 30000,
   }, (error, response, body) => {
     try {
       if (error && fail_ci) {
