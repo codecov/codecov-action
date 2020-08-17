@@ -2234,7 +2234,7 @@ try {
 
   request({
     json: false,
-    maxAttempts: 5,
+    maxAttempts: 10,
     timeout: 3000,
     url: "https://codecov.io/bash"
   }, (error, response, body) => {
