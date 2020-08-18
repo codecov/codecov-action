@@ -29,8 +29,10 @@ try {
   }
 
   request({
-    url: "https://codecov.io/bash",
-    json: false
+    json: false,
+    maxAttempts: 10,
+    timeout: 3000,
+    url: "https://codecov.io/bash"
   }, (error, response, body) => {
     try {
       if (error && fail_ci) {
