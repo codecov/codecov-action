@@ -3,7 +3,7 @@ description: 'GitHub Action that uploads coverage reports for your repository to
 author: 'Ibrahim Ali <@ibrahim0814> & Thomas Hu <@thomasrockhu> | Codecov'
 inputs:
   name:
-    description: 'User defined upload name. Visible in Codecov UI'
+    description: 'User defined upload name. Visible in Codecov UI. Defaults to ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}'
     required: false
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'

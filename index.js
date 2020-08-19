@@ -63,6 +63,7 @@ try {
         options.env = Object.assign(process.env, {
           GITHUB_ACTION: process.env.GITHUB_ACTION,
           GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+          GITHUB_RUN_NUMBER: process.env.GITHUB_RUN_NUMBER,
           GITHUB_REF: process.env.GITHUB_REF,
           GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
           GITHUB_SHA: process.env.GITHUB_SHA,
@@ -103,8 +104,17 @@ try {
           );
         }
 
+        if (name) {
+          execArgs.push(
+            "-n", `${name}`
+          );
+        } else {
+          execArgs.push(
+            "-n", `${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}`
+          );
+        }
+
         execArgs.push(
-          "-n", `${name}`,
           "-F", `${flags}`
         );
 
