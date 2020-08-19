@@ -10,6 +10,11 @@ jobs:
         run: npm install
       - name: Run tests and collect coverage
         run: yarn run test-all
+      - name: Echo env variables
+        run: |
+          echo $GITHUB_RUN_ID
+          echo $GITHUB_RUN_NUMBER
+          echo $GITHUB_ACTION
       - name: Upload coverage to Codecov
         uses: ./
         with:
