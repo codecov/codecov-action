@@ -31,7 +31,7 @@
     "jest-junit": "^11.1.0",
     "request": "^2.88.2",
     "requestretry": "^4.1.1",
-    "ts-jest": "^26.1.1",
+    "ts-jest": "^26.2.0",
     "typescript": "^3.9.7",
     "yarn": "^1.22.4"
   },
