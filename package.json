@@ -27,7 +27,7 @@
     "@types/jest": "^26.0.10",
     "@zeit/ncc": "^0.22.3",
     "fs": "0.0.1-security",
-    "jest": "^26.1.0",
+    "jest": "^26.4.2",
     "jest-junit": "^11.1.0",
     "request": "^2.88.2",
     "requestretry": "^4.1.1",
