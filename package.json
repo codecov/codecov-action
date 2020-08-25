@@ -24,7 +24,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/exec": "^1.0.1",
-    "@types/jest": "^26.0.4",
+    "@types/jest": "^26.0.10",
     "@zeit/ncc": "^0.22.3",
     "fs": "0.0.1-security",
     "jest": "^26.1.0",
