@@ -29,7 +29,7 @@
     "fs": "0.0.1-security",
     "jest": "^26.1.0",
     "jest-junit": "^11.1.0",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "requestretry": "^4.1.1",
     "ts-jest": "^26.1.1",
     "typescript": "^3.9.7",
