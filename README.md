@@ -1,6 +1,7 @@
 # Codecov GitHub Action
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v1-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action?ref=badge_shield)
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
 >The latest release of this Action adds support for tokenless uploads from GitHub Actions!
@@ -90,3 +91,6 @@ Contributions are welcome! Check out the [Contribution Guide](CONTRIBUTING.md).
 ## License
 
 The code in this project is released under the [MIT License](LICENSE).
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action?ref=badge_large)
