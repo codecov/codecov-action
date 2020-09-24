@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/codecov/codecov-action#readme",
   "dependencies": {
-    "@actions/core": "^1.2.5",
+    "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
     "@types/jest": "^26.0.14",
     "@zeit/ncc": "^0.22.3",
