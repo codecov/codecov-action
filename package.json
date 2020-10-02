@@ -33,7 +33,7 @@
     "requestretry": "^4.1.1",
     "ts-jest": "^26.4.0",
     "typescript": "^4.0.3",
-    "yarn": "^1.22.5"
+    "yarn": "^1.22.10"
   },
   "devDependencies": {}
 }
