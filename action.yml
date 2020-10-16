@@ -29,6 +29,9 @@ inputs:
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
+  verbose:
+    description: 'Specify whether the Codecov output should be verbose'
+    required: false
 branding:
   color: 'red'
   icon: 'umbrella'

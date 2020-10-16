@@ -13,6 +13,7 @@ try {
   const env_vars = core.getInput("env_vars");
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
+  const verbose = core.getInput("verbose");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
@@ -123,6 +124,12 @@ try {
         if (write_path) {
           execArgs.push(
             "-q", `${write_path}`
+          );
+        }
+
+        if (verbose) {
+          execArgs.push(
+            "-v"
           );
         }
 
