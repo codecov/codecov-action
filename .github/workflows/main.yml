@@ -17,3 +17,4 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: unittest
           name: codecov-1
+          verbose: true
