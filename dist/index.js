@@ -51,7 +51,302 @@ module.exports =
 /************************************************************************/
 /******/ ([
 /* 0 */,
-/* 1 */,
+/* 1 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const childProcess = __webpack_require__(129);
+const path = __webpack_require__(622);
+const util_1 = __webpack_require__(669);
+const ioUtil = __webpack_require__(672);
+const exec = util_1.promisify(childProcess.exec);
+/**
+ * Copies a file or folder.
+ * Based off of shelljs - https://github.com/shelljs/shelljs/blob/9237f66c52e5daa40458f94f9565e18e8132f5a6/src/cp.js
+ *
+ * @param     source    source path
+ * @param     dest      destination path
+ * @param     options   optional. See CopyOptions.
+ */
+function cp(source, dest, options = {}) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { force, recursive } = readCopyOptions(options);
+        const destStat = (yield ioUtil.exists(dest)) ? yield ioUtil.stat(dest) : null;
+        // Dest is an existing file, but not forcing
+        if (destStat && destStat.isFile() && !force) {
+            return;
+        }
+        // If dest is an existing directory, should copy inside.
+        const newDest = destStat && destStat.isDirectory()
+            ? path.join(dest, path.basename(source))
+            : dest;
+        if (!(yield ioUtil.exists(source))) {
+            throw new Error(`no such file or directory: ${source}`);
+        }
+        const sourceStat = yield ioUtil.stat(source);
+        if (sourceStat.isDirectory()) {
+            if (!recursive) {
+                throw new Error(`Failed to copy. ${source} is a directory, but tried to copy without recursive flag.`);
+            }
+            else {
+                yield cpDirRecursive(source, newDest, 0, force);
+            }
+        }
+        else {
+            if (path.relative(source, newDest) === '') {
+                // a file cannot be copied to itself
+                throw new Error(`'${newDest}' and '${source}' are the same file`);
+            }
+            yield copyFile(source, newDest, force);
+        }
+    });
+}
+exports.cp = cp;
+/**
+ * Moves a path.
+ *
+ * @param     source    source path
+ * @param     dest      destination path
+ * @param     options   optional. See MoveOptions.
+ */
+function mv(source, dest, options = {}) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (yield ioUtil.exists(dest)) {
+            let destExists = true;
+            if (yield ioUtil.isDirectory(dest)) {
+                // If dest is directory copy src into dest
+                dest = path.join(dest, path.basename(source));
+                destExists = yield ioUtil.exists(dest);
+            }
+            if (destExists) {
+                if (options.force == null || options.force) {
+                    yield rmRF(dest);
+                }
+                else {
+                    throw new Error('Destination already exists');
+                }
+            }
+        }
+        yield mkdirP(path.dirname(dest));
+        yield ioUtil.rename(source, dest);
+    });
+}
+exports.mv = mv;
+/**
+ * Remove a path recursively with force
+ *
+ * @param inputPath path to remove
+ */
+function rmRF(inputPath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (ioUtil.IS_WINDOWS) {
+            // Node doesn't provide a delete operation, only an unlink function. This means that if the file is being used by another
+            // program (e.g. antivirus), it won't be deleted. To address this, we shell out the work to rd/del.
+            try {
+                if (yield ioUtil.isDirectory(inputPath, true)) {
+                    yield exec(`rd /s /q "${inputPath}"`);
+                }
+                else {
+                    yield exec(`del /f /a "${inputPath}"`);
+                }
+            }
+            catch (err) {
+                // if you try to delete a file that doesn't exist, desired result is achieved
+                // other errors are valid
+                if (err.code !== 'ENOENT')
+                    throw err;
+            }
+            // Shelling out fails to remove a symlink folder with missing source, this unlink catches that
+            try {
+                yield ioUtil.unlink(inputPath);
+            }
+            catch (err) {
+                // if you try to delete a file that doesn't exist, desired result is achieved
+                // other errors are valid
+                if (err.code !== 'ENOENT')
+                    throw err;
+            }
+        }
+        else {
+            let isDir = false;
+            try {
+                isDir = yield ioUtil.isDirectory(inputPath);
+            }
+            catch (err) {
+                // if you try to delete a file that doesn't exist, desired result is achieved
+                // other errors are valid
+                if (err.code !== 'ENOENT')
+                    throw err;
+                return;
+            }
+            if (isDir) {
+                yield exec(`rm -rf "${inputPath}"`);
+            }
+            else {
+                yield ioUtil.unlink(inputPath);
+            }
+        }
+    });
+}
+exports.rmRF = rmRF;
+/**
+ * Make a directory.  Creates the full path with folders in between
+ * Will throw if it fails
+ *
+ * @param   fsPath        path to create
+ * @returns Promise<void>
+ */
+function mkdirP(fsPath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield ioUtil.mkdirP(fsPath);
+    });
+}
+exports.mkdirP = mkdirP;
+/**
+ * Returns path of a tool had the tool actually been invoked.  Resolves via paths.
+ * If you check and the tool does not exist, it will throw.
+ *
+ * @param     tool              name of the tool
+ * @param     check             whether to check if tool exists
+ * @returns   Promise<string>   path to tool
+ */
+function which(tool, check) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!tool) {
+            throw new Error("parameter 'tool' is required");
+        }
+        // recursive when check=true
+        if (check) {
+            const result = yield which(tool, false);
+            if (!result) {
+                if (ioUtil.IS_WINDOWS) {
+                    throw new Error(`Unable to locate executable file: ${tool}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`);
+                }
+                else {
+                    throw new Error(`Unable to locate executable file: ${tool}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+                }
+            }
+        }
+        try {
+            // build the list of extensions to try
+            const extensions = [];
+            if (ioUtil.IS_WINDOWS && process.env.PATHEXT) {
+                for (const extension of process.env.PATHEXT.split(path.delimiter)) {
+                    if (extension) {
+                        extensions.push(extension);
+                    }
+                }
+            }
+            // if it's rooted, return it if exists. otherwise return empty.
+            if (ioUtil.isRooted(tool)) {
+                const filePath = yield ioUtil.tryGetExecutablePath(tool, extensions);
+                if (filePath) {
+                    return filePath;
+                }
+                return '';
+            }
+            // if any path separators, return empty
+            if (tool.includes('/') || (ioUtil.IS_WINDOWS && tool.includes('\\'))) {
+                return '';
+            }
+            // build the list of directories
+            //
+            // Note, technically "where" checks the current directory on Windows. From a toolkit perspective,
+            // it feels like we should not do this. Checking the current directory seems like more of a use
+            // case of a shell, and the which() function exposed by the toolkit should strive for consistency
+            // across platforms.
+            const directories = [];
+            if (process.env.PATH) {
+                for (const p of process.env.PATH.split(path.delimiter)) {
+                    if (p) {
+                        directories.push(p);
+                    }
+                }
+            }
+            // return the first match
+            for (const directory of directories) {
+                const filePath = yield ioUtil.tryGetExecutablePath(directory + path.sep + tool, extensions);
+                if (filePath) {
+                    return filePath;
+                }
+            }
+            return '';
+        }
+        catch (err) {
+            throw new Error(`which failed with message ${err.message}`);
+        }
+    });
+}
+exports.which = which;
+function readCopyOptions(options) {
+    const force = options.force == null ? true : options.force;
+    const recursive = Boolean(options.recursive);
+    return { force, recursive };
+}
+function cpDirRecursive(sourceDir, destDir, currentDepth, force) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Ensure there is not a run away recursive copy
+        if (currentDepth >= 255)
+            return;
+        currentDepth++;
+        yield mkdirP(destDir);
+        const files = yield ioUtil.readdir(sourceDir);
+        for (const fileName of files) {
+            const srcFile = `${sourceDir}/${fileName}`;
+            const destFile = `${destDir}/${fileName}`;
+            const srcFileStat = yield ioUtil.lstat(srcFile);
+            if (srcFileStat.isDirectory()) {
+                // Recurse
+                yield cpDirRecursive(srcFile, destFile, currentDepth, force);
+            }
+            else {
+                yield copyFile(srcFile, destFile, force);
+            }
+        }
+        // Change the mode for the newly created directory
+        yield ioUtil.chmod(destDir, (yield ioUtil.stat(sourceDir)).mode);
+    });
+}
+// Buffered file copy
+function copyFile(srcFile, destFile, force) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if ((yield ioUtil.lstat(srcFile)).isSymbolicLink()) {
+            // unlink/re-link it
+            try {
+                yield ioUtil.lstat(destFile);
+                yield ioUtil.unlink(destFile);
+            }
+            catch (e) {
+                // Try to override file permission
+                if (e.code === 'EPERM') {
+                    yield ioUtil.chmod(destFile, '0666');
+                    yield ioUtil.unlink(destFile);
+                }
+                // other errors = it doesn't exist, no work to do
+            }
+            // Copy over symlink
+            const symlinkFull = yield ioUtil.readlink(srcFile);
+            yield ioUtil.symlink(symlinkFull, destFile, ioUtil.IS_WINDOWS ? 'junction' : null);
+        }
+        else if (!(yield ioUtil.exists(destFile)) || force) {
+            yield ioUtil.copyFile(srcFile, destFile);
+        }
+    });
+}
+//# sourceMappingURL=io.js.map
+
+/***/ }),
 /* 2 */,
 /* 3 */,
 /* 4 */,
@@ -145,10 +440,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const os = __webpack_require__(87);
-const events = __webpack_require__(614);
-const child = __webpack_require__(129);
+const os = __importStar(__webpack_require__(87));
+const events = __importStar(__webpack_require__(614));
+const child = __importStar(__webpack_require__(129));
+const path = __importStar(__webpack_require__(622));
+const io = __importStar(__webpack_require__(1));
+const ioUtil = __importStar(__webpack_require__(672));
 /* eslint-disable @typescript-eslint/unbound-method */
 const IS_WINDOWS = process.platform === 'win32';
 /*
@@ -494,6 +799,16 @@ class ToolRunner extends events.EventEmitter {
      */
     exec() {
         return __awaiter(this, void 0, void 0, function* () {
+            // root the tool path if it is unrooted and contains relative pathing
+            if (!ioUtil.isRooted(this.toolPath) &&
+                (this.toolPath.includes('/') ||
+                    (IS_WINDOWS && this.toolPath.includes('\\')))) {
+                // prefer options.cwd if it is specified, however options.cwd may also need to be rooted
+                this.toolPath = path.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+            }
+            // if the tool is only a file name, then resolve it from the PATH
+            // otherwise verify it exists (add extension on Windows if necessary)
+            this.toolPath = yield io.which(this.toolPath, true);
             return new Promise((resolve, reject) => {
                 this._debug(`exec tool: ${this.toolPath}`);
                 this._debug('arguments:');
@@ -582,6 +897,12 @@ class ToolRunner extends events.EventEmitter {
                         resolve(exitCode);
                     }
                 });
+                if (this.options.input) {
+                    if (!cp.stdin) {
+                        throw new Error('child process missing stdin');
+                    }
+                    cp.stdin.end(this.options.input);
+                }
             });
         });
     }
@@ -1073,74 +1394,7 @@ module.exports = ["ac","com.ac","edu.ac","gov.ac","net.ac","mil.ac","org.ac","ad
 /* 51 */,
 /* 52 */,
 /* 53 */,
-/* 54 */
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*
- * "A request-path path-matches a given cookie-path if at least one of the
- * following conditions holds:"
- */
-function pathMatch (reqPath, cookiePath) {
-  // "o  The cookie-path and the request-path are identical."
-  if (cookiePath === reqPath) {
-    return true;
-  }
-
-  var idx = reqPath.indexOf(cookiePath);
-  if (idx === 0) {
-    // "o  The cookie-path is a prefix of the request-path, and the last
-    // character of the cookie-path is %x2F ("/")."
-    if (cookiePath.substr(-1) === "/") {
-      return true;
-    }
-
-    // " o  The cookie-path is a prefix of the request-path, and the first
-    // character of the request-path that is not included in the cookie- path
-    // is a %x2F ("/") character."
-    if (reqPath.substr(cookiePath.length, 1) === "/") {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-exports.pathMatch = pathMatch;
-
-
-/***/ }),
+/* 54 */,
 /* 55 */,
 /* 56 */,
 /* 57 */,
@@ -1894,7 +2148,31 @@ function write(key, options) {
 /* 79 */,
 /* 80 */,
 /* 81 */,
-/* 82 */,
+/* 82 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
+ */
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
+    }
+    return JSON.stringify(input);
+}
+exports.toCommandValue = toCommandValue;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
 /* 83 */,
 /* 84 */,
 /* 85 */
@@ -2197,7 +2475,41 @@ module.exports = {
 /* 99 */,
 /* 100 */,
 /* 101 */,
-/* 102 */,
+/* 102 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+// For internal use, subject to change.
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const fs = __importStar(__webpack_require__(747));
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
+function issueCommand(command, message) {
+    const filePath = process.env[`GITHUB_${command}`];
+    if (!filePath) {
+        throw new Error(`Unable to find environment variable for file command ${command}`);
+    }
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Missing file at path: ${filePath}`);
+    }
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+        encoding: 'utf8'
+    });
+}
+exports.issueCommand = issueCommand;
+//# sourceMappingURL=file-command.js.map
+
+/***/ }),
 /* 103 */,
 /* 104 */
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
@@ -2217,6 +2529,7 @@ try {
   const env_vars = core.getInput("env_vars");
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
+  const verbose = core.getInput("verbose");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
@@ -2327,6 +2640,12 @@ try {
         if (write_path) {
           execArgs.push(
             "-q", `${write_path}`
+          );
+        }
+
+        if (verbose) {
+          execArgs.push(
+            "-v"
           );
         }
 
@@ -2649,7 +2968,12 @@ define(function() {
 
 
 /***/ }),
-/* 140 */,
+/* 140 */
+/***/ (function(module) {
+
+module.exports = {"$id":"afterRequest.json#","$schema":"http://json-schema.org/draft-06/schema#","type":"object","optional":true,"required":["lastAccess","eTag","hitCount"],"properties":{"expires":{"type":"string","pattern":"^(\\d{4})(-)?(\\d\\d)(-)?(\\d\\d)(T)?(\\d\\d)(:)?(\\d\\d)(:)?(\\d\\d)(\\.\\d+)?(Z|([+-])(\\d\\d)(:)?(\\d\\d))?"},"lastAccess":{"type":"string","pattern":"^(\\d{4})(-)?(\\d\\d)(-)?(\\d\\d)(T)?(\\d\\d)(:)?(\\d\\d)(:)?(\\d\\d)(\\.\\d+)?(Z|([+-])(\\d\\d)(:)?(\\d\\d))?"},"eTag":{"type":"string"},"hitCount":{"type":"integer"},"comment":{"type":"string"}}};
+
+/***/ }),
 /* 141 */,
 /* 142 */,
 /* 143 */,
@@ -3058,12 +3382,7 @@ function runJob(iterator, key, item, callback)
 
 
 /***/ }),
-/* 158 */
-/***/ (function(module) {
-
-module.exports = {"_args":[["tough-cookie@2.4.3","/Users/thomashu/src/codecov-action"]],"_from":"tough-cookie@2.4.3","_id":"tough-cookie@2.4.3","_inBundle":false,"_integrity":"sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==","_location":"/tough-cookie","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"tough-cookie@2.4.3","name":"tough-cookie","escapedName":"tough-cookie","rawSpec":"2.4.3","saveSpec":null,"fetchSpec":"2.4.3"},"_requiredBy":["/request","/request-promise-native"],"_resolved":"https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz","_spec":"2.4.3","_where":"/Users/thomashu/src/codecov-action","author":{"name":"Jeremy Stashewsky","email":"jstash@gmail.com"},"bugs":{"url":"https://github.com/salesforce/tough-cookie/issues"},"contributors":[{"name":"Alexander Savin"},{"name":"Ian Livingstone"},{"name":"Ivan Nikulin"},{"name":"Lalit Kapoor"},{"name":"Sam Thompson"},{"name":"Sebastian Mayr"}],"dependencies":{"psl":"^1.1.24","punycode":"^1.4.1"},"description":"RFC6265 Cookies and Cookie Jar for node.js","devDependencies":{"async":"^1.4.2","nyc":"^11.6.0","string.prototype.repeat":"^0.2.0","vows":"^0.8.1"},"engines":{"node":">=0.8"},"files":["lib"],"homepage":"https://github.com/salesforce/tough-cookie","keywords":["HTTP","cookie","cookies","set-cookie","cookiejar","jar","RFC6265","RFC2965"],"license":"BSD-3-Clause","main":"./lib/cookie","name":"tough-cookie","repository":{"type":"git","url":"git://github.com/salesforce/tough-cookie.git"},"scripts":{"cover":"nyc --reporter=lcov --reporter=html vows test/*_test.js","test":"vows test/*_test.js"},"version":"2.4.3"};
-
-/***/ }),
+/* 158 */,
 /* 159 */,
 /* 160 */,
 /* 161 */,
@@ -5887,7 +6206,1495 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
 /***/ }),
 /* 234 */,
 /* 235 */,
-/* 236 */,
+/* 236 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+/*!
+ * Copyright (c) 2015, Salesforce.com, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of Salesforce.com nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+var net = __webpack_require__(631);
+var urlParse = __webpack_require__(835).parse;
+var util = __webpack_require__(669);
+var pubsuffix = __webpack_require__(847);
+var Store = __webpack_require__(582).Store;
+var MemoryCookieStore = __webpack_require__(530).MemoryCookieStore;
+var pathMatch = __webpack_require__(542).pathMatch;
+var VERSION = __webpack_require__(525);
+
+var punycode;
+try {
+  punycode = __webpack_require__(213);
+} catch(e) {
+  console.warn("tough-cookie: can't load punycode; won't use punycode for domain normalization");
+}
+
+// From RFC6265 S4.1.1
+// note that it excludes \x3B ";"
+var COOKIE_OCTETS = /^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]+$/;
+
+var CONTROL_CHARS = /[\x00-\x1F]/;
+
+// From Chromium // '\r', '\n' and '\0' should be treated as a terminator in
+// the "relaxed" mode, see:
+// https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/parsed_cookie.cc#L60
+var TERMINATORS = ['\n', '\r', '\0'];
+
+// RFC6265 S4.1.1 defines path value as 'any CHAR except CTLs or ";"'
+// Note ';' is \x3B
+var PATH_VALUE = /[\x20-\x3A\x3C-\x7E]+/;
+
+// date-time parsing constants (RFC6265 S5.1.1)
+
+var DATE_DELIM = /[\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E]/;
+
+var MONTH_TO_NUM = {
+  jan:0, feb:1, mar:2, apr:3, may:4, jun:5,
+  jul:6, aug:7, sep:8, oct:9, nov:10, dec:11
+};
+var NUM_TO_MONTH = [
+  'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
+];
+var NUM_TO_DAY = [
+  'Sun','Mon','Tue','Wed','Thu','Fri','Sat'
+];
+
+var MAX_TIME = 2147483647000; // 31-bit max
+var MIN_TIME = 0; // 31-bit min
+
+/*
+ * Parses a Natural number (i.e., non-negative integer) with either the
+ *    <min>*<max>DIGIT ( non-digit *OCTET )
+ * or
+ *    <min>*<max>DIGIT
+ * grammar (RFC6265 S5.1.1).
+ *
+ * The "trailingOK" boolean controls if the grammar accepts a
+ * "( non-digit *OCTET )" trailer.
+ */
+function parseDigits(token, minDigits, maxDigits, trailingOK) {
+  var count = 0;
+  while (count < token.length) {
+    var c = token.charCodeAt(count);
+    // "non-digit = %x00-2F / %x3A-FF"
+    if (c <= 0x2F || c >= 0x3A) {
+      break;
+    }
+    count++;
+  }
+
+  // constrain to a minimum and maximum number of digits.
+  if (count < minDigits || count > maxDigits) {
+    return null;
+  }
+
+  if (!trailingOK && count != token.length) {
+    return null;
+  }
+
+  return parseInt(token.substr(0,count), 10);
+}
+
+function parseTime(token) {
+  var parts = token.split(':');
+  var result = [0,0,0];
+
+  /* RF6256 S5.1.1:
+   *      time            = hms-time ( non-digit *OCTET )
+   *      hms-time        = time-field ":" time-field ":" time-field
+   *      time-field      = 1*2DIGIT
+   */
+
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  for (var i = 0; i < 3; i++) {
+    // "time-field" must be strictly "1*2DIGIT", HOWEVER, "hms-time" can be
+    // followed by "( non-digit *OCTET )" so therefore the last time-field can
+    // have a trailer
+    var trailingOK = (i == 2);
+    var num = parseDigits(parts[i], 1, 2, trailingOK);
+    if (num === null) {
+      return null;
+    }
+    result[i] = num;
+  }
+
+  return result;
+}
+
+function parseMonth(token) {
+  token = String(token).substr(0,3).toLowerCase();
+  var num = MONTH_TO_NUM[token];
+  return num >= 0 ? num : null;
+}
+
+/*
+ * RFC6265 S5.1.1 date parser (see RFC for full grammar)
+ */
+function parseDate(str) {
+  if (!str) {
+    return;
+  }
+
+  /* RFC6265 S5.1.1:
+   * 2. Process each date-token sequentially in the order the date-tokens
+   * appear in the cookie-date
+   */
+  var tokens = str.split(DATE_DELIM);
+  if (!tokens) {
+    return;
+  }
+
+  var hour = null;
+  var minute = null;
+  var second = null;
+  var dayOfMonth = null;
+  var month = null;
+  var year = null;
+
+  for (var i=0; i<tokens.length; i++) {
+    var token = tokens[i].trim();
+    if (!token.length) {
+      continue;
+    }
+
+    var result;
+
+    /* 2.1. If the found-time flag is not set and the token matches the time
+     * production, set the found-time flag and set the hour- value,
+     * minute-value, and second-value to the numbers denoted by the digits in
+     * the date-token, respectively.  Skip the remaining sub-steps and continue
+     * to the next date-token.
+     */
+    if (second === null) {
+      result = parseTime(token);
+      if (result) {
+        hour = result[0];
+        minute = result[1];
+        second = result[2];
+        continue;
+      }
+    }
+
+    /* 2.2. If the found-day-of-month flag is not set and the date-token matches
+     * the day-of-month production, set the found-day-of- month flag and set
+     * the day-of-month-value to the number denoted by the date-token.  Skip
+     * the remaining sub-steps and continue to the next date-token.
+     */
+    if (dayOfMonth === null) {
+      // "day-of-month = 1*2DIGIT ( non-digit *OCTET )"
+      result = parseDigits(token, 1, 2, true);
+      if (result !== null) {
+        dayOfMonth = result;
+        continue;
+      }
+    }
+
+    /* 2.3. If the found-month flag is not set and the date-token matches the
+     * month production, set the found-month flag and set the month-value to
+     * the month denoted by the date-token.  Skip the remaining sub-steps and
+     * continue to the next date-token.
+     */
+    if (month === null) {
+      result = parseMonth(token);
+      if (result !== null) {
+        month = result;
+        continue;
+      }
+    }
+
+    /* 2.4. If the found-year flag is not set and the date-token matches the
+     * year production, set the found-year flag and set the year-value to the
+     * number denoted by the date-token.  Skip the remaining sub-steps and
+     * continue to the next date-token.
+     */
+    if (year === null) {
+      // "year = 2*4DIGIT ( non-digit *OCTET )"
+      result = parseDigits(token, 2, 4, true);
+      if (result !== null) {
+        year = result;
+        /* From S5.1.1:
+         * 3.  If the year-value is greater than or equal to 70 and less
+         * than or equal to 99, increment the year-value by 1900.
+         * 4.  If the year-value is greater than or equal to 0 and less
+         * than or equal to 69, increment the year-value by 2000.
+         */
+        if (year >= 70 && year <= 99) {
+          year += 1900;
+        } else if (year >= 0 && year <= 69) {
+          year += 2000;
+        }
+      }
+    }
+  }
+
+  /* RFC 6265 S5.1.1
+   * "5. Abort these steps and fail to parse the cookie-date if:
+   *     *  at least one of the found-day-of-month, found-month, found-
+   *        year, or found-time flags is not set,
+   *     *  the day-of-month-value is less than 1 or greater than 31,
+   *     *  the year-value is less than 1601,
+   *     *  the hour-value is greater than 23,
+   *     *  the minute-value is greater than 59, or
+   *     *  the second-value is greater than 59.
+   *     (Note that leap seconds cannot be represented in this syntax.)"
+   *
+   * So, in order as above:
+   */
+  if (
+    dayOfMonth === null || month === null || year === null || second === null ||
+    dayOfMonth < 1 || dayOfMonth > 31 ||
+    year < 1601 ||
+    hour > 23 ||
+    minute > 59 ||
+    second > 59
+  ) {
+    return;
+  }
+
+  return new Date(Date.UTC(year, month, dayOfMonth, hour, minute, second));
+}
+
+function formatDate(date) {
+  var d = date.getUTCDate(); d = d >= 10 ? d : '0'+d;
+  var h = date.getUTCHours(); h = h >= 10 ? h : '0'+h;
+  var m = date.getUTCMinutes(); m = m >= 10 ? m : '0'+m;
+  var s = date.getUTCSeconds(); s = s >= 10 ? s : '0'+s;
+  return NUM_TO_DAY[date.getUTCDay()] + ', ' +
+    d+' '+ NUM_TO_MONTH[date.getUTCMonth()] +' '+ date.getUTCFullYear() +' '+
+    h+':'+m+':'+s+' GMT';
+}
+
+// S5.1.2 Canonicalized Host Names
+function canonicalDomain(str) {
+  if (str == null) {
+    return null;
+  }
+  str = str.trim().replace(/^\./,''); // S4.1.2.3 & S5.2.3: ignore leading .
+
+  // convert to IDN if any non-ASCII characters
+  if (punycode && /[^\u0001-\u007f]/.test(str)) {
+    str = punycode.toASCII(str);
+  }
+
+  return str.toLowerCase();
+}
+
+// S5.1.3 Domain Matching
+function domainMatch(str, domStr, canonicalize) {
+  if (str == null || domStr == null) {
+    return null;
+  }
+  if (canonicalize !== false) {
+    str = canonicalDomain(str);
+    domStr = canonicalDomain(domStr);
+  }
+
+  /*
+   * "The domain string and the string are identical. (Note that both the
+   * domain string and the string will have been canonicalized to lower case at
+   * this point)"
+   */
+  if (str == domStr) {
+    return true;
+  }
+
+  /* "All of the following [three] conditions hold:" (order adjusted from the RFC) */
+
+  /* "* The string is a host name (i.e., not an IP address)." */
+  if (net.isIP(str)) {
+    return false;
+  }
+
+  /* "* The domain string is a suffix of the string" */
+  var idx = str.indexOf(domStr);
+  if (idx <= 0) {
+    return false; // it's a non-match (-1) or prefix (0)
+  }
+
+  // e.g "a.b.c".indexOf("b.c") === 2
+  // 5 === 3+2
+  if (str.length !== domStr.length + idx) { // it's not a suffix
+    return false;
+  }
+
+  /* "* The last character of the string that is not included in the domain
+  * string is a %x2E (".") character." */
+  if (str.substr(idx-1,1) !== '.') {
+    return false;
+  }
+
+  return true;
+}
+
+
+// RFC6265 S5.1.4 Paths and Path-Match
+
+/*
+ * "The user agent MUST use an algorithm equivalent to the following algorithm
+ * to compute the default-path of a cookie:"
+ *
+ * Assumption: the path (and not query part or absolute uri) is passed in.
+ */
+function defaultPath(path) {
+  // "2. If the uri-path is empty or if the first character of the uri-path is not
+  // a %x2F ("/") character, output %x2F ("/") and skip the remaining steps.
+  if (!path || path.substr(0,1) !== "/") {
+    return "/";
+  }
+
+  // "3. If the uri-path contains no more than one %x2F ("/") character, output
+  // %x2F ("/") and skip the remaining step."
+  if (path === "/") {
+    return path;
+  }
+
+  var rightSlash = path.lastIndexOf("/");
+  if (rightSlash === 0) {
+    return "/";
+  }
+
+  // "4. Output the characters of the uri-path from the first character up to,
+  // but not including, the right-most %x2F ("/")."
+  return path.slice(0, rightSlash);
+}
+
+function trimTerminator(str) {
+  for (var t = 0; t < TERMINATORS.length; t++) {
+    var terminatorIdx = str.indexOf(TERMINATORS[t]);
+    if (terminatorIdx !== -1) {
+      str = str.substr(0,terminatorIdx);
+    }
+  }
+
+  return str;
+}
+
+function parseCookiePair(cookiePair, looseMode) {
+  cookiePair = trimTerminator(cookiePair);
+
+  var firstEq = cookiePair.indexOf('=');
+  if (looseMode) {
+    if (firstEq === 0) { // '=' is immediately at start
+      cookiePair = cookiePair.substr(1);
+      firstEq = cookiePair.indexOf('='); // might still need to split on '='
+    }
+  } else { // non-loose mode
+    if (firstEq <= 0) { // no '=' or is at start
+      return; // needs to have non-empty "cookie-name"
+    }
+  }
+
+  var cookieName, cookieValue;
+  if (firstEq <= 0) {
+    cookieName = "";
+    cookieValue = cookiePair.trim();
+  } else {
+    cookieName = cookiePair.substr(0, firstEq).trim();
+    cookieValue = cookiePair.substr(firstEq+1).trim();
+  }
+
+  if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue)) {
+    return;
+  }
+
+  var c = new Cookie();
+  c.key = cookieName;
+  c.value = cookieValue;
+  return c;
+}
+
+function parse(str, options) {
+  if (!options || typeof options !== 'object') {
+    options = {};
+  }
+  str = str.trim();
+
+  // We use a regex to parse the "name-value-pair" part of S5.2
+  var firstSemi = str.indexOf(';'); // S5.2 step 1
+  var cookiePair = (firstSemi === -1) ? str : str.substr(0, firstSemi);
+  var c = parseCookiePair(cookiePair, !!options.loose);
+  if (!c) {
+    return;
+  }
+
+  if (firstSemi === -1) {
+    return c;
+  }
+
+  // S5.2.3 "unparsed-attributes consist of the remainder of the set-cookie-string
+  // (including the %x3B (";") in question)." plus later on in the same section
+  // "discard the first ";" and trim".
+  var unparsed = str.slice(firstSemi + 1).trim();
+
+  // "If the unparsed-attributes string is empty, skip the rest of these
+  // steps."
+  if (unparsed.length === 0) {
+    return c;
+  }
+
+  /*
+   * S5.2 says that when looping over the items "[p]rocess the attribute-name
+   * and attribute-value according to the requirements in the following
+   * subsections" for every item.  Plus, for many of the individual attributes
+   * in S5.3 it says to use the "attribute-value of the last attribute in the
+   * cookie-attribute-list".  Therefore, in this implementation, we overwrite
+   * the previous value.
+   */
+  var cookie_avs = unparsed.split(';');
+  while (cookie_avs.length) {
+    var av = cookie_avs.shift().trim();
+    if (av.length === 0) { // happens if ";;" appears
+      continue;
+    }
+    var av_sep = av.indexOf('=');
+    var av_key, av_value;
+
+    if (av_sep === -1) {
+      av_key = av;
+      av_value = null;
+    } else {
+      av_key = av.substr(0,av_sep);
+      av_value = av.substr(av_sep+1);
+    }
+
+    av_key = av_key.trim().toLowerCase();
+
+    if (av_value) {
+      av_value = av_value.trim();
+    }
+
+    switch(av_key) {
+    case 'expires': // S5.2.1
+      if (av_value) {
+        var exp = parseDate(av_value);
+        // "If the attribute-value failed to parse as a cookie date, ignore the
+        // cookie-av."
+        if (exp) {
+          // over and underflow not realistically a concern: V8's getTime() seems to
+          // store something larger than a 32-bit time_t (even with 32-bit node)
+          c.expires = exp;
+        }
+      }
+      break;
+
+    case 'max-age': // S5.2.2
+      if (av_value) {
+        // "If the first character of the attribute-value is not a DIGIT or a "-"
+        // character ...[or]... If the remainder of attribute-value contains a
+        // non-DIGIT character, ignore the cookie-av."
+        if (/^-?[0-9]+$/.test(av_value)) {
+          var delta = parseInt(av_value, 10);
+          // "If delta-seconds is less than or equal to zero (0), let expiry-time
+          // be the earliest representable date and time."
+          c.setMaxAge(delta);
+        }
+      }
+      break;
+
+    case 'domain': // S5.2.3
+      // "If the attribute-value is empty, the behavior is undefined.  However,
+      // the user agent SHOULD ignore the cookie-av entirely."
+      if (av_value) {
+        // S5.2.3 "Let cookie-domain be the attribute-value without the leading %x2E
+        // (".") character."
+        var domain = av_value.trim().replace(/^\./, '');
+        if (domain) {
+          // "Convert the cookie-domain to lower case."
+          c.domain = domain.toLowerCase();
+        }
+      }
+      break;
+
+    case 'path': // S5.2.4
+      /*
+       * "If the attribute-value is empty or if the first character of the
+       * attribute-value is not %x2F ("/"):
+       *   Let cookie-path be the default-path.
+       * Otherwise:
+       *   Let cookie-path be the attribute-value."
+       *
+       * We'll represent the default-path as null since it depends on the
+       * context of the parsing.
+       */
+      c.path = av_value && av_value[0] === "/" ? av_value : null;
+      break;
+
+    case 'secure': // S5.2.5
+      /*
+       * "If the attribute-name case-insensitively matches the string "Secure",
+       * the user agent MUST append an attribute to the cookie-attribute-list
+       * with an attribute-name of Secure and an empty attribute-value."
+       */
+      c.secure = true;
+      break;
+
+    case 'httponly': // S5.2.6 -- effectively the same as 'secure'
+      c.httpOnly = true;
+      break;
+
+    default:
+      c.extensions = c.extensions || [];
+      c.extensions.push(av);
+      break;
+    }
+  }
+
+  return c;
+}
+
+// avoid the V8 deoptimization monster!
+function jsonParse(str) {
+  var obj;
+  try {
+    obj = JSON.parse(str);
+  } catch (e) {
+    return e;
+  }
+  return obj;
+}
+
+function fromJSON(str) {
+  if (!str) {
+    return null;
+  }
+
+  var obj;
+  if (typeof str === 'string') {
+    obj = jsonParse(str);
+    if (obj instanceof Error) {
+      return null;
+    }
+  } else {
+    // assume it's an Object
+    obj = str;
+  }
+
+  var c = new Cookie();
+  for (var i=0; i<Cookie.serializableProperties.length; i++) {
+    var prop = Cookie.serializableProperties[i];
+    if (obj[prop] === undefined ||
+        obj[prop] === Cookie.prototype[prop])
+    {
+      continue; // leave as prototype default
+    }
+
+    if (prop === 'expires' ||
+        prop === 'creation' ||
+        prop === 'lastAccessed')
+    {
+      if (obj[prop] === null) {
+        c[prop] = null;
+      } else {
+        c[prop] = obj[prop] == "Infinity" ?
+          "Infinity" : new Date(obj[prop]);
+      }
+    } else {
+      c[prop] = obj[prop];
+    }
+  }
+
+  return c;
+}
+
+/* Section 5.4 part 2:
+ * "*  Cookies with longer paths are listed before cookies with
+ *     shorter paths.
+ *
+ *  *  Among cookies that have equal-length path fields, cookies with
+ *     earlier creation-times are listed before cookies with later
+ *     creation-times."
+ */
+
+function cookieCompare(a,b) {
+  var cmp = 0;
+
+  // descending for length: b CMP a
+  var aPathLen = a.path ? a.path.length : 0;
+  var bPathLen = b.path ? b.path.length : 0;
+  cmp = bPathLen - aPathLen;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  // ascending for time: a CMP b
+  var aTime = a.creation ? a.creation.getTime() : MAX_TIME;
+  var bTime = b.creation ? b.creation.getTime() : MAX_TIME;
+  cmp = aTime - bTime;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  // break ties for the same millisecond (precision of JavaScript's clock)
+  cmp = a.creationIndex - b.creationIndex;
+
+  return cmp;
+}
+
+// Gives the permutation of all possible pathMatch()es of a given path. The
+// array is in longest-to-shortest order.  Handy for indexing.
+function permutePath(path) {
+  if (path === '/') {
+    return ['/'];
+  }
+  if (path.lastIndexOf('/') === path.length-1) {
+    path = path.substr(0,path.length-1);
+  }
+  var permutations = [path];
+  while (path.length > 1) {
+    var lindex = path.lastIndexOf('/');
+    if (lindex === 0) {
+      break;
+    }
+    path = path.substr(0,lindex);
+    permutations.push(path);
+  }
+  permutations.push('/');
+  return permutations;
+}
+
+function getCookieContext(url) {
+  if (url instanceof Object) {
+    return url;
+  }
+  // NOTE: decodeURI will throw on malformed URIs (see GH-32).
+  // Therefore, we will just skip decoding for such URIs.
+  try {
+    url = decodeURI(url);
+  }
+  catch(err) {
+    // Silently swallow error
+  }
+
+  return urlParse(url);
+}
+
+function Cookie(options) {
+  options = options || {};
+
+  Object.keys(options).forEach(function(prop) {
+    if (Cookie.prototype.hasOwnProperty(prop) &&
+        Cookie.prototype[prop] !== options[prop] &&
+        prop.substr(0,1) !== '_')
+    {
+      this[prop] = options[prop];
+    }
+  }, this);
+
+  this.creation = this.creation || new Date();
+
+  // used to break creation ties in cookieCompare():
+  Object.defineProperty(this, 'creationIndex', {
+    configurable: false,
+    enumerable: false, // important for assert.deepEqual checks
+    writable: true,
+    value: ++Cookie.cookiesCreated
+  });
+}
+
+Cookie.cookiesCreated = 0; // incremented each time a cookie is created
+
+Cookie.parse = parse;
+Cookie.fromJSON = fromJSON;
+
+Cookie.prototype.key = "";
+Cookie.prototype.value = "";
+
+// the order in which the RFC has them:
+Cookie.prototype.expires = "Infinity"; // coerces to literal Infinity
+Cookie.prototype.maxAge = null; // takes precedence over expires for TTL
+Cookie.prototype.domain = null;
+Cookie.prototype.path = null;
+Cookie.prototype.secure = false;
+Cookie.prototype.httpOnly = false;
+Cookie.prototype.extensions = null;
+
+// set by the CookieJar:
+Cookie.prototype.hostOnly = null; // boolean when set
+Cookie.prototype.pathIsDefault = null; // boolean when set
+Cookie.prototype.creation = null; // Date when set; defaulted by Cookie.parse
+Cookie.prototype.lastAccessed = null; // Date when set
+Object.defineProperty(Cookie.prototype, 'creationIndex', {
+  configurable: true,
+  enumerable: false,
+  writable: true,
+  value: 0
+});
+
+Cookie.serializableProperties = Object.keys(Cookie.prototype)
+  .filter(function(prop) {
+    return !(
+      Cookie.prototype[prop] instanceof Function ||
+      prop === 'creationIndex' ||
+      prop.substr(0,1) === '_'
+    );
+  });
+
+Cookie.prototype.inspect = function inspect() {
+  var now = Date.now();
+  return 'Cookie="'+this.toString() +
+    '; hostOnly='+(this.hostOnly != null ? this.hostOnly : '?') +
+    '; aAge='+(this.lastAccessed ? (now-this.lastAccessed.getTime())+'ms' : '?') +
+    '; cAge='+(this.creation ? (now-this.creation.getTime())+'ms' : '?') +
+    '"';
+};
+
+// Use the new custom inspection symbol to add the custom inspect function if
+// available.
+if (util.inspect.custom) {
+  Cookie.prototype[util.inspect.custom] = Cookie.prototype.inspect;
+}
+
+Cookie.prototype.toJSON = function() {
+  var obj = {};
+
+  var props = Cookie.serializableProperties;
+  for (var i=0; i<props.length; i++) {
+    var prop = props[i];
+    if (this[prop] === Cookie.prototype[prop]) {
+      continue; // leave as prototype default
+    }
+
+    if (prop === 'expires' ||
+        prop === 'creation' ||
+        prop === 'lastAccessed')
+    {
+      if (this[prop] === null) {
+        obj[prop] = null;
+      } else {
+        obj[prop] = this[prop] == "Infinity" ? // intentionally not ===
+          "Infinity" : this[prop].toISOString();
+      }
+    } else if (prop === 'maxAge') {
+      if (this[prop] !== null) {
+        // again, intentionally not ===
+        obj[prop] = (this[prop] == Infinity || this[prop] == -Infinity) ?
+          this[prop].toString() : this[prop];
+      }
+    } else {
+      if (this[prop] !== Cookie.prototype[prop]) {
+        obj[prop] = this[prop];
+      }
+    }
+  }
+
+  return obj;
+};
+
+Cookie.prototype.clone = function() {
+  return fromJSON(this.toJSON());
+};
+
+Cookie.prototype.validate = function validate() {
+  if (!COOKIE_OCTETS.test(this.value)) {
+    return false;
+  }
+  if (this.expires != Infinity && !(this.expires instanceof Date) && !parseDate(this.expires)) {
+    return false;
+  }
+  if (this.maxAge != null && this.maxAge <= 0) {
+    return false; // "Max-Age=" non-zero-digit *DIGIT
+  }
+  if (this.path != null && !PATH_VALUE.test(this.path)) {
+    return false;
+  }
+
+  var cdomain = this.cdomain();
+  if (cdomain) {
+    if (cdomain.match(/\.$/)) {
+      return false; // S4.1.2.3 suggests that this is bad. domainMatch() tests confirm this
+    }
+    var suffix = pubsuffix.getPublicSuffix(cdomain);
+    if (suffix == null) { // it's a public suffix
+      return false;
+    }
+  }
+  return true;
+};
+
+Cookie.prototype.setExpires = function setExpires(exp) {
+  if (exp instanceof Date) {
+    this.expires = exp;
+  } else {
+    this.expires = parseDate(exp) || "Infinity";
+  }
+};
+
+Cookie.prototype.setMaxAge = function setMaxAge(age) {
+  if (age === Infinity || age === -Infinity) {
+    this.maxAge = age.toString(); // so JSON.stringify() works
+  } else {
+    this.maxAge = age;
+  }
+};
+
+// gives Cookie header format
+Cookie.prototype.cookieString = function cookieString() {
+  var val = this.value;
+  if (val == null) {
+    val = '';
+  }
+  if (this.key === '') {
+    return val;
+  }
+  return this.key+'='+val;
+};
+
+// gives Set-Cookie header format
+Cookie.prototype.toString = function toString() {
+  var str = this.cookieString();
+
+  if (this.expires != Infinity) {
+    if (this.expires instanceof Date) {
+      str += '; Expires='+formatDate(this.expires);
+    } else {
+      str += '; Expires='+this.expires;
+    }
+  }
+
+  if (this.maxAge != null && this.maxAge != Infinity) {
+    str += '; Max-Age='+this.maxAge;
+  }
+
+  if (this.domain && !this.hostOnly) {
+    str += '; Domain='+this.domain;
+  }
+  if (this.path) {
+    str += '; Path='+this.path;
+  }
+
+  if (this.secure) {
+    str += '; Secure';
+  }
+  if (this.httpOnly) {
+    str += '; HttpOnly';
+  }
+  if (this.extensions) {
+    this.extensions.forEach(function(ext) {
+      str += '; '+ext;
+    });
+  }
+
+  return str;
+};
+
+// TTL() partially replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+// elsewhere)
+// S5.3 says to give the "latest representable date" for which we use Infinity
+// For "expired" we use 0
+Cookie.prototype.TTL = function TTL(now) {
+  /* RFC6265 S4.1.2.2 If a cookie has both the Max-Age and the Expires
+   * attribute, the Max-Age attribute has precedence and controls the
+   * expiration date of the cookie.
+   * (Concurs with S5.3 step 3)
+   */
+  if (this.maxAge != null) {
+    return this.maxAge<=0 ? 0 : this.maxAge*1000;
+  }
+
+  var expires = this.expires;
+  if (expires != Infinity) {
+    if (!(expires instanceof Date)) {
+      expires = parseDate(expires) || Infinity;
+    }
+
+    if (expires == Infinity) {
+      return Infinity;
+    }
+
+    return expires.getTime() - (now || Date.now());
+  }
+
+  return Infinity;
+};
+
+// expiryTime() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+// elsewhere)
+Cookie.prototype.expiryTime = function expiryTime(now) {
+  if (this.maxAge != null) {
+    var relativeTo = now || this.creation || new Date();
+    var age = (this.maxAge <= 0) ? -Infinity : this.maxAge*1000;
+    return relativeTo.getTime() + age;
+  }
+
+  if (this.expires == Infinity) {
+    return Infinity;
+  }
+  return this.expires.getTime();
+};
+
+// expiryDate() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+// elsewhere), except it returns a Date
+Cookie.prototype.expiryDate = function expiryDate(now) {
+  var millisec = this.expiryTime(now);
+  if (millisec == Infinity) {
+    return new Date(MAX_TIME);
+  } else if (millisec == -Infinity) {
+    return new Date(MIN_TIME);
+  } else {
+    return new Date(millisec);
+  }
+};
+
+// This replaces the "persistent-flag" parts of S5.3 step 3
+Cookie.prototype.isPersistent = function isPersistent() {
+  return (this.maxAge != null || this.expires != Infinity);
+};
+
+// Mostly S5.1.2 and S5.2.3:
+Cookie.prototype.cdomain =
+Cookie.prototype.canonicalizedDomain = function canonicalizedDomain() {
+  if (this.domain == null) {
+    return null;
+  }
+  return canonicalDomain(this.domain);
+};
+
+function CookieJar(store, options) {
+  if (typeof options === "boolean") {
+    options = {rejectPublicSuffixes: options};
+  } else if (options == null) {
+    options = {};
+  }
+  if (options.rejectPublicSuffixes != null) {
+    this.rejectPublicSuffixes = options.rejectPublicSuffixes;
+  }
+  if (options.looseMode != null) {
+    this.enableLooseMode = options.looseMode;
+  }
+
+  if (!store) {
+    store = new MemoryCookieStore();
+  }
+  this.store = store;
+}
+CookieJar.prototype.store = null;
+CookieJar.prototype.rejectPublicSuffixes = true;
+CookieJar.prototype.enableLooseMode = false;
+var CAN_BE_SYNC = [];
+
+CAN_BE_SYNC.push('setCookie');
+CookieJar.prototype.setCookie = function(cookie, url, options, cb) {
+  var err;
+  var context = getCookieContext(url);
+  if (options instanceof Function) {
+    cb = options;
+    options = {};
+  }
+
+  var host = canonicalDomain(context.hostname);
+  var loose = this.enableLooseMode;
+  if (options.loose != null) {
+    loose = options.loose;
+  }
+
+  // S5.3 step 1
+  if (!(cookie instanceof Cookie)) {
+    cookie = Cookie.parse(cookie, { loose: loose });
+  }
+  if (!cookie) {
+    err = new Error("Cookie failed to parse");
+    return cb(options.ignoreError ? null : err);
+  }
+
+  // S5.3 step 2
+  var now = options.now || new Date(); // will assign later to save effort in the face of errors
+
+  // S5.3 step 3: NOOP; persistent-flag and expiry-time is handled by getCookie()
+
+  // S5.3 step 4: NOOP; domain is null by default
+
+  // S5.3 step 5: public suffixes
+  if (this.rejectPublicSuffixes && cookie.domain) {
+    var suffix = pubsuffix.getPublicSuffix(cookie.cdomain());
+    if (suffix == null) { // e.g. "com"
+      err = new Error("Cookie has domain set to a public suffix");
+      return cb(options.ignoreError ? null : err);
+    }
+  }
+
+  // S5.3 step 6:
+  if (cookie.domain) {
+    if (!domainMatch(host, cookie.cdomain(), false)) {
+      err = new Error("Cookie not in this host's domain. Cookie:"+cookie.cdomain()+" Request:"+host);
+      return cb(options.ignoreError ? null : err);
+    }
+
+    if (cookie.hostOnly == null) { // don't reset if already set
+      cookie.hostOnly = false;
+    }
+
+  } else {
+    cookie.hostOnly = true;
+    cookie.domain = host;
+  }
+
+  //S5.2.4 If the attribute-value is empty or if the first character of the
+  //attribute-value is not %x2F ("/"):
+  //Let cookie-path be the default-path.
+  if (!cookie.path || cookie.path[0] !== '/') {
+    cookie.path = defaultPath(context.pathname);
+    cookie.pathIsDefault = true;
+  }
+
+  // S5.3 step 8: NOOP; secure attribute
+  // S5.3 step 9: NOOP; httpOnly attribute
+
+  // S5.3 step 10
+  if (options.http === false && cookie.httpOnly) {
+    err = new Error("Cookie is HttpOnly and this isn't an HTTP API");
+    return cb(options.ignoreError ? null : err);
+  }
+
+  var store = this.store;
+
+  if (!store.updateCookie) {
+    store.updateCookie = function(oldCookie, newCookie, cb) {
+      this.putCookie(newCookie, cb);
+    };
+  }
+
+  function withCookie(err, oldCookie) {
+    if (err) {
+      return cb(err);
+    }
+
+    var next = function(err) {
+      if (err) {
+        return cb(err);
+      } else {
+        cb(null, cookie);
+      }
+    };
+
+    if (oldCookie) {
+      // S5.3 step 11 - "If the cookie store contains a cookie with the same name,
+      // domain, and path as the newly created cookie:"
+      if (options.http === false && oldCookie.httpOnly) { // step 11.2
+        err = new Error("old Cookie is HttpOnly and this isn't an HTTP API");
+        return cb(options.ignoreError ? null : err);
+      }
+      cookie.creation = oldCookie.creation; // step 11.3
+      cookie.creationIndex = oldCookie.creationIndex; // preserve tie-breaker
+      cookie.lastAccessed = now;
+      // Step 11.4 (delete cookie) is implied by just setting the new one:
+      store.updateCookie(oldCookie, cookie, next); // step 12
+
+    } else {
+      cookie.creation = cookie.lastAccessed = now;
+      store.putCookie(cookie, next); // step 12
+    }
+  }
+
+  store.findCookie(cookie.domain, cookie.path, cookie.key, withCookie);
+};
+
+// RFC6365 S5.4
+CAN_BE_SYNC.push('getCookies');
+CookieJar.prototype.getCookies = function(url, options, cb) {
+  var context = getCookieContext(url);
+  if (options instanceof Function) {
+    cb = options;
+    options = {};
+  }
+
+  var host = canonicalDomain(context.hostname);
+  var path = context.pathname || '/';
+
+  var secure = options.secure;
+  if (secure == null && context.protocol &&
+      (context.protocol == 'https:' || context.protocol == 'wss:'))
+  {
+    secure = true;
+  }
+
+  var http = options.http;
+  if (http == null) {
+    http = true;
+  }
+
+  var now = options.now || Date.now();
+  var expireCheck = options.expire !== false;
+  var allPaths = !!options.allPaths;
+  var store = this.store;
+
+  function matchingCookie(c) {
+    // "Either:
+    //   The cookie's host-only-flag is true and the canonicalized
+    //   request-host is identical to the cookie's domain.
+    // Or:
+    //   The cookie's host-only-flag is false and the canonicalized
+    //   request-host domain-matches the cookie's domain."
+    if (c.hostOnly) {
+      if (c.domain != host) {
+        return false;
+      }
+    } else {
+      if (!domainMatch(host, c.domain, false)) {
+        return false;
+      }
+    }
+
+    // "The request-uri's path path-matches the cookie's path."
+    if (!allPaths && !pathMatch(path, c.path)) {
+      return false;
+    }
+
+    // "If the cookie's secure-only-flag is true, then the request-uri's
+    // scheme must denote a "secure" protocol"
+    if (c.secure && !secure) {
+      return false;
+    }
+
+    // "If the cookie's http-only-flag is true, then exclude the cookie if the
+    // cookie-string is being generated for a "non-HTTP" API"
+    if (c.httpOnly && !http) {
+      return false;
+    }
+
+    // deferred from S5.3
+    // non-RFC: allow retention of expired cookies by choice
+    if (expireCheck && c.expiryTime() <= now) {
+      store.removeCookie(c.domain, c.path, c.key, function(){}); // result ignored
+      return false;
+    }
+
+    return true;
+  }
+
+  store.findCookies(host, allPaths ? null : path, function(err,cookies) {
+    if (err) {
+      return cb(err);
+    }
+
+    cookies = cookies.filter(matchingCookie);
+
+    // sorting of S5.4 part 2
+    if (options.sort !== false) {
+      cookies = cookies.sort(cookieCompare);
+    }
+
+    // S5.4 part 3
+    var now = new Date();
+    cookies.forEach(function(c) {
+      c.lastAccessed = now;
+    });
+    // TODO persist lastAccessed
+
+    cb(null,cookies);
+  });
+};
+
+CAN_BE_SYNC.push('getCookieString');
+CookieJar.prototype.getCookieString = function(/*..., cb*/) {
+  var args = Array.prototype.slice.call(arguments,0);
+  var cb = args.pop();
+  var next = function(err,cookies) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null, cookies
+        .sort(cookieCompare)
+        .map(function(c){
+          return c.cookieString();
+        })
+        .join('; '));
+    }
+  };
+  args.push(next);
+  this.getCookies.apply(this,args);
+};
+
+CAN_BE_SYNC.push('getSetCookieStrings');
+CookieJar.prototype.getSetCookieStrings = function(/*..., cb*/) {
+  var args = Array.prototype.slice.call(arguments,0);
+  var cb = args.pop();
+  var next = function(err,cookies) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null, cookies.map(function(c){
+        return c.toString();
+      }));
+    }
+  };
+  args.push(next);
+  this.getCookies.apply(this,args);
+};
+
+CAN_BE_SYNC.push('serialize');
+CookieJar.prototype.serialize = function(cb) {
+  var type = this.store.constructor.name;
+  if (type === 'Object') {
+    type = null;
+  }
+
+  // update README.md "Serialization Format" if you change this, please!
+  var serialized = {
+    // The version of tough-cookie that serialized this jar. Generally a good
+    // practice since future versions can make data import decisions based on
+    // known past behavior. When/if this matters, use `semver`.
+    version: 'tough-cookie@'+VERSION,
+
+    // add the store type, to make humans happy:
+    storeType: type,
+
+    // CookieJar configuration:
+    rejectPublicSuffixes: !!this.rejectPublicSuffixes,
+
+    // this gets filled from getAllCookies:
+    cookies: []
+  };
+
+  if (!(this.store.getAllCookies &&
+        typeof this.store.getAllCookies === 'function'))
+  {
+    return cb(new Error('store does not support getAllCookies and cannot be serialized'));
+  }
+
+  this.store.getAllCookies(function(err,cookies) {
+    if (err) {
+      return cb(err);
+    }
+
+    serialized.cookies = cookies.map(function(cookie) {
+      // convert to serialized 'raw' cookies
+      cookie = (cookie instanceof Cookie) ? cookie.toJSON() : cookie;
+
+      // Remove the index so new ones get assigned during deserialization
+      delete cookie.creationIndex;
+
+      return cookie;
+    });
+
+    return cb(null, serialized);
+  });
+};
+
+// well-known name that JSON.stringify calls
+CookieJar.prototype.toJSON = function() {
+  return this.serializeSync();
+};
+
+// use the class method CookieJar.deserialize instead of calling this directly
+CAN_BE_SYNC.push('_importCookies');
+CookieJar.prototype._importCookies = function(serialized, cb) {
+  var jar = this;
+  var cookies = serialized.cookies;
+  if (!cookies || !Array.isArray(cookies)) {
+    return cb(new Error('serialized jar has no cookies array'));
+  }
+  cookies = cookies.slice(); // do not modify the original
+
+  function putNext(err) {
+    if (err) {
+      return cb(err);
+    }
+
+    if (!cookies.length) {
+      return cb(err, jar);
+    }
+
+    var cookie;
+    try {
+      cookie = fromJSON(cookies.shift());
+    } catch (e) {
+      return cb(e);
+    }
+
+    if (cookie === null) {
+      return putNext(null); // skip this cookie
+    }
+
+    jar.store.putCookie(cookie, putNext);
+  }
+
+  putNext();
+};
+
+CookieJar.deserialize = function(strOrObj, store, cb) {
+  if (arguments.length !== 3) {
+    // store is optional
+    cb = store;
+    store = null;
+  }
+
+  var serialized;
+  if (typeof strOrObj === 'string') {
+    serialized = jsonParse(strOrObj);
+    if (serialized instanceof Error) {
+      return cb(serialized);
+    }
+  } else {
+    serialized = strOrObj;
+  }
+
+  var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
+  jar._importCookies(serialized, function(err) {
+    if (err) {
+      return cb(err);
+    }
+    cb(null, jar);
+  });
+};
+
+CookieJar.deserializeSync = function(strOrObj, store) {
+  var serialized = typeof strOrObj === 'string' ?
+    JSON.parse(strOrObj) : strOrObj;
+  var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
+
+  // catch this mistake early:
+  if (!jar.store.synchronous) {
+    throw new Error('CookieJar store is not synchronous; use async API instead.');
+  }
+
+  jar._importCookiesSync(serialized);
+  return jar;
+};
+CookieJar.fromJSON = CookieJar.deserializeSync;
+
+CookieJar.prototype.clone = function(newStore, cb) {
+  if (arguments.length === 1) {
+    cb = newStore;
+    newStore = null;
+  }
+
+  this.serialize(function(err,serialized) {
+    if (err) {
+      return cb(err);
+    }
+    CookieJar.deserialize(serialized, newStore, cb);
+  });
+};
+
+CAN_BE_SYNC.push('removeAllCookies');
+CookieJar.prototype.removeAllCookies = function(cb) {
+  var store = this.store;
+
+  // Check that the store implements its own removeAllCookies(). The default
+  // implementation in Store will immediately call the callback with a "not
+  // implemented" Error.
+  if (store.removeAllCookies instanceof Function &&
+      store.removeAllCookies !== Store.prototype.removeAllCookies)
+  {
+    return store.removeAllCookies(cb);
+  }
+
+  store.getAllCookies(function(err, cookies) {
+    if (err) {
+      return cb(err);
+    }
+
+    if (cookies.length === 0) {
+      return cb(null);
+    }
+
+    var completedCount = 0;
+    var removeErrors = [];
+
+    function removeCookieCb(removeErr) {
+      if (removeErr) {
+        removeErrors.push(removeErr);
+      }
+
+      completedCount++;
+
+      if (completedCount === cookies.length) {
+        return cb(removeErrors.length ? removeErrors[0] : null);
+      }
+    }
+
+    cookies.forEach(function(cookie) {
+      store.removeCookie(cookie.domain, cookie.path, cookie.key, removeCookieCb);
+    });
+  });
+};
+
+CookieJar.prototype._cloneSync = syncWrap('clone');
+CookieJar.prototype.cloneSync = function(newStore) {
+  if (!newStore.synchronous) {
+    throw new Error('CookieJar clone destination store is not synchronous; use async API instead.');
+  }
+  return this._cloneSync(newStore);
+};
+
+// Use a closure to provide a true imperative API for synchronous stores.
+function syncWrap(method) {
+  return function() {
+    if (!this.store.synchronous) {
+      throw new Error('CookieJar store is not synchronous; use async API instead.');
+    }
+
+    var args = Array.prototype.slice.call(arguments);
+    var syncErr, syncResult;
+    args.push(function syncCb(err, result) {
+      syncErr = err;
+      syncResult = result;
+    });
+    this[method].apply(this, args);
+
+    if (syncErr) {
+      throw syncErr;
+    }
+    return syncResult;
+  };
+}
+
+// wrap all declared CAN_BE_SYNC methods in the sync wrapper
+CAN_BE_SYNC.forEach(function(method) {
+  CookieJar.prototype[method+'Sync'] = syncWrap(method);
+});
+
+exports.version = VERSION;
+exports.CookieJar = CookieJar;
+exports.Cookie = Cookie;
+exports.Store = Store;
+exports.MemoryCookieStore = MemoryCookieStore;
+exports.parseDate = parseDate;
+exports.formatDate = formatDate;
+exports.parse = parse;
+exports.fromJSON = fromJSON;
+exports.domainMatch = domainMatch;
+exports.defaultPath = defaultPath;
+exports.pathMatch = pathMatch;
+exports.getPublicSuffix = pubsuffix.getPublicSuffix;
+exports.cookieCompare = cookieCompare;
+exports.permuteDomain = __webpack_require__(467).permuteDomain;
+exports.permutePath = permutePath;
+exports.canonicalDomain = canonicalDomain;
+
+
+/***/ }),
 /* 237 */,
 /* 238 */,
 /* 239 */,
@@ -9397,7 +11204,7 @@ function uriInNoProxy (uri, noProxy) {
 function getProxyFromURI (uri) {
   // Decide the proper request proxy to use based on the request URI object and the
   // environmental variables (NO_PROXY, HTTP_PROXY, etc.)
-  // respect NO_PROXY environment variables (see: http://lynx.isc.org/current/breakout/lynx_help/keystrokes/environments.html)
+  // respect NO_PROXY environment variables (see: https://lynx.invisible-island.net/lynx2.8.7/breakout/lynx_help/keystrokes/environments.html)
 
   var noProxy = process.env.NO_PROXY || process.env.no_proxy || ''
 
@@ -12626,185 +14433,760 @@ function mergeObjects(provided, overrides, defaults)
 
 /***/ }),
 /* 349 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
-"use strict";
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+// Copyright 2017 Joyent, Inc.
+
+module.exports = {
+	read: read,
+	verify: verify,
+	sign: sign,
+	signAsync: signAsync,
+	write: write
+};
+
+var assert = __webpack_require__(477);
+var asn1 = __webpack_require__(62);
+var Buffer = __webpack_require__(215).Buffer;
+var algs = __webpack_require__(98);
+var utils = __webpack_require__(270);
+var Key = __webpack_require__(852);
+var PrivateKey = __webpack_require__(502);
+var pem = __webpack_require__(268);
+var Identity = __webpack_require__(378);
+var Signature = __webpack_require__(575);
+var Certificate = __webpack_require__(752);
+var pkcs8 = __webpack_require__(707);
+
+/*
+ * This file is based on RFC5280 (X.509).
  */
 
-var Store = __webpack_require__(627).Store;
-var permuteDomain = __webpack_require__(383).permuteDomain;
-var pathMatch = __webpack_require__(54).pathMatch;
-var util = __webpack_require__(669);
-
-function MemoryCookieStore() {
-  Store.call(this);
-  this.idx = {};
-}
-util.inherits(MemoryCookieStore, Store);
-exports.MemoryCookieStore = MemoryCookieStore;
-MemoryCookieStore.prototype.idx = null;
-
-// Since it's just a struct in RAM, this Store is synchronous
-MemoryCookieStore.prototype.synchronous = true;
-
-// force a default depth:
-MemoryCookieStore.prototype.inspect = function() {
-  return "{ idx: "+util.inspect(this.idx, false, 2)+' }';
-};
-
-// Use the new custom inspection symbol to add the custom inspect function if
-// available.
-if (util.inspect.custom) {
-  MemoryCookieStore.prototype[util.inspect.custom] = MemoryCookieStore.prototype.inspect;
+/* Helper to read in a single mpint */
+function readMPInt(der, nm) {
+	assert.strictEqual(der.peek(), asn1.Ber.Integer,
+	    nm + ' is not an Integer');
+	return (utils.mpNormalize(der.readString(asn1.Ber.Integer, true)));
 }
 
-MemoryCookieStore.prototype.findCookie = function(domain, path, key, cb) {
-  if (!this.idx[domain]) {
-    return cb(null,undefined);
-  }
-  if (!this.idx[domain][path]) {
-    return cb(null,undefined);
-  }
-  return cb(null,this.idx[domain][path][key]||null);
+function verify(cert, key) {
+	var sig = cert.signatures.x509;
+	assert.object(sig, 'x509 signature');
+
+	var algParts = sig.algo.split('-');
+	if (algParts[0] !== key.type)
+		return (false);
+
+	var blob = sig.cache;
+	if (blob === undefined) {
+		var der = new asn1.BerWriter();
+		writeTBSCert(cert, der);
+		blob = der.buffer;
+	}
+
+	var verifier = key.createVerify(algParts[1]);
+	verifier.write(blob);
+	return (verifier.verify(sig.signature));
+}
+
+function Local(i) {
+	return (asn1.Ber.Context | asn1.Ber.Constructor | i);
+}
+
+function Context(i) {
+	return (asn1.Ber.Context | i);
+}
+
+var SIGN_ALGS = {
+	'rsa-md5': '1.2.840.113549.1.1.4',
+	'rsa-sha1': '1.2.840.113549.1.1.5',
+	'rsa-sha256': '1.2.840.113549.1.1.11',
+	'rsa-sha384': '1.2.840.113549.1.1.12',
+	'rsa-sha512': '1.2.840.113549.1.1.13',
+	'dsa-sha1': '1.2.840.10040.4.3',
+	'dsa-sha256': '2.16.840.1.101.3.4.3.2',
+	'ecdsa-sha1': '1.2.840.10045.4.1',
+	'ecdsa-sha256': '1.2.840.10045.4.3.2',
+	'ecdsa-sha384': '1.2.840.10045.4.3.3',
+	'ecdsa-sha512': '1.2.840.10045.4.3.4',
+	'ed25519-sha512': '1.3.101.112'
+};
+Object.keys(SIGN_ALGS).forEach(function (k) {
+	SIGN_ALGS[SIGN_ALGS[k]] = k;
+});
+SIGN_ALGS['1.3.14.3.2.3'] = 'rsa-md5';
+SIGN_ALGS['1.3.14.3.2.29'] = 'rsa-sha1';
+
+var EXTS = {
+	'issuerKeyId': '2.5.29.35',
+	'altName': '2.5.29.17',
+	'basicConstraints': '2.5.29.19',
+	'keyUsage': '2.5.29.15',
+	'extKeyUsage': '2.5.29.37'
 };
 
-MemoryCookieStore.prototype.findCookies = function(domain, path, cb) {
-  var results = [];
-  if (!domain) {
-    return cb(null,[]);
-  }
+function read(buf, options) {
+	if (typeof (buf) === 'string') {
+		buf = Buffer.from(buf, 'binary');
+	}
+	assert.buffer(buf, 'buf');
 
-  var pathMatcher;
-  if (!path) {
-    // null means "all paths"
-    pathMatcher = function matchAll(domainIndex) {
-      for (var curPath in domainIndex) {
-        var pathIndex = domainIndex[curPath];
-        for (var key in pathIndex) {
-          results.push(pathIndex[key]);
-        }
-      }
-    };
+	var der = new asn1.BerReader(buf);
 
-  } else {
-    pathMatcher = function matchRFC(domainIndex) {
-       //NOTE: we should use path-match algorithm from S5.1.4 here
-       //(see : https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/canonical_cookie.cc#L299)
-       Object.keys(domainIndex).forEach(function (cookiePath) {
-         if (pathMatch(path, cookiePath)) {
-           var pathIndex = domainIndex[cookiePath];
+	der.readSequence();
+	if (Math.abs(der.length - der.remain) > 1) {
+		throw (new Error('DER sequence does not contain whole byte ' +
+		    'stream'));
+	}
 
-           for (var key in pathIndex) {
-             results.push(pathIndex[key]);
-           }
-         }
-       });
-     };
-  }
+	var tbsStart = der.offset;
+	der.readSequence();
+	var sigOffset = der.offset + der.length;
+	var tbsEnd = sigOffset;
 
-  var domains = permuteDomain(domain) || [domain];
-  var idx = this.idx;
-  domains.forEach(function(curDomain) {
-    var domainIndex = idx[curDomain];
-    if (!domainIndex) {
-      return;
-    }
-    pathMatcher(domainIndex);
-  });
+	if (der.peek() === Local(0)) {
+		der.readSequence(Local(0));
+		var version = der.readInt();
+		assert.ok(version <= 3,
+		    'only x.509 versions up to v3 supported');
+	}
 
-  cb(null,results);
+	var cert = {};
+	cert.signatures = {};
+	var sig = (cert.signatures.x509 = {});
+	sig.extras = {};
+
+	cert.serial = readMPInt(der, 'serial');
+
+	der.readSequence();
+	var after = der.offset + der.length;
+	var certAlgOid = der.readOID();
+	var certAlg = SIGN_ALGS[certAlgOid];
+	if (certAlg === undefined)
+		throw (new Error('unknown signature algorithm ' + certAlgOid));
+
+	der._offset = after;
+	cert.issuer = Identity.parseAsn1(der);
+
+	der.readSequence();
+	cert.validFrom = readDate(der);
+	cert.validUntil = readDate(der);
+
+	cert.subjects = [Identity.parseAsn1(der)];
+
+	der.readSequence();
+	after = der.offset + der.length;
+	cert.subjectKey = pkcs8.readPkcs8(undefined, 'public', der);
+	der._offset = after;
+
+	/* issuerUniqueID */
+	if (der.peek() === Local(1)) {
+		der.readSequence(Local(1));
+		sig.extras.issuerUniqueID =
+		    buf.slice(der.offset, der.offset + der.length);
+		der._offset += der.length;
+	}
+
+	/* subjectUniqueID */
+	if (der.peek() === Local(2)) {
+		der.readSequence(Local(2));
+		sig.extras.subjectUniqueID =
+		    buf.slice(der.offset, der.offset + der.length);
+		der._offset += der.length;
+	}
+
+	/* extensions */
+	if (der.peek() === Local(3)) {
+		der.readSequence(Local(3));
+		var extEnd = der.offset + der.length;
+		der.readSequence();
+
+		while (der.offset < extEnd)
+			readExtension(cert, buf, der);
+
+		assert.strictEqual(der.offset, extEnd);
+	}
+
+	assert.strictEqual(der.offset, sigOffset);
+
+	der.readSequence();
+	after = der.offset + der.length;
+	var sigAlgOid = der.readOID();
+	var sigAlg = SIGN_ALGS[sigAlgOid];
+	if (sigAlg === undefined)
+		throw (new Error('unknown signature algorithm ' + sigAlgOid));
+	der._offset = after;
+
+	var sigData = der.readString(asn1.Ber.BitString, true);
+	if (sigData[0] === 0)
+		sigData = sigData.slice(1);
+	var algParts = sigAlg.split('-');
+
+	sig.signature = Signature.parse(sigData, algParts[0], 'asn1');
+	sig.signature.hashAlgorithm = algParts[1];
+	sig.algo = sigAlg;
+	sig.cache = buf.slice(tbsStart, tbsEnd);
+
+	return (new Certificate(cert));
+}
+
+function readDate(der) {
+	if (der.peek() === asn1.Ber.UTCTime) {
+		return (utcTimeToDate(der.readString(asn1.Ber.UTCTime)));
+	} else if (der.peek() === asn1.Ber.GeneralizedTime) {
+		return (gTimeToDate(der.readString(asn1.Ber.GeneralizedTime)));
+	} else {
+		throw (new Error('Unsupported date format'));
+	}
+}
+
+function writeDate(der, date) {
+	if (date.getUTCFullYear() >= 2050 || date.getUTCFullYear() < 1950) {
+		der.writeString(dateToGTime(date), asn1.Ber.GeneralizedTime);
+	} else {
+		der.writeString(dateToUTCTime(date), asn1.Ber.UTCTime);
+	}
+}
+
+/* RFC5280, section 4.2.1.6 (GeneralName type) */
+var ALTNAME = {
+	OtherName: Local(0),
+	RFC822Name: Context(1),
+	DNSName: Context(2),
+	X400Address: Local(3),
+	DirectoryName: Local(4),
+	EDIPartyName: Local(5),
+	URI: Context(6),
+	IPAddress: Context(7),
+	OID: Context(8)
 };
 
-MemoryCookieStore.prototype.putCookie = function(cookie, cb) {
-  if (!this.idx[cookie.domain]) {
-    this.idx[cookie.domain] = {};
-  }
-  if (!this.idx[cookie.domain][cookie.path]) {
-    this.idx[cookie.domain][cookie.path] = {};
-  }
-  this.idx[cookie.domain][cookie.path][cookie.key] = cookie;
-  cb(null);
+/* RFC5280, section 4.2.1.12 (KeyPurposeId) */
+var EXTPURPOSE = {
+	'serverAuth': '1.3.6.1.5.5.7.3.1',
+	'clientAuth': '1.3.6.1.5.5.7.3.2',
+	'codeSigning': '1.3.6.1.5.5.7.3.3',
+
+	/* See https://github.com/joyent/oid-docs/blob/master/root.md */
+	'joyentDocker': '1.3.6.1.4.1.38678.1.4.1',
+	'joyentCmon': '1.3.6.1.4.1.38678.1.4.2'
 };
+var EXTPURPOSE_REV = {};
+Object.keys(EXTPURPOSE).forEach(function (k) {
+	EXTPURPOSE_REV[EXTPURPOSE[k]] = k;
+});
 
-MemoryCookieStore.prototype.updateCookie = function(oldCookie, newCookie, cb) {
-  // updateCookie() may avoid updating cookies that are identical.  For example,
-  // lastAccessed may not be important to some stores and an equality
-  // comparison could exclude that field.
-  this.putCookie(newCookie,cb);
-};
+var KEYUSEBITS = [
+	'signature', 'identity', 'keyEncryption',
+	'encryption', 'keyAgreement', 'ca', 'crl'
+];
 
-MemoryCookieStore.prototype.removeCookie = function(domain, path, key, cb) {
-  if (this.idx[domain] && this.idx[domain][path] && this.idx[domain][path][key]) {
-    delete this.idx[domain][path][key];
-  }
-  cb(null);
-};
+function readExtension(cert, buf, der) {
+	der.readSequence();
+	var after = der.offset + der.length;
+	var extId = der.readOID();
+	var id;
+	var sig = cert.signatures.x509;
+	if (!sig.extras.exts)
+		sig.extras.exts = [];
 
-MemoryCookieStore.prototype.removeCookies = function(domain, path, cb) {
-  if (this.idx[domain]) {
-    if (path) {
-      delete this.idx[domain][path];
-    } else {
-      delete this.idx[domain];
-    }
-  }
-  return cb(null);
-};
+	var critical;
+	if (der.peek() === asn1.Ber.Boolean)
+		critical = der.readBoolean();
 
-MemoryCookieStore.prototype.getAllCookies = function(cb) {
-  var cookies = [];
-  var idx = this.idx;
+	switch (extId) {
+	case (EXTS.basicConstraints):
+		der.readSequence(asn1.Ber.OctetString);
+		der.readSequence();
+		var bcEnd = der.offset + der.length;
+		var ca = false;
+		if (der.peek() === asn1.Ber.Boolean)
+			ca = der.readBoolean();
+		if (cert.purposes === undefined)
+			cert.purposes = [];
+		if (ca === true)
+			cert.purposes.push('ca');
+		var bc = { oid: extId, critical: critical };
+		if (der.offset < bcEnd && der.peek() === asn1.Ber.Integer)
+			bc.pathLen = der.readInt();
+		sig.extras.exts.push(bc);
+		break;
+	case (EXTS.extKeyUsage):
+		der.readSequence(asn1.Ber.OctetString);
+		der.readSequence();
+		if (cert.purposes === undefined)
+			cert.purposes = [];
+		var ekEnd = der.offset + der.length;
+		while (der.offset < ekEnd) {
+			var oid = der.readOID();
+			cert.purposes.push(EXTPURPOSE_REV[oid] || oid);
+		}
+		/*
+		 * This is a bit of a hack: in the case where we have a cert
+		 * that's only allowed to do serverAuth or clientAuth (and not
+		 * the other), we want to make sure all our Subjects are of
+		 * the right type. But we already parsed our Subjects and
+		 * decided if they were hosts or users earlier (since it appears
+		 * first in the cert).
+		 *
+		 * So we go through and mutate them into the right kind here if
+		 * it doesn't match. This might not be hugely beneficial, as it
+		 * seems that single-purpose certs are not often seen in the
+		 * wild.
+		 */
+		if (cert.purposes.indexOf('serverAuth') !== -1 &&
+		    cert.purposes.indexOf('clientAuth') === -1) {
+			cert.subjects.forEach(function (ide) {
+				if (ide.type !== 'host') {
+					ide.type = 'host';
+					ide.hostname = ide.uid ||
+					    ide.email ||
+					    ide.components[0].value;
+				}
+			});
+		} else if (cert.purposes.indexOf('clientAuth') !== -1 &&
+		    cert.purposes.indexOf('serverAuth') === -1) {
+			cert.subjects.forEach(function (ide) {
+				if (ide.type !== 'user') {
+					ide.type = 'user';
+					ide.uid = ide.hostname ||
+					    ide.email ||
+					    ide.components[0].value;
+				}
+			});
+		}
+		sig.extras.exts.push({ oid: extId, critical: critical });
+		break;
+	case (EXTS.keyUsage):
+		der.readSequence(asn1.Ber.OctetString);
+		var bits = der.readString(asn1.Ber.BitString, true);
+		var setBits = readBitField(bits, KEYUSEBITS);
+		setBits.forEach(function (bit) {
+			if (cert.purposes === undefined)
+				cert.purposes = [];
+			if (cert.purposes.indexOf(bit) === -1)
+				cert.purposes.push(bit);
+		});
+		sig.extras.exts.push({ oid: extId, critical: critical,
+		    bits: bits });
+		break;
+	case (EXTS.altName):
+		der.readSequence(asn1.Ber.OctetString);
+		der.readSequence();
+		var aeEnd = der.offset + der.length;
+		while (der.offset < aeEnd) {
+			switch (der.peek()) {
+			case ALTNAME.OtherName:
+			case ALTNAME.EDIPartyName:
+				der.readSequence();
+				der._offset += der.length;
+				break;
+			case ALTNAME.OID:
+				der.readOID(ALTNAME.OID);
+				break;
+			case ALTNAME.RFC822Name:
+				/* RFC822 specifies email addresses */
+				var email = der.readString(ALTNAME.RFC822Name);
+				id = Identity.forEmail(email);
+				if (!cert.subjects[0].equals(id))
+					cert.subjects.push(id);
+				break;
+			case ALTNAME.DirectoryName:
+				der.readSequence(ALTNAME.DirectoryName);
+				id = Identity.parseAsn1(der);
+				if (!cert.subjects[0].equals(id))
+					cert.subjects.push(id);
+				break;
+			case ALTNAME.DNSName:
+				var host = der.readString(
+				    ALTNAME.DNSName);
+				id = Identity.forHost(host);
+				if (!cert.subjects[0].equals(id))
+					cert.subjects.push(id);
+				break;
+			default:
+				der.readString(der.peek());
+				break;
+			}
+		}
+		sig.extras.exts.push({ oid: extId, critical: critical });
+		break;
+	default:
+		sig.extras.exts.push({
+			oid: extId,
+			critical: critical,
+			data: der.readString(asn1.Ber.OctetString, true)
+		});
+		break;
+	}
 
-  var domains = Object.keys(idx);
-  domains.forEach(function(domain) {
-    var paths = Object.keys(idx[domain]);
-    paths.forEach(function(path) {
-      var keys = Object.keys(idx[domain][path]);
-      keys.forEach(function(key) {
-        if (key !== null) {
-          cookies.push(idx[domain][path][key]);
-        }
-      });
-    });
-  });
+	der._offset = after;
+}
 
-  // Sort by creationIndex so deserializing retains the creation order.
-  // When implementing your own store, this SHOULD retain the order too
-  cookies.sort(function(a,b) {
-    return (a.creationIndex||0) - (b.creationIndex||0);
-  });
+var UTCTIME_RE =
+    /^([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})?Z$/;
+function utcTimeToDate(t) {
+	var m = t.match(UTCTIME_RE);
+	assert.ok(m, 'timestamps must be in UTC');
+	var d = new Date();
 
-  cb(null, cookies);
-};
+	var thisYear = d.getUTCFullYear();
+	var century = Math.floor(thisYear / 100) * 100;
+
+	var year = parseInt(m[1], 10);
+	if (thisYear % 100 < 50 && year >= 60)
+		year += (century - 1);
+	else
+		year += century;
+	d.setUTCFullYear(year, parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+	d.setUTCHours(parseInt(m[4], 10), parseInt(m[5], 10));
+	if (m[6] && m[6].length > 0)
+		d.setUTCSeconds(parseInt(m[6], 10));
+	return (d);
+}
+
+var GTIME_RE =
+    /^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})?Z$/;
+function gTimeToDate(t) {
+	var m = t.match(GTIME_RE);
+	assert.ok(m);
+	var d = new Date();
+
+	d.setUTCFullYear(parseInt(m[1], 10), parseInt(m[2], 10) - 1,
+	    parseInt(m[3], 10));
+	d.setUTCHours(parseInt(m[4], 10), parseInt(m[5], 10));
+	if (m[6] && m[6].length > 0)
+		d.setUTCSeconds(parseInt(m[6], 10));
+	return (d);
+}
+
+function zeroPad(n, m) {
+	if (m === undefined)
+		m = 2;
+	var s = '' + n;
+	while (s.length < m)
+		s = '0' + s;
+	return (s);
+}
+
+function dateToUTCTime(d) {
+	var s = '';
+	s += zeroPad(d.getUTCFullYear() % 100);
+	s += zeroPad(d.getUTCMonth() + 1);
+	s += zeroPad(d.getUTCDate());
+	s += zeroPad(d.getUTCHours());
+	s += zeroPad(d.getUTCMinutes());
+	s += zeroPad(d.getUTCSeconds());
+	s += 'Z';
+	return (s);
+}
+
+function dateToGTime(d) {
+	var s = '';
+	s += zeroPad(d.getUTCFullYear(), 4);
+	s += zeroPad(d.getUTCMonth() + 1);
+	s += zeroPad(d.getUTCDate());
+	s += zeroPad(d.getUTCHours());
+	s += zeroPad(d.getUTCMinutes());
+	s += zeroPad(d.getUTCSeconds());
+	s += 'Z';
+	return (s);
+}
+
+function sign(cert, key) {
+	if (cert.signatures.x509 === undefined)
+		cert.signatures.x509 = {};
+	var sig = cert.signatures.x509;
+
+	sig.algo = key.type + '-' + key.defaultHashAlgorithm();
+	if (SIGN_ALGS[sig.algo] === undefined)
+		return (false);
+
+	var der = new asn1.BerWriter();
+	writeTBSCert(cert, der);
+	var blob = der.buffer;
+	sig.cache = blob;
+
+	var signer = key.createSign();
+	signer.write(blob);
+	cert.signatures.x509.signature = signer.sign();
+
+	return (true);
+}
+
+function signAsync(cert, signer, done) {
+	if (cert.signatures.x509 === undefined)
+		cert.signatures.x509 = {};
+	var sig = cert.signatures.x509;
+
+	var der = new asn1.BerWriter();
+	writeTBSCert(cert, der);
+	var blob = der.buffer;
+	sig.cache = blob;
+
+	signer(blob, function (err, signature) {
+		if (err) {
+			done(err);
+			return;
+		}
+		sig.algo = signature.type + '-' + signature.hashAlgorithm;
+		if (SIGN_ALGS[sig.algo] === undefined) {
+			done(new Error('Invalid signing algorithm "' +
+			    sig.algo + '"'));
+			return;
+		}
+		sig.signature = signature;
+		done();
+	});
+}
+
+function write(cert, options) {
+	var sig = cert.signatures.x509;
+	assert.object(sig, 'x509 signature');
+
+	var der = new asn1.BerWriter();
+	der.startSequence();
+	if (sig.cache) {
+		der._ensure(sig.cache.length);
+		sig.cache.copy(der._buf, der._offset);
+		der._offset += sig.cache.length;
+	} else {
+		writeTBSCert(cert, der);
+	}
+
+	der.startSequence();
+	der.writeOID(SIGN_ALGS[sig.algo]);
+	if (sig.algo.match(/^rsa-/))
+		der.writeNull();
+	der.endSequence();
+
+	var sigData = sig.signature.toBuffer('asn1');
+	var data = Buffer.alloc(sigData.length + 1);
+	data[0] = 0;
+	sigData.copy(data, 1);
+	der.writeBuffer(data, asn1.Ber.BitString);
+	der.endSequence();
+
+	return (der.buffer);
+}
+
+function writeTBSCert(cert, der) {
+	var sig = cert.signatures.x509;
+	assert.object(sig, 'x509 signature');
+
+	der.startSequence();
+
+	der.startSequence(Local(0));
+	der.writeInt(2);
+	der.endSequence();
+
+	der.writeBuffer(utils.mpNormalize(cert.serial), asn1.Ber.Integer);
+
+	der.startSequence();
+	der.writeOID(SIGN_ALGS[sig.algo]);
+	if (sig.algo.match(/^rsa-/))
+		der.writeNull();
+	der.endSequence();
+
+	cert.issuer.toAsn1(der);
+
+	der.startSequence();
+	writeDate(der, cert.validFrom);
+	writeDate(der, cert.validUntil);
+	der.endSequence();
+
+	var subject = cert.subjects[0];
+	var altNames = cert.subjects.slice(1);
+	subject.toAsn1(der);
+
+	pkcs8.writePkcs8(der, cert.subjectKey);
+
+	if (sig.extras && sig.extras.issuerUniqueID) {
+		der.writeBuffer(sig.extras.issuerUniqueID, Local(1));
+	}
+
+	if (sig.extras && sig.extras.subjectUniqueID) {
+		der.writeBuffer(sig.extras.subjectUniqueID, Local(2));
+	}
+
+	if (altNames.length > 0 || subject.type === 'host' ||
+	    (cert.purposes !== undefined && cert.purposes.length > 0) ||
+	    (sig.extras && sig.extras.exts)) {
+		der.startSequence(Local(3));
+		der.startSequence();
+
+		var exts = [];
+		if (cert.purposes !== undefined && cert.purposes.length > 0) {
+			exts.push({
+				oid: EXTS.basicConstraints,
+				critical: true
+			});
+			exts.push({
+				oid: EXTS.keyUsage,
+				critical: true
+			});
+			exts.push({
+				oid: EXTS.extKeyUsage,
+				critical: true
+			});
+		}
+		exts.push({ oid: EXTS.altName });
+		if (sig.extras && sig.extras.exts)
+			exts = sig.extras.exts;
+
+		for (var i = 0; i < exts.length; ++i) {
+			der.startSequence();
+			der.writeOID(exts[i].oid);
+
+			if (exts[i].critical !== undefined)
+				der.writeBoolean(exts[i].critical);
+
+			if (exts[i].oid === EXTS.altName) {
+				der.startSequence(asn1.Ber.OctetString);
+				der.startSequence();
+				if (subject.type === 'host') {
+					der.writeString(subject.hostname,
+					    Context(2));
+				}
+				for (var j = 0; j < altNames.length; ++j) {
+					if (altNames[j].type === 'host') {
+						der.writeString(
+						    altNames[j].hostname,
+						    ALTNAME.DNSName);
+					} else if (altNames[j].type ===
+					    'email') {
+						der.writeString(
+						    altNames[j].email,
+						    ALTNAME.RFC822Name);
+					} else {
+						/*
+						 * Encode anything else as a
+						 * DN style name for now.
+						 */
+						der.startSequence(
+						    ALTNAME.DirectoryName);
+						altNames[j].toAsn1(der);
+						der.endSequence();
+					}
+				}
+				der.endSequence();
+				der.endSequence();
+			} else if (exts[i].oid === EXTS.basicConstraints) {
+				der.startSequence(asn1.Ber.OctetString);
+				der.startSequence();
+				var ca = (cert.purposes.indexOf('ca') !== -1);
+				var pathLen = exts[i].pathLen;
+				der.writeBoolean(ca);
+				if (pathLen !== undefined)
+					der.writeInt(pathLen);
+				der.endSequence();
+				der.endSequence();
+			} else if (exts[i].oid === EXTS.extKeyUsage) {
+				der.startSequence(asn1.Ber.OctetString);
+				der.startSequence();
+				cert.purposes.forEach(function (purpose) {
+					if (purpose === 'ca')
+						return;
+					if (KEYUSEBITS.indexOf(purpose) !== -1)
+						return;
+					var oid = purpose;
+					if (EXTPURPOSE[purpose] !== undefined)
+						oid = EXTPURPOSE[purpose];
+					der.writeOID(oid);
+				});
+				der.endSequence();
+				der.endSequence();
+			} else if (exts[i].oid === EXTS.keyUsage) {
+				der.startSequence(asn1.Ber.OctetString);
+				/*
+				 * If we parsed this certificate from a byte
+				 * stream (i.e. we didn't generate it in sshpk)
+				 * then we'll have a ".bits" property on the
+				 * ext with the original raw byte contents.
+				 *
+				 * If we have this, use it here instead of
+				 * regenerating it. This guarantees we output
+				 * the same data we parsed, so signatures still
+				 * validate.
+				 */
+				if (exts[i].bits !== undefined) {
+					der.writeBuffer(exts[i].bits,
+					    asn1.Ber.BitString);
+				} else {
+					var bits = writeBitField(cert.purposes,
+					    KEYUSEBITS);
+					der.writeBuffer(bits,
+					    asn1.Ber.BitString);
+				}
+				der.endSequence();
+			} else {
+				der.writeBuffer(exts[i].data,
+				    asn1.Ber.OctetString);
+			}
+
+			der.endSequence();
+		}
+
+		der.endSequence();
+		der.endSequence();
+	}
+
+	der.endSequence();
+}
+
+/*
+ * Reads an ASN.1 BER bitfield out of the Buffer produced by doing
+ * `BerReader#readString(asn1.Ber.BitString)`. That function gives us the raw
+ * contents of the BitString tag, which is a count of unused bits followed by
+ * the bits as a right-padded byte string.
+ *
+ * `bits` is the Buffer, `bitIndex` should contain an array of string names
+ * for the bits in the string, ordered starting with bit #0 in the ASN.1 spec.
+ *
+ * Returns an array of Strings, the names of the bits that were set to 1.
+ */
+function readBitField(bits, bitIndex) {
+	var bitLen = 8 * (bits.length - 1) - bits[0];
+	var setBits = {};
+	for (var i = 0; i < bitLen; ++i) {
+		var byteN = 1 + Math.floor(i / 8);
+		var bit = 7 - (i % 8);
+		var mask = 1 << bit;
+		var bitVal = ((bits[byteN] & mask) !== 0);
+		var name = bitIndex[i];
+		if (bitVal && typeof (name) === 'string') {
+			setBits[name] = true;
+		}
+	}
+	return (Object.keys(setBits));
+}
+
+/*
+ * `setBits` is an array of strings, containing the names for each bit that
+ * sould be set to 1. `bitIndex` is same as in `readBitField()`.
+ *
+ * Returns a Buffer, ready to be written out with `BerWriter#writeString()`.
+ */
+function writeBitField(setBits, bitIndex) {
+	var bitLen = bitIndex.length;
+	var blen = Math.ceil(bitLen / 8);
+	var unused = blen * 8 - bitLen;
+	var bits = Buffer.alloc(1 + blen); // zero-filled
+	bits[0] = unused;
+	for (var i = 0; i < bitLen; ++i) {
+		var byteN = 1 + Math.floor(i / 8);
+		var bit = 7 - (i % 8);
+		var mask = 1 << bit;
+		var name = bitIndex[i];
+		if (name === undefined)
+			continue;
+		var bitVal = (setBits.indexOf(name) !== -1);
+		if (bitVal) {
+			bits[byteN] |= mask;
+		}
+	}
+	return (bits);
+}
 
 
 /***/ }),
@@ -12822,7 +15204,88 @@ module.exports = require("assert");
 
 /***/ }),
 /* 358 */,
-/* 359 */,
+/* 359 */
+/***/ (function(module) {
+
+"use strict";
+
+module.exports = function generate_pattern(it, $keyword, $ruleType) {
+  var out = ' ';
+  var $lvl = it.level;
+  var $dataLvl = it.dataLevel;
+  var $schema = it.schema[$keyword];
+  var $schemaPath = it.schemaPath + it.util.getProperty($keyword);
+  var $errSchemaPath = it.errSchemaPath + '/' + $keyword;
+  var $breakOnError = !it.opts.allErrors;
+  var $data = 'data' + ($dataLvl || '');
+  var $isData = it.opts.$data && $schema && $schema.$data,
+    $schemaValue;
+  if ($isData) {
+    out += ' var schema' + ($lvl) + ' = ' + (it.util.getData($schema.$data, $dataLvl, it.dataPathArr)) + '; ';
+    $schemaValue = 'schema' + $lvl;
+  } else {
+    $schemaValue = $schema;
+  }
+  var $regexp = $isData ? '(new RegExp(' + $schemaValue + '))' : it.usePattern($schema);
+  out += 'if ( ';
+  if ($isData) {
+    out += ' (' + ($schemaValue) + ' !== undefined && typeof ' + ($schemaValue) + ' != \'string\') || ';
+  }
+  out += ' !' + ($regexp) + '.test(' + ($data) + ') ) {   ';
+  var $$outStack = $$outStack || [];
+  $$outStack.push(out);
+  out = ''; /* istanbul ignore else */
+  if (it.createErrors !== false) {
+    out += ' { keyword: \'' + ('pattern') + '\' , dataPath: (dataPath || \'\') + ' + (it.errorPath) + ' , schemaPath: ' + (it.util.toQuotedString($errSchemaPath)) + ' , params: { pattern:  ';
+    if ($isData) {
+      out += '' + ($schemaValue);
+    } else {
+      out += '' + (it.util.toQuotedString($schema));
+    }
+    out += '  } ';
+    if (it.opts.messages !== false) {
+      out += ' , message: \'should match pattern "';
+      if ($isData) {
+        out += '\' + ' + ($schemaValue) + ' + \'';
+      } else {
+        out += '' + (it.util.escapeQuotes($schema));
+      }
+      out += '"\' ';
+    }
+    if (it.opts.verbose) {
+      out += ' , schema:  ';
+      if ($isData) {
+        out += 'validate.schema' + ($schemaPath);
+      } else {
+        out += '' + (it.util.toQuotedString($schema));
+      }
+      out += '         , parentSchema: validate.schema' + (it.schemaPath) + ' , data: ' + ($data) + ' ';
+    }
+    out += ' } ';
+  } else {
+    out += ' {} ';
+  }
+  var __err = out;
+  out = $$outStack.pop();
+  if (!it.compositeRule && $breakOnError) {
+    /* istanbul ignore if */
+    if (it.async) {
+      out += ' throw new ValidationError([' + (__err) + ']); ';
+    } else {
+      out += ' validate.errors = [' + (__err) + ']; return false; ';
+    }
+  } else {
+    out += ' var err = ' + (__err) + ';  if (vErrors === null) vErrors = [err]; else vErrors.push(err); errors++; ';
+  }
+  out += '} ';
+  if ($breakOnError) {
+    out += ' else { ';
+  }
+  return out;
+}
+
+
+/***/ }),
 /* 360 */,
 /* 361 */,
 /* 362 */
@@ -13523,65 +15986,42 @@ module.exports.isDuplex   = isDuplex
 
 /***/ }),
 /* 383 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
 "use strict";
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
 
-var pubsuffix = __webpack_require__(519);
 
-// Gives the permutation of all possible domainMatch()es of a given domain. The
-// array is in shortest-to-longest order.  Handy for indexing.
-function permuteDomain (domain) {
-  var pubSuf = pubsuffix.getPublicSuffix(domain);
-  if (!pubSuf) {
-    return null;
-  }
-  if (pubSuf == domain) {
-    return [domain];
-  }
-
-  var prefix = domain.slice(0, -(pubSuf.length + 1)); // ".example.com"
-  var parts = prefix.split('.').reverse();
-  var cur = pubSuf;
-  var permutations = [cur];
-  while (parts.length) {
-    cur = parts.shift() + '.' + cur;
-    permutations.push(cur);
-  }
-  return permutations;
-}
-
-exports.permuteDomain = permuteDomain;
+//all requires must be explicit because browserify won't work with dynamic requires
+module.exports = {
+  '$ref': __webpack_require__(266),
+  allOf: __webpack_require__(107),
+  anyOf: __webpack_require__(902),
+  '$comment': __webpack_require__(28),
+  const: __webpack_require__(662),
+  contains: __webpack_require__(154),
+  dependencies: __webpack_require__(233),
+  'enum': __webpack_require__(281),
+  format: __webpack_require__(687),
+  'if': __webpack_require__(479),
+  items: __webpack_require__(643),
+  maximum: __webpack_require__(341),
+  minimum: __webpack_require__(341),
+  maxItems: __webpack_require__(85),
+  minItems: __webpack_require__(85),
+  maxLength: __webpack_require__(772),
+  minLength: __webpack_require__(772),
+  maxProperties: __webpack_require__(560),
+  minProperties: __webpack_require__(560),
+  multipleOf: __webpack_require__(397),
+  not: __webpack_require__(673),
+  oneOf: __webpack_require__(653),
+  pattern: __webpack_require__(359),
+  properties: __webpack_require__(343),
+  propertyNames: __webpack_require__(35),
+  required: __webpack_require__(858),
+  uniqueItems: __webpack_require__(899),
+  validate: __webpack_require__(967)
+};
 
 
 /***/ }),
@@ -14147,7 +16587,7 @@ Har.prototype.options = function (options) {
     req.postData.params.forEach(function (param) {
       var attachment = {}
 
-      if (!param.fileName && !param.fileName && !param.contentType) {
+      if (!param.fileName && !param.contentType) {
         options.formData[param.name] = param.value
         return
       }
@@ -14346,17 +16786,25 @@ module.exports = {
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const os = __webpack_require__(87);
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
 /**
  * Commands
  *
  * Command Format:
- *   ##[name key=value;key=value]message
+ *   ::name key=value,key=value::message
  *
  * Examples:
- *   ##[warning]This is the user warning message
- *   ##[set-secret name=mypassword]definitelyNotAPassword!
+ *   ::warning::This is the message
+ *   ::set-env name=MY_VAR::some value
  */
 function issueCommand(command, properties, message) {
     const cmd = new Command(command, properties, message);
@@ -14381,34 +16829,39 @@ class Command {
         let cmdStr = CMD_STRING + this.command;
         if (this.properties && Object.keys(this.properties).length > 0) {
             cmdStr += ' ';
+            let first = true;
             for (const key in this.properties) {
                 if (this.properties.hasOwnProperty(key)) {
                     const val = this.properties[key];
                     if (val) {
-                        // safely append the val - avoid blowing up when attempting to
-                        // call .replace() if message is not a string for some reason
-                        cmdStr += `${key}=${escape(`${val || ''}`)},`;
+                        if (first) {
+                            first = false;
+                        }
+                        else {
+                            cmdStr += ',';
+                        }
+                        cmdStr += `${key}=${escapeProperty(val)}`;
                     }
                 }
             }
         }
-        cmdStr += CMD_STRING;
-        // safely append the message - avoid blowing up when attempting to
-        // call .replace() if message is not a string for some reason
-        const message = `${this.message || ''}`;
-        cmdStr += escapeData(message);
+        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
         return cmdStr;
     }
 }
 function escapeData(s) {
-    return s.replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A');
 }
-function escape(s) {
-    return s
+function escapeProperty(s) {
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A')
-        .replace(/]/g, '%5D')
-        .replace(/;/g, '%3B');
+        .replace(/:/g, '%3A')
+        .replace(/,/g, '%2C');
 }
 //# sourceMappingURL=command.js.map
 
@@ -15847,8 +18300,7 @@ Request.prototype.start = function () {
       if (isConnecting) {
         var onReqSockConnect = function () {
           socket.removeListener('connect', onReqSockConnect)
-          clearTimeout(self.timeoutTimer)
-          self.timeoutTimer = null
+          self.clearTimeout()
           setReqTimeout()
         }
 
@@ -15893,10 +18345,7 @@ Request.prototype.onRequestError = function (error) {
     self.req.end()
     return
   }
-  if (self.timeout && self.timeoutTimer) {
-    clearTimeout(self.timeoutTimer)
-    self.timeoutTimer = null
-  }
+  self.clearTimeout()
   self.emit('error', error)
 }
 
@@ -15983,10 +18432,7 @@ Request.prototype.onRequestResponse = function (response) {
   if (self.setHost) {
     self.removeHeader('host')
   }
-  if (self.timeout && self.timeoutTimer) {
-    clearTimeout(self.timeoutTimer)
-    self.timeoutTimer = null
-  }
+  self.clearTimeout()
 
   var targetCookieJar = (self._jar && self._jar.setCookie) ? self._jar : globalCookieJar
   var addCookie = function (cookie) {
@@ -16191,6 +18637,7 @@ Request.prototype.abort = function () {
     self.response.destroy()
   }
 
+  self.clearTimeout()
   self.emit('abort')
 }
 
@@ -16467,7 +18914,7 @@ Request.prototype.jar = function (jar) {
     cookies = false
     self._disableCookies = true
   } else {
-    var targetCookieJar = (jar && jar.getCookieString) ? jar : globalCookieJar
+    var targetCookieJar = jar.getCookieString ? jar : globalCookieJar
     var urihref = self.uri.href
     // fetch cookie in the Specified host
     if (targetCookieJar) {
@@ -16551,10 +18998,18 @@ Request.prototype.resume = function () {
 }
 Request.prototype.destroy = function () {
   var self = this
+  this.clearTimeout()
   if (!self._ended) {
     self.end()
   } else if (self.response) {
     self.response.destroy()
+  }
+}
+
+Request.prototype.clearTimeout = function () {
+  if (this.timeoutTimer) {
+    clearTimeout(this.timeoutTimer)
+    this.timeoutTimer = null
   }
 }
 
@@ -17011,7 +19466,69 @@ define(function() {
 
 /***/ }),
 /* 466 */,
-/* 467 */,
+/* 467 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+/*!
+ * Copyright (c) 2015, Salesforce.com, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of Salesforce.com nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+var pubsuffix = __webpack_require__(847);
+
+// Gives the permutation of all possible domainMatch()es of a given domain. The
+// array is in shortest-to-longest order.  Handy for indexing.
+function permuteDomain (domain) {
+  var pubSuf = pubsuffix.getPublicSuffix(domain);
+  if (!pubSuf) {
+    return null;
+  }
+  if (pubSuf == domain) {
+    return [domain];
+  }
+
+  var prefix = domain.slice(0, -(pubSuf.length + 1)); // ".example.com"
+  var parts = prefix.split('.').reverse();
+  var cur = pubSuf;
+  var permutations = [cur];
+  while (parts.length) {
+    cur = parts.shift() + '.' + cur;
+    permutations.push(cur);
+  }
+  return permutations;
+}
+
+exports.permuteDomain = permuteDomain;
+
+
+/***/ }),
 /* 468 */,
 /* 469 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -17146,10 +19663,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = __webpack_require__(431);
-const os = __webpack_require__(87);
-const path = __webpack_require__(622);
+const file_command_1 = __webpack_require__(102);
+const utils_1 = __webpack_require__(82);
+const os = __importStar(__webpack_require__(87));
+const path = __importStar(__webpack_require__(622));
 /**
  * The code to exit an action
  */
@@ -17170,11 +19696,21 @@ var ExitCode;
 /**
  * Sets env variable for this action and future actions in the job
  * @param name the name of the variable to set
- * @param val the value of the variable
+ * @param val the value of the variable. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function exportVariable(name, val) {
-    process.env[name] = val;
-    command_1.issueCommand('set-env', { name }, val);
+    const convertedVal = utils_1.toCommandValue(val);
+    process.env[name] = convertedVal;
+    const filePath = process.env['GITHUB_ENV'] || '';
+    if (filePath) {
+        const delimiter = '_GitHubActionsFileCommandDelimeter_';
+        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
+        file_command_1.issueCommand('ENV', commandValue);
+    }
+    else {
+        command_1.issueCommand('set-env', { name }, convertedVal);
+    }
 }
 exports.exportVariable = exportVariable;
 /**
@@ -17190,7 +19726,13 @@ exports.setSecret = setSecret;
  * @param inputPath
  */
 function addPath(inputPath) {
-    command_1.issueCommand('add-path', {}, inputPath);
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        file_command_1.issueCommand('PATH', inputPath);
+    }
+    else {
+        command_1.issueCommand('add-path', {}, inputPath);
+    }
     process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 }
 exports.addPath = addPath;
@@ -17213,12 +19755,22 @@ exports.getInput = getInput;
  * Sets the value of an output.
  *
  * @param     name     name of the output to set
- * @param     value    value to store
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
+/**
+ * Enables or disables the echoing of commands into stdout for the rest of the step.
+ * Echoing is disabled by default if ACTIONS_STEP_DEBUG is not set.
+ *
+ */
+function setCommandEcho(enabled) {
+    command_1.issue('echo', enabled ? 'on' : 'off');
+}
+exports.setCommandEcho = setCommandEcho;
 //-----------------------------------------------------------------------
 // Results
 //-----------------------------------------------------------------------
@@ -17236,6 +19788,13 @@ exports.setFailed = setFailed;
 // Logging Commands
 //-----------------------------------------------------------------------
 /**
+ * Gets whether Actions Step Debug is on or not
+ */
+function isDebug() {
+    return process.env['RUNNER_DEBUG'] === '1';
+}
+exports.isDebug = isDebug;
+/**
  * Writes debug message to user log
  * @param message debug message
  */
@@ -17245,18 +19804,18 @@ function debug(message) {
 exports.debug = debug;
 /**
  * Adds an error issue
- * @param message error issue message
+ * @param message error issue message. Errors will be converted to string via toString()
  */
 function error(message) {
-    command_1.issue('error', message);
+    command_1.issue('error', message instanceof Error ? message.toString() : message);
 }
 exports.error = error;
 /**
  * Adds an warning issue
- * @param message warning issue message
+ * @param message warning issue message. Errors will be converted to string via toString()
  */
 function warning(message) {
-    command_1.issue('warning', message);
+    command_1.issue('warning', message instanceof Error ? message.toString() : message);
 }
 exports.warning = warning;
 /**
@@ -17314,8 +19873,9 @@ exports.group = group;
  * Saves state for current action, the state can only be retrieved by this action's post job execution.
  *
  * @param     name     name of the state to store
- * @param     value    value to store
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveState(name, value) {
     command_1.issueCommand('save-state', { name }, value);
 }
@@ -18008,7 +20568,7 @@ define(function () {
 "use strict";
 
 
-var ruleModules = __webpack_require__(894)
+var ruleModules = __webpack_require__(383)
   , toHash = __webpack_require__(855).toHash;
 
 module.exports = function rules() {
@@ -18912,12 +21472,35 @@ define(function() {
 /* 516 */,
 /* 517 */,
 /* 518 */,
-/* 519 */
+/* 519 */,
+/* 520 */,
+/* 521 */,
+/* 522 */
+/***/ (function(module) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-07/schema#","$id":"http://json-schema.org/draft-07/schema#","title":"Core schema meta-schema","definitions":{"schemaArray":{"type":"array","minItems":1,"items":{"$ref":"#"}},"nonNegativeInteger":{"type":"integer","minimum":0},"nonNegativeIntegerDefault0":{"allOf":[{"$ref":"#/definitions/nonNegativeInteger"},{"default":0}]},"simpleTypes":{"enum":["array","boolean","integer","null","number","object","string"]},"stringArray":{"type":"array","items":{"type":"string"},"uniqueItems":true,"default":[]}},"type":["object","boolean"],"properties":{"$id":{"type":"string","format":"uri-reference"},"$schema":{"type":"string","format":"uri"},"$ref":{"type":"string","format":"uri-reference"},"$comment":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"default":true,"readOnly":{"type":"boolean","default":false},"examples":{"type":"array","items":true},"multipleOf":{"type":"number","exclusiveMinimum":0},"maximum":{"type":"number"},"exclusiveMaximum":{"type":"number"},"minimum":{"type":"number"},"exclusiveMinimum":{"type":"number"},"maxLength":{"$ref":"#/definitions/nonNegativeInteger"},"minLength":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"pattern":{"type":"string","format":"regex"},"additionalItems":{"$ref":"#"},"items":{"anyOf":[{"$ref":"#"},{"$ref":"#/definitions/schemaArray"}],"default":true},"maxItems":{"$ref":"#/definitions/nonNegativeInteger"},"minItems":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"uniqueItems":{"type":"boolean","default":false},"contains":{"$ref":"#"},"maxProperties":{"$ref":"#/definitions/nonNegativeInteger"},"minProperties":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"required":{"$ref":"#/definitions/stringArray"},"additionalProperties":{"$ref":"#"},"definitions":{"type":"object","additionalProperties":{"$ref":"#"},"default":{}},"properties":{"type":"object","additionalProperties":{"$ref":"#"},"default":{}},"patternProperties":{"type":"object","additionalProperties":{"$ref":"#"},"propertyNames":{"format":"regex"},"default":{}},"dependencies":{"type":"object","additionalProperties":{"anyOf":[{"$ref":"#"},{"$ref":"#/definitions/stringArray"}]}},"propertyNames":{"$ref":"#"},"const":true,"enum":{"type":"array","items":true,"minItems":1,"uniqueItems":true},"type":{"anyOf":[{"$ref":"#/definitions/simpleTypes"},{"type":"array","items":{"$ref":"#/definitions/simpleTypes"},"minItems":1,"uniqueItems":true}]},"format":{"type":"string"},"contentMediaType":{"type":"string"},"contentEncoding":{"type":"string"},"if":{"$ref":"#"},"then":{"$ref":"#"},"else":{"$ref":"#"},"allOf":{"$ref":"#/definitions/schemaArray"},"anyOf":{"$ref":"#/definitions/schemaArray"},"oneOf":{"$ref":"#/definitions/schemaArray"},"not":{"$ref":"#"}},"default":true};
+
+/***/ }),
+/* 523 */,
+/* 524 */,
+/* 525 */
+/***/ (function(module) {
+
+// generated by genversion
+module.exports = '2.5.0'
+
+
+/***/ }),
+/* 526 */,
+/* 527 */,
+/* 528 */,
+/* 529 */,
+/* 530 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 /*!
- * Copyright (c) 2018, Salesforce.com, Inc.
+ * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -18947,50 +21530,159 @@ define(function() {
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-var psl = __webpack_require__(750);
+var Store = __webpack_require__(582).Store;
+var permuteDomain = __webpack_require__(467).permuteDomain;
+var pathMatch = __webpack_require__(542).pathMatch;
+var util = __webpack_require__(669);
 
-function getPublicSuffix(domain) {
-  return psl.get(domain);
+function MemoryCookieStore() {
+  Store.call(this);
+  this.idx = {};
+}
+util.inherits(MemoryCookieStore, Store);
+exports.MemoryCookieStore = MemoryCookieStore;
+MemoryCookieStore.prototype.idx = null;
+
+// Since it's just a struct in RAM, this Store is synchronous
+MemoryCookieStore.prototype.synchronous = true;
+
+// force a default depth:
+MemoryCookieStore.prototype.inspect = function() {
+  return "{ idx: "+util.inspect(this.idx, false, 2)+' }';
+};
+
+// Use the new custom inspection symbol to add the custom inspect function if
+// available.
+if (util.inspect.custom) {
+  MemoryCookieStore.prototype[util.inspect.custom] = MemoryCookieStore.prototype.inspect;
 }
 
-exports.getPublicSuffix = getPublicSuffix;
+MemoryCookieStore.prototype.findCookie = function(domain, path, key, cb) {
+  if (!this.idx[domain]) {
+    return cb(null,undefined);
+  }
+  if (!this.idx[domain][path]) {
+    return cb(null,undefined);
+  }
+  return cb(null,this.idx[domain][path][key]||null);
+};
 
+MemoryCookieStore.prototype.findCookies = function(domain, path, cb) {
+  var results = [];
+  if (!domain) {
+    return cb(null,[]);
+  }
 
-/***/ }),
-/* 520 */,
-/* 521 */,
-/* 522 */
-/***/ (function(module) {
+  var pathMatcher;
+  if (!path) {
+    // null means "all paths"
+    pathMatcher = function matchAll(domainIndex) {
+      for (var curPath in domainIndex) {
+        var pathIndex = domainIndex[curPath];
+        for (var key in pathIndex) {
+          results.push(pathIndex[key]);
+        }
+      }
+    };
 
-module.exports = {"$schema":"http://json-schema.org/draft-07/schema#","$id":"http://json-schema.org/draft-07/schema#","title":"Core schema meta-schema","definitions":{"schemaArray":{"type":"array","minItems":1,"items":{"$ref":"#"}},"nonNegativeInteger":{"type":"integer","minimum":0},"nonNegativeIntegerDefault0":{"allOf":[{"$ref":"#/definitions/nonNegativeInteger"},{"default":0}]},"simpleTypes":{"enum":["array","boolean","integer","null","number","object","string"]},"stringArray":{"type":"array","items":{"type":"string"},"uniqueItems":true,"default":[]}},"type":["object","boolean"],"properties":{"$id":{"type":"string","format":"uri-reference"},"$schema":{"type":"string","format":"uri"},"$ref":{"type":"string","format":"uri-reference"},"$comment":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"default":true,"readOnly":{"type":"boolean","default":false},"examples":{"type":"array","items":true},"multipleOf":{"type":"number","exclusiveMinimum":0},"maximum":{"type":"number"},"exclusiveMaximum":{"type":"number"},"minimum":{"type":"number"},"exclusiveMinimum":{"type":"number"},"maxLength":{"$ref":"#/definitions/nonNegativeInteger"},"minLength":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"pattern":{"type":"string","format":"regex"},"additionalItems":{"$ref":"#"},"items":{"anyOf":[{"$ref":"#"},{"$ref":"#/definitions/schemaArray"}],"default":true},"maxItems":{"$ref":"#/definitions/nonNegativeInteger"},"minItems":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"uniqueItems":{"type":"boolean","default":false},"contains":{"$ref":"#"},"maxProperties":{"$ref":"#/definitions/nonNegativeInteger"},"minProperties":{"$ref":"#/definitions/nonNegativeIntegerDefault0"},"required":{"$ref":"#/definitions/stringArray"},"additionalProperties":{"$ref":"#"},"definitions":{"type":"object","additionalProperties":{"$ref":"#"},"default":{}},"properties":{"type":"object","additionalProperties":{"$ref":"#"},"default":{}},"patternProperties":{"type":"object","additionalProperties":{"$ref":"#"},"propertyNames":{"format":"regex"},"default":{}},"dependencies":{"type":"object","additionalProperties":{"anyOf":[{"$ref":"#"},{"$ref":"#/definitions/stringArray"}]}},"propertyNames":{"$ref":"#"},"const":true,"enum":{"type":"array","items":true,"minItems":1,"uniqueItems":true},"type":{"anyOf":[{"$ref":"#/definitions/simpleTypes"},{"type":"array","items":{"$ref":"#/definitions/simpleTypes"},"minItems":1,"uniqueItems":true}]},"format":{"type":"string"},"contentMediaType":{"type":"string"},"contentEncoding":{"type":"string"},"if":{"$ref":"#"},"then":{"$ref":"#"},"else":{"$ref":"#"},"allOf":{"$ref":"#/definitions/schemaArray"},"anyOf":{"$ref":"#/definitions/schemaArray"},"oneOf":{"$ref":"#/definitions/schemaArray"},"not":{"$ref":"#"}},"default":true};
+  } else {
+    pathMatcher = function matchRFC(domainIndex) {
+       //NOTE: we should use path-match algorithm from S5.1.4 here
+       //(see : https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/canonical_cookie.cc#L299)
+       Object.keys(domainIndex).forEach(function (cookiePath) {
+         if (pathMatch(path, cookiePath)) {
+           var pathIndex = domainIndex[cookiePath];
 
-/***/ }),
-/* 523 */,
-/* 524 */,
-/* 525 */
-/***/ (function(module) {
+           for (var key in pathIndex) {
+             results.push(pathIndex[key]);
+           }
+         }
+       });
+     };
+  }
 
-"use strict";
+  var domains = permuteDomain(domain) || [domain];
+  var idx = this.idx;
+  domains.forEach(function(curDomain) {
+    var domainIndex = idx[curDomain];
+    if (!domainIndex) {
+      return;
+    }
+    pathMatcher(domainIndex);
+  });
 
-module.exports = function HTTPOrNetworkError(httpError, networkError) {
-  /**
-   * @param  {Null | Object} err
-   * @param  {Object} response
-   * @return {Boolean} true if the request had a recoverable HTTP or network error
-   */
-  return function HTTPError(err, response) {
-    return httpError(err, response) || networkError(err, response);
-  };
+  cb(null,results);
+};
 
+MemoryCookieStore.prototype.putCookie = function(cookie, cb) {
+  if (!this.idx[cookie.domain]) {
+    this.idx[cookie.domain] = {};
+  }
+  if (!this.idx[cookie.domain][cookie.path]) {
+    this.idx[cookie.domain][cookie.path] = {};
+  }
+  this.idx[cookie.domain][cookie.path][cookie.key] = cookie;
+  cb(null);
+};
+
+MemoryCookieStore.prototype.updateCookie = function(oldCookie, newCookie, cb) {
+  // updateCookie() may avoid updating cookies that are identical.  For example,
+  // lastAccessed may not be important to some stores and an equality
+  // comparison could exclude that field.
+  this.putCookie(newCookie,cb);
+};
+
+MemoryCookieStore.prototype.removeCookie = function(domain, path, key, cb) {
+  if (this.idx[domain] && this.idx[domain][path] && this.idx[domain][path][key]) {
+    delete this.idx[domain][path][key];
+  }
+  cb(null);
+};
+
+MemoryCookieStore.prototype.removeCookies = function(domain, path, cb) {
+  if (this.idx[domain]) {
+    if (path) {
+      delete this.idx[domain][path];
+    } else {
+      delete this.idx[domain];
+    }
+  }
+  return cb(null);
+};
+
+MemoryCookieStore.prototype.removeAllCookies = function(cb) {
+  this.idx = {};
+  return cb(null);
+}
+
+MemoryCookieStore.prototype.getAllCookies = function(cb) {
+  var cookies = [];
+  var idx = this.idx;
+
+  var domains = Object.keys(idx);
+  domains.forEach(function(domain) {
+    var paths = Object.keys(idx[domain]);
+    paths.forEach(function(path) {
+      var keys = Object.keys(idx[domain][path]);
+      keys.forEach(function(key) {
+        if (key !== null) {
+          cookies.push(idx[domain][path][key]);
+        }
+      });
+    });
+  });
+
+  // Sort by creationIndex so deserializing retains the creation order.
+  // When implementing your own store, this SHOULD retain the order too
+  cookies.sort(function(a,b) {
+    return (a.creationIndex||0) - (b.creationIndex||0);
+  });
+
+  cb(null, cookies);
 };
 
 
 /***/ }),
-/* 526 */,
-/* 527 */,
-/* 528 */,
-/* 529 */,
-/* 530 */,
 /* 531 */,
 /* 532 */,
 /* 533 */,
@@ -19174,84 +21866,70 @@ function write(key, options) {
 /* 540 */,
 /* 541 */,
 /* 542 */
-/***/ (function(module) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
+/*!
+ * Copyright (c) 2015, Salesforce.com, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of Salesforce.com nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 
-module.exports = function generate_pattern(it, $keyword, $ruleType) {
-  var out = ' ';
-  var $lvl = it.level;
-  var $dataLvl = it.dataLevel;
-  var $schema = it.schema[$keyword];
-  var $schemaPath = it.schemaPath + it.util.getProperty($keyword);
-  var $errSchemaPath = it.errSchemaPath + '/' + $keyword;
-  var $breakOnError = !it.opts.allErrors;
-  var $data = 'data' + ($dataLvl || '');
-  var $isData = it.opts.$data && $schema && $schema.$data,
-    $schemaValue;
-  if ($isData) {
-    out += ' var schema' + ($lvl) + ' = ' + (it.util.getData($schema.$data, $dataLvl, it.dataPathArr)) + '; ';
-    $schemaValue = 'schema' + $lvl;
-  } else {
-    $schemaValue = $schema;
+/*
+ * "A request-path path-matches a given cookie-path if at least one of the
+ * following conditions holds:"
+ */
+function pathMatch (reqPath, cookiePath) {
+  // "o  The cookie-path and the request-path are identical."
+  if (cookiePath === reqPath) {
+    return true;
   }
-  var $regexp = $isData ? '(new RegExp(' + $schemaValue + '))' : it.usePattern($schema);
-  out += 'if ( ';
-  if ($isData) {
-    out += ' (' + ($schemaValue) + ' !== undefined && typeof ' + ($schemaValue) + ' != \'string\') || ';
-  }
-  out += ' !' + ($regexp) + '.test(' + ($data) + ') ) {   ';
-  var $$outStack = $$outStack || [];
-  $$outStack.push(out);
-  out = ''; /* istanbul ignore else */
-  if (it.createErrors !== false) {
-    out += ' { keyword: \'' + ('pattern') + '\' , dataPath: (dataPath || \'\') + ' + (it.errorPath) + ' , schemaPath: ' + (it.util.toQuotedString($errSchemaPath)) + ' , params: { pattern:  ';
-    if ($isData) {
-      out += '' + ($schemaValue);
-    } else {
-      out += '' + (it.util.toQuotedString($schema));
+
+  var idx = reqPath.indexOf(cookiePath);
+  if (idx === 0) {
+    // "o  The cookie-path is a prefix of the request-path, and the last
+    // character of the cookie-path is %x2F ("/")."
+    if (cookiePath.substr(-1) === "/") {
+      return true;
     }
-    out += '  } ';
-    if (it.opts.messages !== false) {
-      out += ' , message: \'should match pattern "';
-      if ($isData) {
-        out += '\' + ' + ($schemaValue) + ' + \'';
-      } else {
-        out += '' + (it.util.escapeQuotes($schema));
-      }
-      out += '"\' ';
+
+    // " o  The cookie-path is a prefix of the request-path, and the first
+    // character of the request-path that is not included in the cookie- path
+    // is a %x2F ("/") character."
+    if (reqPath.substr(cookiePath.length, 1) === "/") {
+      return true;
     }
-    if (it.opts.verbose) {
-      out += ' , schema:  ';
-      if ($isData) {
-        out += 'validate.schema' + ($schemaPath);
-      } else {
-        out += '' + (it.util.toQuotedString($schema));
-      }
-      out += '         , parentSchema: validate.schema' + (it.schemaPath) + ' , data: ' + ($data) + ' ';
-    }
-    out += ' } ';
-  } else {
-    out += ' {} ';
   }
-  var __err = out;
-  out = $$outStack.pop();
-  if (!it.compositeRule && $breakOnError) {
-    /* istanbul ignore if */
-    if (it.async) {
-      out += ' throw new ValidationError([' + (__err) + ']); ';
-    } else {
-      out += ' validate.errors = [' + (__err) + ']; return false; ';
-    }
-  } else {
-    out += ' var err = ' + (__err) + ';  if (vErrors === null) vErrors = [err]; else vErrors.push(err); errors++; ';
-  }
-  out += '} ';
-  if ($breakOnError) {
-    out += ' else { ';
-  }
-  return out;
+
+  return false;
 }
+
+exports.pathMatch = pathMatch;
 
 
 /***/ }),
@@ -19736,7 +22414,7 @@ Auth.prototype.digest = function (method, path, authHeader) {
 
   var challenge = {}
   var re = /([a-z0-9_-]+)=(?:"([^"]+)"|([a-z0-9_-]+))/gi
-  for (;;) {
+  while (true) {
     var match = re.exec(authHeader)
     if (!match) {
       break
@@ -19862,7 +22540,7 @@ exports.Auth = Auth
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.19';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -23569,8 +26247,21 @@ exports.Auth = Auth
      * @returns {Array} Returns the new sorted array.
      */
     function baseOrderBy(collection, iteratees, orders) {
+      if (iteratees.length) {
+        iteratees = arrayMap(iteratees, function(iteratee) {
+          if (isArray(iteratee)) {
+            return function(value) {
+              return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+            }
+          }
+          return iteratee;
+        });
+      } else {
+        iteratees = [identity];
+      }
+
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(getIteratee()));
+      iteratees = arrayMap(iteratees, baseUnary(getIteratee()));
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
@@ -23827,6 +26518,10 @@ exports.Auth = Auth
         var key = toKey(path[index]),
             newValue = value;
 
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          return object;
+        }
+
         if (index != lastIndex) {
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -23979,11 +26674,14 @@ exports.Auth = Auth
      *  into `array`.
      */
     function baseSortedIndexBy(array, value, iteratee, retHighest) {
-      value = iteratee(value);
-
       var low = 0,
-          high = array == null ? 0 : array.length,
-          valIsNaN = value !== value,
+          high = array == null ? 0 : array.length;
+      if (high === 0) {
+        return 0;
+      }
+
+      value = iteratee(value);
+      var valIsNaN = value !== value,
           valIsNull = value === null,
           valIsSymbol = isSymbol(value),
           valIsUndefined = value === undefined;
@@ -25468,10 +28166,11 @@ exports.Auth = Auth
       if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(array);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var arrStacked = stack.get(array);
+      var othStacked = stack.get(other);
+      if (arrStacked && othStacked) {
+        return arrStacked == other && othStacked == array;
       }
       var index = -1,
           result = true,
@@ -25633,10 +28332,11 @@ exports.Auth = Auth
           return false;
         }
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(object);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var objStacked = stack.get(object);
+      var othStacked = stack.get(other);
+      if (objStacked && othStacked) {
+        return objStacked == other && othStacked == object;
       }
       var result = true;
       stack.set(object, other);
@@ -29017,6 +31717,10 @@ exports.Auth = Auth
      * // The `_.property` iteratee shorthand.
      * _.filter(users, 'active');
      * // => objects for ['barney']
+     *
+     * // Combining several predicates using `_.overEvery` or `_.overSome`.
+     * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
+     * // => objects for ['fred', 'barney']
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -29766,15 +32470,15 @@ exports.Auth = Auth
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
      *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'fred',   'age': 30 },
      *   { 'user': 'barney', 'age': 34 }
      * ];
      *
      * _.sortBy(users, [function(o) { return o.user; }]);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
+     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
      *
      * _.sortBy(users, ['user', 'age']);
-     * // => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
+     * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
      */
     var sortBy = baseRest(function(collection, iteratees) {
       if (collection == null) {
@@ -34649,11 +37353,11 @@ exports.Auth = Auth
 
       // Use a sourceURL for easier debugging.
       // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
+      // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
+      // and escape the comment, thus injecting code that gets evaled.
       var sourceURL = '//# sourceURL=' +
         (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
+          ? (options.sourceURL + '').replace(/\s/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -34686,8 +37390,6 @@ exports.Auth = Auth
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      // Like with sourceURL, we take care to not check the option's prototype,
-      // as this configuration is a code injection vector.
       var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
@@ -35394,6 +38096,9 @@ exports.Auth = Auth
      * values against any array or object value, respectively. See `_.isEqual`
      * for a list of supported value comparisons.
      *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
+     *
      * @static
      * @memberOf _
      * @since 3.0.0
@@ -35409,6 +38114,10 @@ exports.Auth = Auth
      *
      * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
      * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+     *
+     * // Checking for several possible values
+     * _.filter(users, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matches(source) {
       return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
@@ -35422,6 +38131,9 @@ exports.Auth = Auth
      * **Note:** Partial comparisons will match empty array and empty object
      * `srcValue` values against any array or object value, respectively. See
      * `_.isEqual` for a list of supported value comparisons.
+     *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
      *
      * @static
      * @memberOf _
@@ -35439,6 +38151,10 @@ exports.Auth = Auth
      *
      * _.find(objects, _.matchesProperty('a', 4));
      * // => { 'a': 4, 'b': 5, 'c': 6 }
+     *
+     * // Checking for several possible values
+     * _.filter(users, _.overSome([_.matchesProperty('a', 1), _.matchesProperty('a', 4)]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matchesProperty(path, srcValue) {
       return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
@@ -35662,6 +38378,10 @@ exports.Auth = Auth
      * Creates a function that checks if **all** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -35688,6 +38408,10 @@ exports.Auth = Auth
      * Creates a function that checks if **any** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -35707,6 +38431,9 @@ exports.Auth = Auth
      *
      * func(NaN);
      * // => false
+     *
+     * var matchesFunc = _.overSome([{ 'a': 1 }, { 'a': 2 }])
+     * var matchesPropertyFunc = _.overSome([['a', 1], ['a', 2]])
      */
     var overSome = createOver(arraySome);
 
@@ -37702,7 +40429,88 @@ module.exports = {
 
 
 /***/ }),
-/* 582 */,
+/* 582 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+/*!
+ * Copyright (c) 2015, Salesforce.com, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of Salesforce.com nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*jshint unused:false */
+
+function Store() {
+}
+exports.Store = Store;
+
+// Stores may be synchronous, but are still required to use a
+// Continuation-Passing Style API.  The CookieJar itself will expose a "*Sync"
+// API that converts from synchronous-callbacks to imperative style.
+Store.prototype.synchronous = false;
+
+Store.prototype.findCookie = function(domain, path, key, cb) {
+  throw new Error('findCookie is not implemented');
+};
+
+Store.prototype.findCookies = function(domain, path, cb) {
+  throw new Error('findCookies is not implemented');
+};
+
+Store.prototype.putCookie = function(cookie, cb) {
+  throw new Error('putCookie is not implemented');
+};
+
+Store.prototype.updateCookie = function(oldCookie, newCookie, cb) {
+  // recommended default implementation:
+  // return this.putCookie(newCookie, cb);
+  throw new Error('updateCookie is not implemented');
+};
+
+Store.prototype.removeCookie = function(domain, path, key, cb) {
+  throw new Error('removeCookie is not implemented');
+};
+
+Store.prototype.removeCookies = function(domain, path, cb) {
+  throw new Error('removeCookies is not implemented');
+};
+
+Store.prototype.removeAllCookies = function(cb) {
+  throw new Error('removeAllCookies is not implemented');
+}
+
+Store.prototype.getAllCookies = function(cb) {
+  throw new Error('getAllCookies is not implemented (therefore jar cannot be serialized)');
+};
+
+
+/***/ }),
 /* 583 */,
 /* 584 */
 /***/ (function(module) {
@@ -37746,7 +40554,7 @@ module.exports = {
 "use strict";
 
 
-var tough = __webpack_require__(701)
+var tough = __webpack_require__(236)
 
 var Cookie = tough.Cookie
 var CookieJar = tough.CookieJar
@@ -38048,84 +40856,7 @@ function wrap(txt, len) {
 /***/ }),
 /* 625 */,
 /* 626 */,
-/* 627 */
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*jshint unused:false */
-
-function Store() {
-}
-exports.Store = Store;
-
-// Stores may be synchronous, but are still required to use a
-// Continuation-Passing Style API.  The CookieJar itself will expose a "*Sync"
-// API that converts from synchronous-callbacks to imperative style.
-Store.prototype.synchronous = false;
-
-Store.prototype.findCookie = function(domain, path, key, cb) {
-  throw new Error('findCookie is not implemented');
-};
-
-Store.prototype.findCookies = function(domain, path, cb) {
-  throw new Error('findCookies is not implemented');
-};
-
-Store.prototype.putCookie = function(cookie, cb) {
-  throw new Error('putCookie is not implemented');
-};
-
-Store.prototype.updateCookie = function(oldCookie, newCookie, cb) {
-  // recommended default implementation:
-  // return this.putCookie(newCookie, cb);
-  throw new Error('updateCookie is not implemented');
-};
-
-Store.prototype.removeCookie = function(domain, path, key, cb) {
-  throw new Error('removeCookie is not implemented');
-};
-
-Store.prototype.removeCookies = function(domain, path, cb) {
-  throw new Error('removeCookies is not implemented');
-};
-
-Store.prototype.getAllCookies = function(cb) {
-  throw new Error('getAllCookies is not implemented (therefore jar cannot be serialized)');
-};
-
-
-/***/ }),
+/* 627 */,
 /* 628 */
 /***/ (function(module) {
 
@@ -39529,7 +42260,7 @@ module.exports = require("util");
 
 
 module.exports = {
-  afterRequest: __webpack_require__(672),
+  afterRequest: __webpack_require__(140),
   beforeRequest: __webpack_require__(820),
   browser: __webpack_require__(222),
   cache: __webpack_require__(435),
@@ -39552,9 +42283,204 @@ module.exports = {
 
 /***/ }),
 /* 672 */
-/***/ (function(module) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
-module.exports = {"$id":"afterRequest.json#","$schema":"http://json-schema.org/draft-06/schema#","type":"object","optional":true,"required":["lastAccess","eTag","hitCount"],"properties":{"expires":{"type":"string","pattern":"^(\\d{4})(-)?(\\d\\d)(-)?(\\d\\d)(T)?(\\d\\d)(:)?(\\d\\d)(:)?(\\d\\d)(\\.\\d+)?(Z|([+-])(\\d\\d)(:)?(\\d\\d))?"},"lastAccess":{"type":"string","pattern":"^(\\d{4})(-)?(\\d\\d)(-)?(\\d\\d)(T)?(\\d\\d)(:)?(\\d\\d)(:)?(\\d\\d)(\\.\\d+)?(Z|([+-])(\\d\\d)(:)?(\\d\\d))?"},"eTag":{"type":"string"},"hitCount":{"type":"integer"},"comment":{"type":"string"}}};
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+const assert_1 = __webpack_require__(357);
+const fs = __webpack_require__(747);
+const path = __webpack_require__(622);
+_a = fs.promises, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
+exports.IS_WINDOWS = process.platform === 'win32';
+function exists(fsPath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield exports.stat(fsPath);
+        }
+        catch (err) {
+            if (err.code === 'ENOENT') {
+                return false;
+            }
+            throw err;
+        }
+        return true;
+    });
+}
+exports.exists = exists;
+function isDirectory(fsPath, useStat = false) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const stats = useStat ? yield exports.stat(fsPath) : yield exports.lstat(fsPath);
+        return stats.isDirectory();
+    });
+}
+exports.isDirectory = isDirectory;
+/**
+ * On OSX/Linux, true if path starts with '/'. On Windows, true for paths like:
+ * \, \hello, \\hello\share, C:, and C:\hello (and corresponding alternate separator cases).
+ */
+function isRooted(p) {
+    p = normalizeSeparators(p);
+    if (!p) {
+        throw new Error('isRooted() parameter "p" cannot be empty');
+    }
+    if (exports.IS_WINDOWS) {
+        return (p.startsWith('\\') || /^[A-Z]:/i.test(p) // e.g. \ or \hello or \\hello
+        ); // e.g. C: or C:\hello
+    }
+    return p.startsWith('/');
+}
+exports.isRooted = isRooted;
+/**
+ * Recursively create a directory at `fsPath`.
+ *
+ * This implementation is optimistic, meaning it attempts to create the full
+ * path first, and backs up the path stack from there.
+ *
+ * @param fsPath The path to create
+ * @param maxDepth The maximum recursion depth
+ * @param depth The current recursion depth
+ */
+function mkdirP(fsPath, maxDepth = 1000, depth = 1) {
+    return __awaiter(this, void 0, void 0, function* () {
+        assert_1.ok(fsPath, 'a path argument must be provided');
+        fsPath = path.resolve(fsPath);
+        if (depth >= maxDepth)
+            return exports.mkdir(fsPath);
+        try {
+            yield exports.mkdir(fsPath);
+            return;
+        }
+        catch (err) {
+            switch (err.code) {
+                case 'ENOENT': {
+                    yield mkdirP(path.dirname(fsPath), maxDepth, depth + 1);
+                    yield exports.mkdir(fsPath);
+                    return;
+                }
+                default: {
+                    let stats;
+                    try {
+                        stats = yield exports.stat(fsPath);
+                    }
+                    catch (err2) {
+                        throw err;
+                    }
+                    if (!stats.isDirectory())
+                        throw err;
+                }
+            }
+        }
+    });
+}
+exports.mkdirP = mkdirP;
+/**
+ * Best effort attempt to determine whether a file exists and is executable.
+ * @param filePath    file path to check
+ * @param extensions  additional file extensions to try
+ * @return if file exists and is executable, returns the file path. otherwise empty string.
+ */
+function tryGetExecutablePath(filePath, extensions) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let stats = undefined;
+        try {
+            // test file exists
+            stats = yield exports.stat(filePath);
+        }
+        catch (err) {
+            if (err.code !== 'ENOENT') {
+                // eslint-disable-next-line no-console
+                console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
+            }
+        }
+        if (stats && stats.isFile()) {
+            if (exports.IS_WINDOWS) {
+                // on Windows, test for valid extension
+                const upperExt = path.extname(filePath).toUpperCase();
+                if (extensions.some(validExt => validExt.toUpperCase() === upperExt)) {
+                    return filePath;
+                }
+            }
+            else {
+                if (isUnixExecutable(stats)) {
+                    return filePath;
+                }
+            }
+        }
+        // try each extension
+        const originalFilePath = filePath;
+        for (const extension of extensions) {
+            filePath = originalFilePath + extension;
+            stats = undefined;
+            try {
+                stats = yield exports.stat(filePath);
+            }
+            catch (err) {
+                if (err.code !== 'ENOENT') {
+                    // eslint-disable-next-line no-console
+                    console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
+                }
+            }
+            if (stats && stats.isFile()) {
+                if (exports.IS_WINDOWS) {
+                    // preserve the case of the actual file (since an extension was appended)
+                    try {
+                        const directory = path.dirname(filePath);
+                        const upperName = path.basename(filePath).toUpperCase();
+                        for (const actualName of yield exports.readdir(directory)) {
+                            if (upperName === actualName.toUpperCase()) {
+                                filePath = path.join(directory, actualName);
+                                break;
+                            }
+                        }
+                    }
+                    catch (err) {
+                        // eslint-disable-next-line no-console
+                        console.log(`Unexpected error attempting to determine the actual case of the file '${filePath}': ${err}`);
+                    }
+                    return filePath;
+                }
+                else {
+                    if (isUnixExecutable(stats)) {
+                        return filePath;
+                    }
+                }
+            }
+        }
+        return '';
+    });
+}
+exports.tryGetExecutablePath = tryGetExecutablePath;
+function normalizeSeparators(p) {
+    p = p || '';
+    if (exports.IS_WINDOWS) {
+        // convert slashes on Windows
+        p = p.replace(/\//g, '\\');
+        // remove redundant slashes
+        return p.replace(/\\\\+/g, '\\');
+    }
+    // remove redundant slashes
+    return p.replace(/\/\/+/g, '/');
+}
+// on Mac/Linux, test the execute bit
+//     R   W  X  R  W X R W X
+//   256 128 64 32 16 8 4 2 1
+function isUnixExecutable(stats) {
+    return ((stats.mode & 1) > 0 ||
+        ((stats.mode & 8) > 0 && stats.gid === process.getgid()) ||
+        ((stats.mode & 64) > 0 && stats.uid === process.getuid()));
+}
+//# sourceMappingURL=io-util.js.map
 
 /***/ }),
 /* 673 */
@@ -39659,7 +42585,7 @@ module.exports = function generate_not(it, $keyword, $ruleType) {
 
 // Copyright 2016 Joyent, Inc.
 
-var x509 = __webpack_require__(866);
+var x509 = __webpack_require__(349);
 
 module.exports = {
 	read: read,
@@ -39921,7 +42847,7 @@ var strategies = module.exports;
 
 strategies.HTTPError = __webpack_require__(43);
 strategies.NetworkError = __webpack_require__(405);
-strategies.HTTPOrNetworkError = __webpack_require__(525)(strategies.HTTPError, strategies.NetworkError);
+strategies.HTTPOrNetworkError = __webpack_require__(951)(strategies.HTTPError, strategies.NetworkError);
 
 
 /***/ }),
@@ -40150,1444 +43076,7 @@ function dumpException(ex)
 /* 698 */,
 /* 699 */,
 /* 700 */,
-/* 701 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-var net = __webpack_require__(631);
-var urlParse = __webpack_require__(835).parse;
-var util = __webpack_require__(669);
-var pubsuffix = __webpack_require__(519);
-var Store = __webpack_require__(627).Store;
-var MemoryCookieStore = __webpack_require__(349).MemoryCookieStore;
-var pathMatch = __webpack_require__(54).pathMatch;
-var VERSION = __webpack_require__(158).version;
-
-var punycode;
-try {
-  punycode = __webpack_require__(213);
-} catch(e) {
-  console.warn("tough-cookie: can't load punycode; won't use punycode for domain normalization");
-}
-
-// From RFC6265 S4.1.1
-// note that it excludes \x3B ";"
-var COOKIE_OCTETS = /^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]+$/;
-
-var CONTROL_CHARS = /[\x00-\x1F]/;
-
-// From Chromium // '\r', '\n' and '\0' should be treated as a terminator in
-// the "relaxed" mode, see:
-// https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/parsed_cookie.cc#L60
-var TERMINATORS = ['\n', '\r', '\0'];
-
-// RFC6265 S4.1.1 defines path value as 'any CHAR except CTLs or ";"'
-// Note ';' is \x3B
-var PATH_VALUE = /[\x20-\x3A\x3C-\x7E]+/;
-
-// date-time parsing constants (RFC6265 S5.1.1)
-
-var DATE_DELIM = /[\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E]/;
-
-var MONTH_TO_NUM = {
-  jan:0, feb:1, mar:2, apr:3, may:4, jun:5,
-  jul:6, aug:7, sep:8, oct:9, nov:10, dec:11
-};
-var NUM_TO_MONTH = [
-  'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
-];
-var NUM_TO_DAY = [
-  'Sun','Mon','Tue','Wed','Thu','Fri','Sat'
-];
-
-var MAX_TIME = 2147483647000; // 31-bit max
-var MIN_TIME = 0; // 31-bit min
-
-/*
- * Parses a Natural number (i.e., non-negative integer) with either the
- *    <min>*<max>DIGIT ( non-digit *OCTET )
- * or
- *    <min>*<max>DIGIT
- * grammar (RFC6265 S5.1.1).
- *
- * The "trailingOK" boolean controls if the grammar accepts a
- * "( non-digit *OCTET )" trailer.
- */
-function parseDigits(token, minDigits, maxDigits, trailingOK) {
-  var count = 0;
-  while (count < token.length) {
-    var c = token.charCodeAt(count);
-    // "non-digit = %x00-2F / %x3A-FF"
-    if (c <= 0x2F || c >= 0x3A) {
-      break;
-    }
-    count++;
-  }
-
-  // constrain to a minimum and maximum number of digits.
-  if (count < minDigits || count > maxDigits) {
-    return null;
-  }
-
-  if (!trailingOK && count != token.length) {
-    return null;
-  }
-
-  return parseInt(token.substr(0,count), 10);
-}
-
-function parseTime(token) {
-  var parts = token.split(':');
-  var result = [0,0,0];
-
-  /* RF6256 S5.1.1:
-   *      time            = hms-time ( non-digit *OCTET )
-   *      hms-time        = time-field ":" time-field ":" time-field
-   *      time-field      = 1*2DIGIT
-   */
-
-  if (parts.length !== 3) {
-    return null;
-  }
-
-  for (var i = 0; i < 3; i++) {
-    // "time-field" must be strictly "1*2DIGIT", HOWEVER, "hms-time" can be
-    // followed by "( non-digit *OCTET )" so therefore the last time-field can
-    // have a trailer
-    var trailingOK = (i == 2);
-    var num = parseDigits(parts[i], 1, 2, trailingOK);
-    if (num === null) {
-      return null;
-    }
-    result[i] = num;
-  }
-
-  return result;
-}
-
-function parseMonth(token) {
-  token = String(token).substr(0,3).toLowerCase();
-  var num = MONTH_TO_NUM[token];
-  return num >= 0 ? num : null;
-}
-
-/*
- * RFC6265 S5.1.1 date parser (see RFC for full grammar)
- */
-function parseDate(str) {
-  if (!str) {
-    return;
-  }
-
-  /* RFC6265 S5.1.1:
-   * 2. Process each date-token sequentially in the order the date-tokens
-   * appear in the cookie-date
-   */
-  var tokens = str.split(DATE_DELIM);
-  if (!tokens) {
-    return;
-  }
-
-  var hour = null;
-  var minute = null;
-  var second = null;
-  var dayOfMonth = null;
-  var month = null;
-  var year = null;
-
-  for (var i=0; i<tokens.length; i++) {
-    var token = tokens[i].trim();
-    if (!token.length) {
-      continue;
-    }
-
-    var result;
-
-    /* 2.1. If the found-time flag is not set and the token matches the time
-     * production, set the found-time flag and set the hour- value,
-     * minute-value, and second-value to the numbers denoted by the digits in
-     * the date-token, respectively.  Skip the remaining sub-steps and continue
-     * to the next date-token.
-     */
-    if (second === null) {
-      result = parseTime(token);
-      if (result) {
-        hour = result[0];
-        minute = result[1];
-        second = result[2];
-        continue;
-      }
-    }
-
-    /* 2.2. If the found-day-of-month flag is not set and the date-token matches
-     * the day-of-month production, set the found-day-of- month flag and set
-     * the day-of-month-value to the number denoted by the date-token.  Skip
-     * the remaining sub-steps and continue to the next date-token.
-     */
-    if (dayOfMonth === null) {
-      // "day-of-month = 1*2DIGIT ( non-digit *OCTET )"
-      result = parseDigits(token, 1, 2, true);
-      if (result !== null) {
-        dayOfMonth = result;
-        continue;
-      }
-    }
-
-    /* 2.3. If the found-month flag is not set and the date-token matches the
-     * month production, set the found-month flag and set the month-value to
-     * the month denoted by the date-token.  Skip the remaining sub-steps and
-     * continue to the next date-token.
-     */
-    if (month === null) {
-      result = parseMonth(token);
-      if (result !== null) {
-        month = result;
-        continue;
-      }
-    }
-
-    /* 2.4. If the found-year flag is not set and the date-token matches the
-     * year production, set the found-year flag and set the year-value to the
-     * number denoted by the date-token.  Skip the remaining sub-steps and
-     * continue to the next date-token.
-     */
-    if (year === null) {
-      // "year = 2*4DIGIT ( non-digit *OCTET )"
-      result = parseDigits(token, 2, 4, true);
-      if (result !== null) {
-        year = result;
-        /* From S5.1.1:
-         * 3.  If the year-value is greater than or equal to 70 and less
-         * than or equal to 99, increment the year-value by 1900.
-         * 4.  If the year-value is greater than or equal to 0 and less
-         * than or equal to 69, increment the year-value by 2000.
-         */
-        if (year >= 70 && year <= 99) {
-          year += 1900;
-        } else if (year >= 0 && year <= 69) {
-          year += 2000;
-        }
-      }
-    }
-  }
-
-  /* RFC 6265 S5.1.1
-   * "5. Abort these steps and fail to parse the cookie-date if:
-   *     *  at least one of the found-day-of-month, found-month, found-
-   *        year, or found-time flags is not set,
-   *     *  the day-of-month-value is less than 1 or greater than 31,
-   *     *  the year-value is less than 1601,
-   *     *  the hour-value is greater than 23,
-   *     *  the minute-value is greater than 59, or
-   *     *  the second-value is greater than 59.
-   *     (Note that leap seconds cannot be represented in this syntax.)"
-   *
-   * So, in order as above:
-   */
-  if (
-    dayOfMonth === null || month === null || year === null || second === null ||
-    dayOfMonth < 1 || dayOfMonth > 31 ||
-    year < 1601 ||
-    hour > 23 ||
-    minute > 59 ||
-    second > 59
-  ) {
-    return;
-  }
-
-  return new Date(Date.UTC(year, month, dayOfMonth, hour, minute, second));
-}
-
-function formatDate(date) {
-  var d = date.getUTCDate(); d = d >= 10 ? d : '0'+d;
-  var h = date.getUTCHours(); h = h >= 10 ? h : '0'+h;
-  var m = date.getUTCMinutes(); m = m >= 10 ? m : '0'+m;
-  var s = date.getUTCSeconds(); s = s >= 10 ? s : '0'+s;
-  return NUM_TO_DAY[date.getUTCDay()] + ', ' +
-    d+' '+ NUM_TO_MONTH[date.getUTCMonth()] +' '+ date.getUTCFullYear() +' '+
-    h+':'+m+':'+s+' GMT';
-}
-
-// S5.1.2 Canonicalized Host Names
-function canonicalDomain(str) {
-  if (str == null) {
-    return null;
-  }
-  str = str.trim().replace(/^\./,''); // S4.1.2.3 & S5.2.3: ignore leading .
-
-  // convert to IDN if any non-ASCII characters
-  if (punycode && /[^\u0001-\u007f]/.test(str)) {
-    str = punycode.toASCII(str);
-  }
-
-  return str.toLowerCase();
-}
-
-// S5.1.3 Domain Matching
-function domainMatch(str, domStr, canonicalize) {
-  if (str == null || domStr == null) {
-    return null;
-  }
-  if (canonicalize !== false) {
-    str = canonicalDomain(str);
-    domStr = canonicalDomain(domStr);
-  }
-
-  /*
-   * "The domain string and the string are identical. (Note that both the
-   * domain string and the string will have been canonicalized to lower case at
-   * this point)"
-   */
-  if (str == domStr) {
-    return true;
-  }
-
-  /* "All of the following [three] conditions hold:" (order adjusted from the RFC) */
-
-  /* "* The string is a host name (i.e., not an IP address)." */
-  if (net.isIP(str)) {
-    return false;
-  }
-
-  /* "* The domain string is a suffix of the string" */
-  var idx = str.indexOf(domStr);
-  if (idx <= 0) {
-    return false; // it's a non-match (-1) or prefix (0)
-  }
-
-  // e.g "a.b.c".indexOf("b.c") === 2
-  // 5 === 3+2
-  if (str.length !== domStr.length + idx) { // it's not a suffix
-    return false;
-  }
-
-  /* "* The last character of the string that is not included in the domain
-  * string is a %x2E (".") character." */
-  if (str.substr(idx-1,1) !== '.') {
-    return false;
-  }
-
-  return true;
-}
-
-
-// RFC6265 S5.1.4 Paths and Path-Match
-
-/*
- * "The user agent MUST use an algorithm equivalent to the following algorithm
- * to compute the default-path of a cookie:"
- *
- * Assumption: the path (and not query part or absolute uri) is passed in.
- */
-function defaultPath(path) {
-  // "2. If the uri-path is empty or if the first character of the uri-path is not
-  // a %x2F ("/") character, output %x2F ("/") and skip the remaining steps.
-  if (!path || path.substr(0,1) !== "/") {
-    return "/";
-  }
-
-  // "3. If the uri-path contains no more than one %x2F ("/") character, output
-  // %x2F ("/") and skip the remaining step."
-  if (path === "/") {
-    return path;
-  }
-
-  var rightSlash = path.lastIndexOf("/");
-  if (rightSlash === 0) {
-    return "/";
-  }
-
-  // "4. Output the characters of the uri-path from the first character up to,
-  // but not including, the right-most %x2F ("/")."
-  return path.slice(0, rightSlash);
-}
-
-function trimTerminator(str) {
-  for (var t = 0; t < TERMINATORS.length; t++) {
-    var terminatorIdx = str.indexOf(TERMINATORS[t]);
-    if (terminatorIdx !== -1) {
-      str = str.substr(0,terminatorIdx);
-    }
-  }
-
-  return str;
-}
-
-function parseCookiePair(cookiePair, looseMode) {
-  cookiePair = trimTerminator(cookiePair);
-
-  var firstEq = cookiePair.indexOf('=');
-  if (looseMode) {
-    if (firstEq === 0) { // '=' is immediately at start
-      cookiePair = cookiePair.substr(1);
-      firstEq = cookiePair.indexOf('='); // might still need to split on '='
-    }
-  } else { // non-loose mode
-    if (firstEq <= 0) { // no '=' or is at start
-      return; // needs to have non-empty "cookie-name"
-    }
-  }
-
-  var cookieName, cookieValue;
-  if (firstEq <= 0) {
-    cookieName = "";
-    cookieValue = cookiePair.trim();
-  } else {
-    cookieName = cookiePair.substr(0, firstEq).trim();
-    cookieValue = cookiePair.substr(firstEq+1).trim();
-  }
-
-  if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue)) {
-    return;
-  }
-
-  var c = new Cookie();
-  c.key = cookieName;
-  c.value = cookieValue;
-  return c;
-}
-
-function parse(str, options) {
-  if (!options || typeof options !== 'object') {
-    options = {};
-  }
-  str = str.trim();
-
-  // We use a regex to parse the "name-value-pair" part of S5.2
-  var firstSemi = str.indexOf(';'); // S5.2 step 1
-  var cookiePair = (firstSemi === -1) ? str : str.substr(0, firstSemi);
-  var c = parseCookiePair(cookiePair, !!options.loose);
-  if (!c) {
-    return;
-  }
-
-  if (firstSemi === -1) {
-    return c;
-  }
-
-  // S5.2.3 "unparsed-attributes consist of the remainder of the set-cookie-string
-  // (including the %x3B (";") in question)." plus later on in the same section
-  // "discard the first ";" and trim".
-  var unparsed = str.slice(firstSemi + 1).trim();
-
-  // "If the unparsed-attributes string is empty, skip the rest of these
-  // steps."
-  if (unparsed.length === 0) {
-    return c;
-  }
-
-  /*
-   * S5.2 says that when looping over the items "[p]rocess the attribute-name
-   * and attribute-value according to the requirements in the following
-   * subsections" for every item.  Plus, for many of the individual attributes
-   * in S5.3 it says to use the "attribute-value of the last attribute in the
-   * cookie-attribute-list".  Therefore, in this implementation, we overwrite
-   * the previous value.
-   */
-  var cookie_avs = unparsed.split(';');
-  while (cookie_avs.length) {
-    var av = cookie_avs.shift().trim();
-    if (av.length === 0) { // happens if ";;" appears
-      continue;
-    }
-    var av_sep = av.indexOf('=');
-    var av_key, av_value;
-
-    if (av_sep === -1) {
-      av_key = av;
-      av_value = null;
-    } else {
-      av_key = av.substr(0,av_sep);
-      av_value = av.substr(av_sep+1);
-    }
-
-    av_key = av_key.trim().toLowerCase();
-
-    if (av_value) {
-      av_value = av_value.trim();
-    }
-
-    switch(av_key) {
-    case 'expires': // S5.2.1
-      if (av_value) {
-        var exp = parseDate(av_value);
-        // "If the attribute-value failed to parse as a cookie date, ignore the
-        // cookie-av."
-        if (exp) {
-          // over and underflow not realistically a concern: V8's getTime() seems to
-          // store something larger than a 32-bit time_t (even with 32-bit node)
-          c.expires = exp;
-        }
-      }
-      break;
-
-    case 'max-age': // S5.2.2
-      if (av_value) {
-        // "If the first character of the attribute-value is not a DIGIT or a "-"
-        // character ...[or]... If the remainder of attribute-value contains a
-        // non-DIGIT character, ignore the cookie-av."
-        if (/^-?[0-9]+$/.test(av_value)) {
-          var delta = parseInt(av_value, 10);
-          // "If delta-seconds is less than or equal to zero (0), let expiry-time
-          // be the earliest representable date and time."
-          c.setMaxAge(delta);
-        }
-      }
-      break;
-
-    case 'domain': // S5.2.3
-      // "If the attribute-value is empty, the behavior is undefined.  However,
-      // the user agent SHOULD ignore the cookie-av entirely."
-      if (av_value) {
-        // S5.2.3 "Let cookie-domain be the attribute-value without the leading %x2E
-        // (".") character."
-        var domain = av_value.trim().replace(/^\./, '');
-        if (domain) {
-          // "Convert the cookie-domain to lower case."
-          c.domain = domain.toLowerCase();
-        }
-      }
-      break;
-
-    case 'path': // S5.2.4
-      /*
-       * "If the attribute-value is empty or if the first character of the
-       * attribute-value is not %x2F ("/"):
-       *   Let cookie-path be the default-path.
-       * Otherwise:
-       *   Let cookie-path be the attribute-value."
-       *
-       * We'll represent the default-path as null since it depends on the
-       * context of the parsing.
-       */
-      c.path = av_value && av_value[0] === "/" ? av_value : null;
-      break;
-
-    case 'secure': // S5.2.5
-      /*
-       * "If the attribute-name case-insensitively matches the string "Secure",
-       * the user agent MUST append an attribute to the cookie-attribute-list
-       * with an attribute-name of Secure and an empty attribute-value."
-       */
-      c.secure = true;
-      break;
-
-    case 'httponly': // S5.2.6 -- effectively the same as 'secure'
-      c.httpOnly = true;
-      break;
-
-    default:
-      c.extensions = c.extensions || [];
-      c.extensions.push(av);
-      break;
-    }
-  }
-
-  return c;
-}
-
-// avoid the V8 deoptimization monster!
-function jsonParse(str) {
-  var obj;
-  try {
-    obj = JSON.parse(str);
-  } catch (e) {
-    return e;
-  }
-  return obj;
-}
-
-function fromJSON(str) {
-  if (!str) {
-    return null;
-  }
-
-  var obj;
-  if (typeof str === 'string') {
-    obj = jsonParse(str);
-    if (obj instanceof Error) {
-      return null;
-    }
-  } else {
-    // assume it's an Object
-    obj = str;
-  }
-
-  var c = new Cookie();
-  for (var i=0; i<Cookie.serializableProperties.length; i++) {
-    var prop = Cookie.serializableProperties[i];
-    if (obj[prop] === undefined ||
-        obj[prop] === Cookie.prototype[prop])
-    {
-      continue; // leave as prototype default
-    }
-
-    if (prop === 'expires' ||
-        prop === 'creation' ||
-        prop === 'lastAccessed')
-    {
-      if (obj[prop] === null) {
-        c[prop] = null;
-      } else {
-        c[prop] = obj[prop] == "Infinity" ?
-          "Infinity" : new Date(obj[prop]);
-      }
-    } else {
-      c[prop] = obj[prop];
-    }
-  }
-
-  return c;
-}
-
-/* Section 5.4 part 2:
- * "*  Cookies with longer paths are listed before cookies with
- *     shorter paths.
- *
- *  *  Among cookies that have equal-length path fields, cookies with
- *     earlier creation-times are listed before cookies with later
- *     creation-times."
- */
-
-function cookieCompare(a,b) {
-  var cmp = 0;
-
-  // descending for length: b CMP a
-  var aPathLen = a.path ? a.path.length : 0;
-  var bPathLen = b.path ? b.path.length : 0;
-  cmp = bPathLen - aPathLen;
-  if (cmp !== 0) {
-    return cmp;
-  }
-
-  // ascending for time: a CMP b
-  var aTime = a.creation ? a.creation.getTime() : MAX_TIME;
-  var bTime = b.creation ? b.creation.getTime() : MAX_TIME;
-  cmp = aTime - bTime;
-  if (cmp !== 0) {
-    return cmp;
-  }
-
-  // break ties for the same millisecond (precision of JavaScript's clock)
-  cmp = a.creationIndex - b.creationIndex;
-
-  return cmp;
-}
-
-// Gives the permutation of all possible pathMatch()es of a given path. The
-// array is in longest-to-shortest order.  Handy for indexing.
-function permutePath(path) {
-  if (path === '/') {
-    return ['/'];
-  }
-  if (path.lastIndexOf('/') === path.length-1) {
-    path = path.substr(0,path.length-1);
-  }
-  var permutations = [path];
-  while (path.length > 1) {
-    var lindex = path.lastIndexOf('/');
-    if (lindex === 0) {
-      break;
-    }
-    path = path.substr(0,lindex);
-    permutations.push(path);
-  }
-  permutations.push('/');
-  return permutations;
-}
-
-function getCookieContext(url) {
-  if (url instanceof Object) {
-    return url;
-  }
-  // NOTE: decodeURI will throw on malformed URIs (see GH-32).
-  // Therefore, we will just skip decoding for such URIs.
-  try {
-    url = decodeURI(url);
-  }
-  catch(err) {
-    // Silently swallow error
-  }
-
-  return urlParse(url);
-}
-
-function Cookie(options) {
-  options = options || {};
-
-  Object.keys(options).forEach(function(prop) {
-    if (Cookie.prototype.hasOwnProperty(prop) &&
-        Cookie.prototype[prop] !== options[prop] &&
-        prop.substr(0,1) !== '_')
-    {
-      this[prop] = options[prop];
-    }
-  }, this);
-
-  this.creation = this.creation || new Date();
-
-  // used to break creation ties in cookieCompare():
-  Object.defineProperty(this, 'creationIndex', {
-    configurable: false,
-    enumerable: false, // important for assert.deepEqual checks
-    writable: true,
-    value: ++Cookie.cookiesCreated
-  });
-}
-
-Cookie.cookiesCreated = 0; // incremented each time a cookie is created
-
-Cookie.parse = parse;
-Cookie.fromJSON = fromJSON;
-
-Cookie.prototype.key = "";
-Cookie.prototype.value = "";
-
-// the order in which the RFC has them:
-Cookie.prototype.expires = "Infinity"; // coerces to literal Infinity
-Cookie.prototype.maxAge = null; // takes precedence over expires for TTL
-Cookie.prototype.domain = null;
-Cookie.prototype.path = null;
-Cookie.prototype.secure = false;
-Cookie.prototype.httpOnly = false;
-Cookie.prototype.extensions = null;
-
-// set by the CookieJar:
-Cookie.prototype.hostOnly = null; // boolean when set
-Cookie.prototype.pathIsDefault = null; // boolean when set
-Cookie.prototype.creation = null; // Date when set; defaulted by Cookie.parse
-Cookie.prototype.lastAccessed = null; // Date when set
-Object.defineProperty(Cookie.prototype, 'creationIndex', {
-  configurable: true,
-  enumerable: false,
-  writable: true,
-  value: 0
-});
-
-Cookie.serializableProperties = Object.keys(Cookie.prototype)
-  .filter(function(prop) {
-    return !(
-      Cookie.prototype[prop] instanceof Function ||
-      prop === 'creationIndex' ||
-      prop.substr(0,1) === '_'
-    );
-  });
-
-Cookie.prototype.inspect = function inspect() {
-  var now = Date.now();
-  return 'Cookie="'+this.toString() +
-    '; hostOnly='+(this.hostOnly != null ? this.hostOnly : '?') +
-    '; aAge='+(this.lastAccessed ? (now-this.lastAccessed.getTime())+'ms' : '?') +
-    '; cAge='+(this.creation ? (now-this.creation.getTime())+'ms' : '?') +
-    '"';
-};
-
-// Use the new custom inspection symbol to add the custom inspect function if
-// available.
-if (util.inspect.custom) {
-  Cookie.prototype[util.inspect.custom] = Cookie.prototype.inspect;
-}
-
-Cookie.prototype.toJSON = function() {
-  var obj = {};
-
-  var props = Cookie.serializableProperties;
-  for (var i=0; i<props.length; i++) {
-    var prop = props[i];
-    if (this[prop] === Cookie.prototype[prop]) {
-      continue; // leave as prototype default
-    }
-
-    if (prop === 'expires' ||
-        prop === 'creation' ||
-        prop === 'lastAccessed')
-    {
-      if (this[prop] === null) {
-        obj[prop] = null;
-      } else {
-        obj[prop] = this[prop] == "Infinity" ? // intentionally not ===
-          "Infinity" : this[prop].toISOString();
-      }
-    } else if (prop === 'maxAge') {
-      if (this[prop] !== null) {
-        // again, intentionally not ===
-        obj[prop] = (this[prop] == Infinity || this[prop] == -Infinity) ?
-          this[prop].toString() : this[prop];
-      }
-    } else {
-      if (this[prop] !== Cookie.prototype[prop]) {
-        obj[prop] = this[prop];
-      }
-    }
-  }
-
-  return obj;
-};
-
-Cookie.prototype.clone = function() {
-  return fromJSON(this.toJSON());
-};
-
-Cookie.prototype.validate = function validate() {
-  if (!COOKIE_OCTETS.test(this.value)) {
-    return false;
-  }
-  if (this.expires != Infinity && !(this.expires instanceof Date) && !parseDate(this.expires)) {
-    return false;
-  }
-  if (this.maxAge != null && this.maxAge <= 0) {
-    return false; // "Max-Age=" non-zero-digit *DIGIT
-  }
-  if (this.path != null && !PATH_VALUE.test(this.path)) {
-    return false;
-  }
-
-  var cdomain = this.cdomain();
-  if (cdomain) {
-    if (cdomain.match(/\.$/)) {
-      return false; // S4.1.2.3 suggests that this is bad. domainMatch() tests confirm this
-    }
-    var suffix = pubsuffix.getPublicSuffix(cdomain);
-    if (suffix == null) { // it's a public suffix
-      return false;
-    }
-  }
-  return true;
-};
-
-Cookie.prototype.setExpires = function setExpires(exp) {
-  if (exp instanceof Date) {
-    this.expires = exp;
-  } else {
-    this.expires = parseDate(exp) || "Infinity";
-  }
-};
-
-Cookie.prototype.setMaxAge = function setMaxAge(age) {
-  if (age === Infinity || age === -Infinity) {
-    this.maxAge = age.toString(); // so JSON.stringify() works
-  } else {
-    this.maxAge = age;
-  }
-};
-
-// gives Cookie header format
-Cookie.prototype.cookieString = function cookieString() {
-  var val = this.value;
-  if (val == null) {
-    val = '';
-  }
-  if (this.key === '') {
-    return val;
-  }
-  return this.key+'='+val;
-};
-
-// gives Set-Cookie header format
-Cookie.prototype.toString = function toString() {
-  var str = this.cookieString();
-
-  if (this.expires != Infinity) {
-    if (this.expires instanceof Date) {
-      str += '; Expires='+formatDate(this.expires);
-    } else {
-      str += '; Expires='+this.expires;
-    }
-  }
-
-  if (this.maxAge != null && this.maxAge != Infinity) {
-    str += '; Max-Age='+this.maxAge;
-  }
-
-  if (this.domain && !this.hostOnly) {
-    str += '; Domain='+this.domain;
-  }
-  if (this.path) {
-    str += '; Path='+this.path;
-  }
-
-  if (this.secure) {
-    str += '; Secure';
-  }
-  if (this.httpOnly) {
-    str += '; HttpOnly';
-  }
-  if (this.extensions) {
-    this.extensions.forEach(function(ext) {
-      str += '; '+ext;
-    });
-  }
-
-  return str;
-};
-
-// TTL() partially replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
-// elsewhere)
-// S5.3 says to give the "latest representable date" for which we use Infinity
-// For "expired" we use 0
-Cookie.prototype.TTL = function TTL(now) {
-  /* RFC6265 S4.1.2.2 If a cookie has both the Max-Age and the Expires
-   * attribute, the Max-Age attribute has precedence and controls the
-   * expiration date of the cookie.
-   * (Concurs with S5.3 step 3)
-   */
-  if (this.maxAge != null) {
-    return this.maxAge<=0 ? 0 : this.maxAge*1000;
-  }
-
-  var expires = this.expires;
-  if (expires != Infinity) {
-    if (!(expires instanceof Date)) {
-      expires = parseDate(expires) || Infinity;
-    }
-
-    if (expires == Infinity) {
-      return Infinity;
-    }
-
-    return expires.getTime() - (now || Date.now());
-  }
-
-  return Infinity;
-};
-
-// expiryTime() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
-// elsewhere)
-Cookie.prototype.expiryTime = function expiryTime(now) {
-  if (this.maxAge != null) {
-    var relativeTo = now || this.creation || new Date();
-    var age = (this.maxAge <= 0) ? -Infinity : this.maxAge*1000;
-    return relativeTo.getTime() + age;
-  }
-
-  if (this.expires == Infinity) {
-    return Infinity;
-  }
-  return this.expires.getTime();
-};
-
-// expiryDate() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
-// elsewhere), except it returns a Date
-Cookie.prototype.expiryDate = function expiryDate(now) {
-  var millisec = this.expiryTime(now);
-  if (millisec == Infinity) {
-    return new Date(MAX_TIME);
-  } else if (millisec == -Infinity) {
-    return new Date(MIN_TIME);
-  } else {
-    return new Date(millisec);
-  }
-};
-
-// This replaces the "persistent-flag" parts of S5.3 step 3
-Cookie.prototype.isPersistent = function isPersistent() {
-  return (this.maxAge != null || this.expires != Infinity);
-};
-
-// Mostly S5.1.2 and S5.2.3:
-Cookie.prototype.cdomain =
-Cookie.prototype.canonicalizedDomain = function canonicalizedDomain() {
-  if (this.domain == null) {
-    return null;
-  }
-  return canonicalDomain(this.domain);
-};
-
-function CookieJar(store, options) {
-  if (typeof options === "boolean") {
-    options = {rejectPublicSuffixes: options};
-  } else if (options == null) {
-    options = {};
-  }
-  if (options.rejectPublicSuffixes != null) {
-    this.rejectPublicSuffixes = options.rejectPublicSuffixes;
-  }
-  if (options.looseMode != null) {
-    this.enableLooseMode = options.looseMode;
-  }
-
-  if (!store) {
-    store = new MemoryCookieStore();
-  }
-  this.store = store;
-}
-CookieJar.prototype.store = null;
-CookieJar.prototype.rejectPublicSuffixes = true;
-CookieJar.prototype.enableLooseMode = false;
-var CAN_BE_SYNC = [];
-
-CAN_BE_SYNC.push('setCookie');
-CookieJar.prototype.setCookie = function(cookie, url, options, cb) {
-  var err;
-  var context = getCookieContext(url);
-  if (options instanceof Function) {
-    cb = options;
-    options = {};
-  }
-
-  var host = canonicalDomain(context.hostname);
-  var loose = this.enableLooseMode;
-  if (options.loose != null) {
-    loose = options.loose;
-  }
-
-  // S5.3 step 1
-  if (!(cookie instanceof Cookie)) {
-    cookie = Cookie.parse(cookie, { loose: loose });
-  }
-  if (!cookie) {
-    err = new Error("Cookie failed to parse");
-    return cb(options.ignoreError ? null : err);
-  }
-
-  // S5.3 step 2
-  var now = options.now || new Date(); // will assign later to save effort in the face of errors
-
-  // S5.3 step 3: NOOP; persistent-flag and expiry-time is handled by getCookie()
-
-  // S5.3 step 4: NOOP; domain is null by default
-
-  // S5.3 step 5: public suffixes
-  if (this.rejectPublicSuffixes && cookie.domain) {
-    var suffix = pubsuffix.getPublicSuffix(cookie.cdomain());
-    if (suffix == null) { // e.g. "com"
-      err = new Error("Cookie has domain set to a public suffix");
-      return cb(options.ignoreError ? null : err);
-    }
-  }
-
-  // S5.3 step 6:
-  if (cookie.domain) {
-    if (!domainMatch(host, cookie.cdomain(), false)) {
-      err = new Error("Cookie not in this host's domain. Cookie:"+cookie.cdomain()+" Request:"+host);
-      return cb(options.ignoreError ? null : err);
-    }
-
-    if (cookie.hostOnly == null) { // don't reset if already set
-      cookie.hostOnly = false;
-    }
-
-  } else {
-    cookie.hostOnly = true;
-    cookie.domain = host;
-  }
-
-  //S5.2.4 If the attribute-value is empty or if the first character of the
-  //attribute-value is not %x2F ("/"):
-  //Let cookie-path be the default-path.
-  if (!cookie.path || cookie.path[0] !== '/') {
-    cookie.path = defaultPath(context.pathname);
-    cookie.pathIsDefault = true;
-  }
-
-  // S5.3 step 8: NOOP; secure attribute
-  // S5.3 step 9: NOOP; httpOnly attribute
-
-  // S5.3 step 10
-  if (options.http === false && cookie.httpOnly) {
-    err = new Error("Cookie is HttpOnly and this isn't an HTTP API");
-    return cb(options.ignoreError ? null : err);
-  }
-
-  var store = this.store;
-
-  if (!store.updateCookie) {
-    store.updateCookie = function(oldCookie, newCookie, cb) {
-      this.putCookie(newCookie, cb);
-    };
-  }
-
-  function withCookie(err, oldCookie) {
-    if (err) {
-      return cb(err);
-    }
-
-    var next = function(err) {
-      if (err) {
-        return cb(err);
-      } else {
-        cb(null, cookie);
-      }
-    };
-
-    if (oldCookie) {
-      // S5.3 step 11 - "If the cookie store contains a cookie with the same name,
-      // domain, and path as the newly created cookie:"
-      if (options.http === false && oldCookie.httpOnly) { // step 11.2
-        err = new Error("old Cookie is HttpOnly and this isn't an HTTP API");
-        return cb(options.ignoreError ? null : err);
-      }
-      cookie.creation = oldCookie.creation; // step 11.3
-      cookie.creationIndex = oldCookie.creationIndex; // preserve tie-breaker
-      cookie.lastAccessed = now;
-      // Step 11.4 (delete cookie) is implied by just setting the new one:
-      store.updateCookie(oldCookie, cookie, next); // step 12
-
-    } else {
-      cookie.creation = cookie.lastAccessed = now;
-      store.putCookie(cookie, next); // step 12
-    }
-  }
-
-  store.findCookie(cookie.domain, cookie.path, cookie.key, withCookie);
-};
-
-// RFC6365 S5.4
-CAN_BE_SYNC.push('getCookies');
-CookieJar.prototype.getCookies = function(url, options, cb) {
-  var context = getCookieContext(url);
-  if (options instanceof Function) {
-    cb = options;
-    options = {};
-  }
-
-  var host = canonicalDomain(context.hostname);
-  var path = context.pathname || '/';
-
-  var secure = options.secure;
-  if (secure == null && context.protocol &&
-      (context.protocol == 'https:' || context.protocol == 'wss:'))
-  {
-    secure = true;
-  }
-
-  var http = options.http;
-  if (http == null) {
-    http = true;
-  }
-
-  var now = options.now || Date.now();
-  var expireCheck = options.expire !== false;
-  var allPaths = !!options.allPaths;
-  var store = this.store;
-
-  function matchingCookie(c) {
-    // "Either:
-    //   The cookie's host-only-flag is true and the canonicalized
-    //   request-host is identical to the cookie's domain.
-    // Or:
-    //   The cookie's host-only-flag is false and the canonicalized
-    //   request-host domain-matches the cookie's domain."
-    if (c.hostOnly) {
-      if (c.domain != host) {
-        return false;
-      }
-    } else {
-      if (!domainMatch(host, c.domain, false)) {
-        return false;
-      }
-    }
-
-    // "The request-uri's path path-matches the cookie's path."
-    if (!allPaths && !pathMatch(path, c.path)) {
-      return false;
-    }
-
-    // "If the cookie's secure-only-flag is true, then the request-uri's
-    // scheme must denote a "secure" protocol"
-    if (c.secure && !secure) {
-      return false;
-    }
-
-    // "If the cookie's http-only-flag is true, then exclude the cookie if the
-    // cookie-string is being generated for a "non-HTTP" API"
-    if (c.httpOnly && !http) {
-      return false;
-    }
-
-    // deferred from S5.3
-    // non-RFC: allow retention of expired cookies by choice
-    if (expireCheck && c.expiryTime() <= now) {
-      store.removeCookie(c.domain, c.path, c.key, function(){}); // result ignored
-      return false;
-    }
-
-    return true;
-  }
-
-  store.findCookies(host, allPaths ? null : path, function(err,cookies) {
-    if (err) {
-      return cb(err);
-    }
-
-    cookies = cookies.filter(matchingCookie);
-
-    // sorting of S5.4 part 2
-    if (options.sort !== false) {
-      cookies = cookies.sort(cookieCompare);
-    }
-
-    // S5.4 part 3
-    var now = new Date();
-    cookies.forEach(function(c) {
-      c.lastAccessed = now;
-    });
-    // TODO persist lastAccessed
-
-    cb(null,cookies);
-  });
-};
-
-CAN_BE_SYNC.push('getCookieString');
-CookieJar.prototype.getCookieString = function(/*..., cb*/) {
-  var args = Array.prototype.slice.call(arguments,0);
-  var cb = args.pop();
-  var next = function(err,cookies) {
-    if (err) {
-      cb(err);
-    } else {
-      cb(null, cookies
-        .sort(cookieCompare)
-        .map(function(c){
-          return c.cookieString();
-        })
-        .join('; '));
-    }
-  };
-  args.push(next);
-  this.getCookies.apply(this,args);
-};
-
-CAN_BE_SYNC.push('getSetCookieStrings');
-CookieJar.prototype.getSetCookieStrings = function(/*..., cb*/) {
-  var args = Array.prototype.slice.call(arguments,0);
-  var cb = args.pop();
-  var next = function(err,cookies) {
-    if (err) {
-      cb(err);
-    } else {
-      cb(null, cookies.map(function(c){
-        return c.toString();
-      }));
-    }
-  };
-  args.push(next);
-  this.getCookies.apply(this,args);
-};
-
-CAN_BE_SYNC.push('serialize');
-CookieJar.prototype.serialize = function(cb) {
-  var type = this.store.constructor.name;
-  if (type === 'Object') {
-    type = null;
-  }
-
-  // update README.md "Serialization Format" if you change this, please!
-  var serialized = {
-    // The version of tough-cookie that serialized this jar. Generally a good
-    // practice since future versions can make data import decisions based on
-    // known past behavior. When/if this matters, use `semver`.
-    version: 'tough-cookie@'+VERSION,
-
-    // add the store type, to make humans happy:
-    storeType: type,
-
-    // CookieJar configuration:
-    rejectPublicSuffixes: !!this.rejectPublicSuffixes,
-
-    // this gets filled from getAllCookies:
-    cookies: []
-  };
-
-  if (!(this.store.getAllCookies &&
-        typeof this.store.getAllCookies === 'function'))
-  {
-    return cb(new Error('store does not support getAllCookies and cannot be serialized'));
-  }
-
-  this.store.getAllCookies(function(err,cookies) {
-    if (err) {
-      return cb(err);
-    }
-
-    serialized.cookies = cookies.map(function(cookie) {
-      // convert to serialized 'raw' cookies
-      cookie = (cookie instanceof Cookie) ? cookie.toJSON() : cookie;
-
-      // Remove the index so new ones get assigned during deserialization
-      delete cookie.creationIndex;
-
-      return cookie;
-    });
-
-    return cb(null, serialized);
-  });
-};
-
-// well-known name that JSON.stringify calls
-CookieJar.prototype.toJSON = function() {
-  return this.serializeSync();
-};
-
-// use the class method CookieJar.deserialize instead of calling this directly
-CAN_BE_SYNC.push('_importCookies');
-CookieJar.prototype._importCookies = function(serialized, cb) {
-  var jar = this;
-  var cookies = serialized.cookies;
-  if (!cookies || !Array.isArray(cookies)) {
-    return cb(new Error('serialized jar has no cookies array'));
-  }
-  cookies = cookies.slice(); // do not modify the original
-
-  function putNext(err) {
-    if (err) {
-      return cb(err);
-    }
-
-    if (!cookies.length) {
-      return cb(err, jar);
-    }
-
-    var cookie;
-    try {
-      cookie = fromJSON(cookies.shift());
-    } catch (e) {
-      return cb(e);
-    }
-
-    if (cookie === null) {
-      return putNext(null); // skip this cookie
-    }
-
-    jar.store.putCookie(cookie, putNext);
-  }
-
-  putNext();
-};
-
-CookieJar.deserialize = function(strOrObj, store, cb) {
-  if (arguments.length !== 3) {
-    // store is optional
-    cb = store;
-    store = null;
-  }
-
-  var serialized;
-  if (typeof strOrObj === 'string') {
-    serialized = jsonParse(strOrObj);
-    if (serialized instanceof Error) {
-      return cb(serialized);
-    }
-  } else {
-    serialized = strOrObj;
-  }
-
-  var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
-  jar._importCookies(serialized, function(err) {
-    if (err) {
-      return cb(err);
-    }
-    cb(null, jar);
-  });
-};
-
-CookieJar.deserializeSync = function(strOrObj, store) {
-  var serialized = typeof strOrObj === 'string' ?
-    JSON.parse(strOrObj) : strOrObj;
-  var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
-
-  // catch this mistake early:
-  if (!jar.store.synchronous) {
-    throw new Error('CookieJar store is not synchronous; use async API instead.');
-  }
-
-  jar._importCookiesSync(serialized);
-  return jar;
-};
-CookieJar.fromJSON = CookieJar.deserializeSync;
-
-CAN_BE_SYNC.push('clone');
-CookieJar.prototype.clone = function(newStore, cb) {
-  if (arguments.length === 1) {
-    cb = newStore;
-    newStore = null;
-  }
-
-  this.serialize(function(err,serialized) {
-    if (err) {
-      return cb(err);
-    }
-    CookieJar.deserialize(newStore, serialized, cb);
-  });
-};
-
-// Use a closure to provide a true imperative API for synchronous stores.
-function syncWrap(method) {
-  return function() {
-    if (!this.store.synchronous) {
-      throw new Error('CookieJar store is not synchronous; use async API instead.');
-    }
-
-    var args = Array.prototype.slice.call(arguments);
-    var syncErr, syncResult;
-    args.push(function syncCb(err, result) {
-      syncErr = err;
-      syncResult = result;
-    });
-    this[method].apply(this, args);
-
-    if (syncErr) {
-      throw syncErr;
-    }
-    return syncResult;
-  };
-}
-
-// wrap all declared CAN_BE_SYNC methods in the sync wrapper
-CAN_BE_SYNC.forEach(function(method) {
-  CookieJar.prototype[method+'Sync'] = syncWrap(method);
-});
-
-exports.CookieJar = CookieJar;
-exports.Cookie = Cookie;
-exports.Store = Store;
-exports.MemoryCookieStore = MemoryCookieStore;
-exports.parseDate = parseDate;
-exports.formatDate = formatDate;
-exports.parse = parse;
-exports.fromJSON = fromJSON;
-exports.domainMatch = domainMatch;
-exports.defaultPath = defaultPath;
-exports.pathMatch = pathMatch;
-exports.getPublicSuffix = pubsuffix.getPublicSuffix;
-exports.cookieCompare = cookieCompare;
-exports.permuteDomain = __webpack_require__(383).permuteDomain;
-exports.permutePath = permutePath;
-exports.canonicalDomain = canonicalDomain;
-
-
-/***/ }),
+/* 701 */,
 /* 702 */,
 /* 703 */
 /***/ (function(module) {
@@ -44185,7 +45674,7 @@ var Identity = __webpack_require__(378);
 
 var formats = {};
 formats['openssh'] = __webpack_require__(893);
-formats['x509'] = __webpack_require__(866);
+formats['x509'] = __webpack_require__(349);
 formats['pem'] = __webpack_require__(680);
 
 var CertificateParseError = errs.CertificateParseError;
@@ -45801,7 +47290,7 @@ function initParams (uri, options, callback) {
   }
 
   var params = {}
-  if (typeof options === 'object') {
+  if (options !== null && typeof options === 'object') {
     extend(params, options, {uri: uri})
   } else if (typeof uri === 'string') {
     extend(params, {uri: uri})
@@ -46159,7 +47648,51 @@ exports.timings = function (data) {
 
 
 /***/ }),
-/* 847 */,
+/* 847 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+/*!
+ * Copyright (c) 2018, Salesforce.com, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of Salesforce.com nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+var psl = __webpack_require__(750);
+
+function getPublicSuffix(domain) {
+  return psl.get(domain);
+}
+
+exports.getPublicSuffix = getPublicSuffix;
+
+
+/***/ }),
 /* 848 */,
 /* 849 */,
 /* 850 */,
@@ -48426,764 +49959,7 @@ module.exports = function generate_required(it, $keyword, $ruleType) {
 /* 863 */,
 /* 864 */,
 /* 865 */,
-/* 866 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-// Copyright 2017 Joyent, Inc.
-
-module.exports = {
-	read: read,
-	verify: verify,
-	sign: sign,
-	signAsync: signAsync,
-	write: write
-};
-
-var assert = __webpack_require__(477);
-var asn1 = __webpack_require__(62);
-var Buffer = __webpack_require__(215).Buffer;
-var algs = __webpack_require__(98);
-var utils = __webpack_require__(270);
-var Key = __webpack_require__(852);
-var PrivateKey = __webpack_require__(502);
-var pem = __webpack_require__(268);
-var Identity = __webpack_require__(378);
-var Signature = __webpack_require__(575);
-var Certificate = __webpack_require__(752);
-var pkcs8 = __webpack_require__(707);
-
-/*
- * This file is based on RFC5280 (X.509).
- */
-
-/* Helper to read in a single mpint */
-function readMPInt(der, nm) {
-	assert.strictEqual(der.peek(), asn1.Ber.Integer,
-	    nm + ' is not an Integer');
-	return (utils.mpNormalize(der.readString(asn1.Ber.Integer, true)));
-}
-
-function verify(cert, key) {
-	var sig = cert.signatures.x509;
-	assert.object(sig, 'x509 signature');
-
-	var algParts = sig.algo.split('-');
-	if (algParts[0] !== key.type)
-		return (false);
-
-	var blob = sig.cache;
-	if (blob === undefined) {
-		var der = new asn1.BerWriter();
-		writeTBSCert(cert, der);
-		blob = der.buffer;
-	}
-
-	var verifier = key.createVerify(algParts[1]);
-	verifier.write(blob);
-	return (verifier.verify(sig.signature));
-}
-
-function Local(i) {
-	return (asn1.Ber.Context | asn1.Ber.Constructor | i);
-}
-
-function Context(i) {
-	return (asn1.Ber.Context | i);
-}
-
-var SIGN_ALGS = {
-	'rsa-md5': '1.2.840.113549.1.1.4',
-	'rsa-sha1': '1.2.840.113549.1.1.5',
-	'rsa-sha256': '1.2.840.113549.1.1.11',
-	'rsa-sha384': '1.2.840.113549.1.1.12',
-	'rsa-sha512': '1.2.840.113549.1.1.13',
-	'dsa-sha1': '1.2.840.10040.4.3',
-	'dsa-sha256': '2.16.840.1.101.3.4.3.2',
-	'ecdsa-sha1': '1.2.840.10045.4.1',
-	'ecdsa-sha256': '1.2.840.10045.4.3.2',
-	'ecdsa-sha384': '1.2.840.10045.4.3.3',
-	'ecdsa-sha512': '1.2.840.10045.4.3.4',
-	'ed25519-sha512': '1.3.101.112'
-};
-Object.keys(SIGN_ALGS).forEach(function (k) {
-	SIGN_ALGS[SIGN_ALGS[k]] = k;
-});
-SIGN_ALGS['1.3.14.3.2.3'] = 'rsa-md5';
-SIGN_ALGS['1.3.14.3.2.29'] = 'rsa-sha1';
-
-var EXTS = {
-	'issuerKeyId': '2.5.29.35',
-	'altName': '2.5.29.17',
-	'basicConstraints': '2.5.29.19',
-	'keyUsage': '2.5.29.15',
-	'extKeyUsage': '2.5.29.37'
-};
-
-function read(buf, options) {
-	if (typeof (buf) === 'string') {
-		buf = Buffer.from(buf, 'binary');
-	}
-	assert.buffer(buf, 'buf');
-
-	var der = new asn1.BerReader(buf);
-
-	der.readSequence();
-	if (Math.abs(der.length - der.remain) > 1) {
-		throw (new Error('DER sequence does not contain whole byte ' +
-		    'stream'));
-	}
-
-	var tbsStart = der.offset;
-	der.readSequence();
-	var sigOffset = der.offset + der.length;
-	var tbsEnd = sigOffset;
-
-	if (der.peek() === Local(0)) {
-		der.readSequence(Local(0));
-		var version = der.readInt();
-		assert.ok(version <= 3,
-		    'only x.509 versions up to v3 supported');
-	}
-
-	var cert = {};
-	cert.signatures = {};
-	var sig = (cert.signatures.x509 = {});
-	sig.extras = {};
-
-	cert.serial = readMPInt(der, 'serial');
-
-	der.readSequence();
-	var after = der.offset + der.length;
-	var certAlgOid = der.readOID();
-	var certAlg = SIGN_ALGS[certAlgOid];
-	if (certAlg === undefined)
-		throw (new Error('unknown signature algorithm ' + certAlgOid));
-
-	der._offset = after;
-	cert.issuer = Identity.parseAsn1(der);
-
-	der.readSequence();
-	cert.validFrom = readDate(der);
-	cert.validUntil = readDate(der);
-
-	cert.subjects = [Identity.parseAsn1(der)];
-
-	der.readSequence();
-	after = der.offset + der.length;
-	cert.subjectKey = pkcs8.readPkcs8(undefined, 'public', der);
-	der._offset = after;
-
-	/* issuerUniqueID */
-	if (der.peek() === Local(1)) {
-		der.readSequence(Local(1));
-		sig.extras.issuerUniqueID =
-		    buf.slice(der.offset, der.offset + der.length);
-		der._offset += der.length;
-	}
-
-	/* subjectUniqueID */
-	if (der.peek() === Local(2)) {
-		der.readSequence(Local(2));
-		sig.extras.subjectUniqueID =
-		    buf.slice(der.offset, der.offset + der.length);
-		der._offset += der.length;
-	}
-
-	/* extensions */
-	if (der.peek() === Local(3)) {
-		der.readSequence(Local(3));
-		var extEnd = der.offset + der.length;
-		der.readSequence();
-
-		while (der.offset < extEnd)
-			readExtension(cert, buf, der);
-
-		assert.strictEqual(der.offset, extEnd);
-	}
-
-	assert.strictEqual(der.offset, sigOffset);
-
-	der.readSequence();
-	after = der.offset + der.length;
-	var sigAlgOid = der.readOID();
-	var sigAlg = SIGN_ALGS[sigAlgOid];
-	if (sigAlg === undefined)
-		throw (new Error('unknown signature algorithm ' + sigAlgOid));
-	der._offset = after;
-
-	var sigData = der.readString(asn1.Ber.BitString, true);
-	if (sigData[0] === 0)
-		sigData = sigData.slice(1);
-	var algParts = sigAlg.split('-');
-
-	sig.signature = Signature.parse(sigData, algParts[0], 'asn1');
-	sig.signature.hashAlgorithm = algParts[1];
-	sig.algo = sigAlg;
-	sig.cache = buf.slice(tbsStart, tbsEnd);
-
-	return (new Certificate(cert));
-}
-
-function readDate(der) {
-	if (der.peek() === asn1.Ber.UTCTime) {
-		return (utcTimeToDate(der.readString(asn1.Ber.UTCTime)));
-	} else if (der.peek() === asn1.Ber.GeneralizedTime) {
-		return (gTimeToDate(der.readString(asn1.Ber.GeneralizedTime)));
-	} else {
-		throw (new Error('Unsupported date format'));
-	}
-}
-
-function writeDate(der, date) {
-	if (date.getUTCFullYear() >= 2050 || date.getUTCFullYear() < 1950) {
-		der.writeString(dateToGTime(date), asn1.Ber.GeneralizedTime);
-	} else {
-		der.writeString(dateToUTCTime(date), asn1.Ber.UTCTime);
-	}
-}
-
-/* RFC5280, section 4.2.1.6 (GeneralName type) */
-var ALTNAME = {
-	OtherName: Local(0),
-	RFC822Name: Context(1),
-	DNSName: Context(2),
-	X400Address: Local(3),
-	DirectoryName: Local(4),
-	EDIPartyName: Local(5),
-	URI: Context(6),
-	IPAddress: Context(7),
-	OID: Context(8)
-};
-
-/* RFC5280, section 4.2.1.12 (KeyPurposeId) */
-var EXTPURPOSE = {
-	'serverAuth': '1.3.6.1.5.5.7.3.1',
-	'clientAuth': '1.3.6.1.5.5.7.3.2',
-	'codeSigning': '1.3.6.1.5.5.7.3.3',
-
-	/* See https://github.com/joyent/oid-docs/blob/master/root.md */
-	'joyentDocker': '1.3.6.1.4.1.38678.1.4.1',
-	'joyentCmon': '1.3.6.1.4.1.38678.1.4.2'
-};
-var EXTPURPOSE_REV = {};
-Object.keys(EXTPURPOSE).forEach(function (k) {
-	EXTPURPOSE_REV[EXTPURPOSE[k]] = k;
-});
-
-var KEYUSEBITS = [
-	'signature', 'identity', 'keyEncryption',
-	'encryption', 'keyAgreement', 'ca', 'crl'
-];
-
-function readExtension(cert, buf, der) {
-	der.readSequence();
-	var after = der.offset + der.length;
-	var extId = der.readOID();
-	var id;
-	var sig = cert.signatures.x509;
-	if (!sig.extras.exts)
-		sig.extras.exts = [];
-
-	var critical;
-	if (der.peek() === asn1.Ber.Boolean)
-		critical = der.readBoolean();
-
-	switch (extId) {
-	case (EXTS.basicConstraints):
-		der.readSequence(asn1.Ber.OctetString);
-		der.readSequence();
-		var bcEnd = der.offset + der.length;
-		var ca = false;
-		if (der.peek() === asn1.Ber.Boolean)
-			ca = der.readBoolean();
-		if (cert.purposes === undefined)
-			cert.purposes = [];
-		if (ca === true)
-			cert.purposes.push('ca');
-		var bc = { oid: extId, critical: critical };
-		if (der.offset < bcEnd && der.peek() === asn1.Ber.Integer)
-			bc.pathLen = der.readInt();
-		sig.extras.exts.push(bc);
-		break;
-	case (EXTS.extKeyUsage):
-		der.readSequence(asn1.Ber.OctetString);
-		der.readSequence();
-		if (cert.purposes === undefined)
-			cert.purposes = [];
-		var ekEnd = der.offset + der.length;
-		while (der.offset < ekEnd) {
-			var oid = der.readOID();
-			cert.purposes.push(EXTPURPOSE_REV[oid] || oid);
-		}
-		/*
-		 * This is a bit of a hack: in the case where we have a cert
-		 * that's only allowed to do serverAuth or clientAuth (and not
-		 * the other), we want to make sure all our Subjects are of
-		 * the right type. But we already parsed our Subjects and
-		 * decided if they were hosts or users earlier (since it appears
-		 * first in the cert).
-		 *
-		 * So we go through and mutate them into the right kind here if
-		 * it doesn't match. This might not be hugely beneficial, as it
-		 * seems that single-purpose certs are not often seen in the
-		 * wild.
-		 */
-		if (cert.purposes.indexOf('serverAuth') !== -1 &&
-		    cert.purposes.indexOf('clientAuth') === -1) {
-			cert.subjects.forEach(function (ide) {
-				if (ide.type !== 'host') {
-					ide.type = 'host';
-					ide.hostname = ide.uid ||
-					    ide.email ||
-					    ide.components[0].value;
-				}
-			});
-		} else if (cert.purposes.indexOf('clientAuth') !== -1 &&
-		    cert.purposes.indexOf('serverAuth') === -1) {
-			cert.subjects.forEach(function (ide) {
-				if (ide.type !== 'user') {
-					ide.type = 'user';
-					ide.uid = ide.hostname ||
-					    ide.email ||
-					    ide.components[0].value;
-				}
-			});
-		}
-		sig.extras.exts.push({ oid: extId, critical: critical });
-		break;
-	case (EXTS.keyUsage):
-		der.readSequence(asn1.Ber.OctetString);
-		var bits = der.readString(asn1.Ber.BitString, true);
-		var setBits = readBitField(bits, KEYUSEBITS);
-		setBits.forEach(function (bit) {
-			if (cert.purposes === undefined)
-				cert.purposes = [];
-			if (cert.purposes.indexOf(bit) === -1)
-				cert.purposes.push(bit);
-		});
-		sig.extras.exts.push({ oid: extId, critical: critical,
-		    bits: bits });
-		break;
-	case (EXTS.altName):
-		der.readSequence(asn1.Ber.OctetString);
-		der.readSequence();
-		var aeEnd = der.offset + der.length;
-		while (der.offset < aeEnd) {
-			switch (der.peek()) {
-			case ALTNAME.OtherName:
-			case ALTNAME.EDIPartyName:
-				der.readSequence();
-				der._offset += der.length;
-				break;
-			case ALTNAME.OID:
-				der.readOID(ALTNAME.OID);
-				break;
-			case ALTNAME.RFC822Name:
-				/* RFC822 specifies email addresses */
-				var email = der.readString(ALTNAME.RFC822Name);
-				id = Identity.forEmail(email);
-				if (!cert.subjects[0].equals(id))
-					cert.subjects.push(id);
-				break;
-			case ALTNAME.DirectoryName:
-				der.readSequence(ALTNAME.DirectoryName);
-				id = Identity.parseAsn1(der);
-				if (!cert.subjects[0].equals(id))
-					cert.subjects.push(id);
-				break;
-			case ALTNAME.DNSName:
-				var host = der.readString(
-				    ALTNAME.DNSName);
-				id = Identity.forHost(host);
-				if (!cert.subjects[0].equals(id))
-					cert.subjects.push(id);
-				break;
-			default:
-				der.readString(der.peek());
-				break;
-			}
-		}
-		sig.extras.exts.push({ oid: extId, critical: critical });
-		break;
-	default:
-		sig.extras.exts.push({
-			oid: extId,
-			critical: critical,
-			data: der.readString(asn1.Ber.OctetString, true)
-		});
-		break;
-	}
-
-	der._offset = after;
-}
-
-var UTCTIME_RE =
-    /^([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})?Z$/;
-function utcTimeToDate(t) {
-	var m = t.match(UTCTIME_RE);
-	assert.ok(m, 'timestamps must be in UTC');
-	var d = new Date();
-
-	var thisYear = d.getUTCFullYear();
-	var century = Math.floor(thisYear / 100) * 100;
-
-	var year = parseInt(m[1], 10);
-	if (thisYear % 100 < 50 && year >= 60)
-		year += (century - 1);
-	else
-		year += century;
-	d.setUTCFullYear(year, parseInt(m[2], 10) - 1, parseInt(m[3], 10));
-	d.setUTCHours(parseInt(m[4], 10), parseInt(m[5], 10));
-	if (m[6] && m[6].length > 0)
-		d.setUTCSeconds(parseInt(m[6], 10));
-	return (d);
-}
-
-var GTIME_RE =
-    /^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})?Z$/;
-function gTimeToDate(t) {
-	var m = t.match(GTIME_RE);
-	assert.ok(m);
-	var d = new Date();
-
-	d.setUTCFullYear(parseInt(m[1], 10), parseInt(m[2], 10) - 1,
-	    parseInt(m[3], 10));
-	d.setUTCHours(parseInt(m[4], 10), parseInt(m[5], 10));
-	if (m[6] && m[6].length > 0)
-		d.setUTCSeconds(parseInt(m[6], 10));
-	return (d);
-}
-
-function zeroPad(n, m) {
-	if (m === undefined)
-		m = 2;
-	var s = '' + n;
-	while (s.length < m)
-		s = '0' + s;
-	return (s);
-}
-
-function dateToUTCTime(d) {
-	var s = '';
-	s += zeroPad(d.getUTCFullYear() % 100);
-	s += zeroPad(d.getUTCMonth() + 1);
-	s += zeroPad(d.getUTCDate());
-	s += zeroPad(d.getUTCHours());
-	s += zeroPad(d.getUTCMinutes());
-	s += zeroPad(d.getUTCSeconds());
-	s += 'Z';
-	return (s);
-}
-
-function dateToGTime(d) {
-	var s = '';
-	s += zeroPad(d.getUTCFullYear(), 4);
-	s += zeroPad(d.getUTCMonth() + 1);
-	s += zeroPad(d.getUTCDate());
-	s += zeroPad(d.getUTCHours());
-	s += zeroPad(d.getUTCMinutes());
-	s += zeroPad(d.getUTCSeconds());
-	s += 'Z';
-	return (s);
-}
-
-function sign(cert, key) {
-	if (cert.signatures.x509 === undefined)
-		cert.signatures.x509 = {};
-	var sig = cert.signatures.x509;
-
-	sig.algo = key.type + '-' + key.defaultHashAlgorithm();
-	if (SIGN_ALGS[sig.algo] === undefined)
-		return (false);
-
-	var der = new asn1.BerWriter();
-	writeTBSCert(cert, der);
-	var blob = der.buffer;
-	sig.cache = blob;
-
-	var signer = key.createSign();
-	signer.write(blob);
-	cert.signatures.x509.signature = signer.sign();
-
-	return (true);
-}
-
-function signAsync(cert, signer, done) {
-	if (cert.signatures.x509 === undefined)
-		cert.signatures.x509 = {};
-	var sig = cert.signatures.x509;
-
-	var der = new asn1.BerWriter();
-	writeTBSCert(cert, der);
-	var blob = der.buffer;
-	sig.cache = blob;
-
-	signer(blob, function (err, signature) {
-		if (err) {
-			done(err);
-			return;
-		}
-		sig.algo = signature.type + '-' + signature.hashAlgorithm;
-		if (SIGN_ALGS[sig.algo] === undefined) {
-			done(new Error('Invalid signing algorithm "' +
-			    sig.algo + '"'));
-			return;
-		}
-		sig.signature = signature;
-		done();
-	});
-}
-
-function write(cert, options) {
-	var sig = cert.signatures.x509;
-	assert.object(sig, 'x509 signature');
-
-	var der = new asn1.BerWriter();
-	der.startSequence();
-	if (sig.cache) {
-		der._ensure(sig.cache.length);
-		sig.cache.copy(der._buf, der._offset);
-		der._offset += sig.cache.length;
-	} else {
-		writeTBSCert(cert, der);
-	}
-
-	der.startSequence();
-	der.writeOID(SIGN_ALGS[sig.algo]);
-	if (sig.algo.match(/^rsa-/))
-		der.writeNull();
-	der.endSequence();
-
-	var sigData = sig.signature.toBuffer('asn1');
-	var data = Buffer.alloc(sigData.length + 1);
-	data[0] = 0;
-	sigData.copy(data, 1);
-	der.writeBuffer(data, asn1.Ber.BitString);
-	der.endSequence();
-
-	return (der.buffer);
-}
-
-function writeTBSCert(cert, der) {
-	var sig = cert.signatures.x509;
-	assert.object(sig, 'x509 signature');
-
-	der.startSequence();
-
-	der.startSequence(Local(0));
-	der.writeInt(2);
-	der.endSequence();
-
-	der.writeBuffer(utils.mpNormalize(cert.serial), asn1.Ber.Integer);
-
-	der.startSequence();
-	der.writeOID(SIGN_ALGS[sig.algo]);
-	if (sig.algo.match(/^rsa-/))
-		der.writeNull();
-	der.endSequence();
-
-	cert.issuer.toAsn1(der);
-
-	der.startSequence();
-	writeDate(der, cert.validFrom);
-	writeDate(der, cert.validUntil);
-	der.endSequence();
-
-	var subject = cert.subjects[0];
-	var altNames = cert.subjects.slice(1);
-	subject.toAsn1(der);
-
-	pkcs8.writePkcs8(der, cert.subjectKey);
-
-	if (sig.extras && sig.extras.issuerUniqueID) {
-		der.writeBuffer(sig.extras.issuerUniqueID, Local(1));
-	}
-
-	if (sig.extras && sig.extras.subjectUniqueID) {
-		der.writeBuffer(sig.extras.subjectUniqueID, Local(2));
-	}
-
-	if (altNames.length > 0 || subject.type === 'host' ||
-	    (cert.purposes !== undefined && cert.purposes.length > 0) ||
-	    (sig.extras && sig.extras.exts)) {
-		der.startSequence(Local(3));
-		der.startSequence();
-
-		var exts = [];
-		if (cert.purposes !== undefined && cert.purposes.length > 0) {
-			exts.push({
-				oid: EXTS.basicConstraints,
-				critical: true
-			});
-			exts.push({
-				oid: EXTS.keyUsage,
-				critical: true
-			});
-			exts.push({
-				oid: EXTS.extKeyUsage,
-				critical: true
-			});
-		}
-		exts.push({ oid: EXTS.altName });
-		if (sig.extras && sig.extras.exts)
-			exts = sig.extras.exts;
-
-		for (var i = 0; i < exts.length; ++i) {
-			der.startSequence();
-			der.writeOID(exts[i].oid);
-
-			if (exts[i].critical !== undefined)
-				der.writeBoolean(exts[i].critical);
-
-			if (exts[i].oid === EXTS.altName) {
-				der.startSequence(asn1.Ber.OctetString);
-				der.startSequence();
-				if (subject.type === 'host') {
-					der.writeString(subject.hostname,
-					    Context(2));
-				}
-				for (var j = 0; j < altNames.length; ++j) {
-					if (altNames[j].type === 'host') {
-						der.writeString(
-						    altNames[j].hostname,
-						    ALTNAME.DNSName);
-					} else if (altNames[j].type ===
-					    'email') {
-						der.writeString(
-						    altNames[j].email,
-						    ALTNAME.RFC822Name);
-					} else {
-						/*
-						 * Encode anything else as a
-						 * DN style name for now.
-						 */
-						der.startSequence(
-						    ALTNAME.DirectoryName);
-						altNames[j].toAsn1(der);
-						der.endSequence();
-					}
-				}
-				der.endSequence();
-				der.endSequence();
-			} else if (exts[i].oid === EXTS.basicConstraints) {
-				der.startSequence(asn1.Ber.OctetString);
-				der.startSequence();
-				var ca = (cert.purposes.indexOf('ca') !== -1);
-				var pathLen = exts[i].pathLen;
-				der.writeBoolean(ca);
-				if (pathLen !== undefined)
-					der.writeInt(pathLen);
-				der.endSequence();
-				der.endSequence();
-			} else if (exts[i].oid === EXTS.extKeyUsage) {
-				der.startSequence(asn1.Ber.OctetString);
-				der.startSequence();
-				cert.purposes.forEach(function (purpose) {
-					if (purpose === 'ca')
-						return;
-					if (KEYUSEBITS.indexOf(purpose) !== -1)
-						return;
-					var oid = purpose;
-					if (EXTPURPOSE[purpose] !== undefined)
-						oid = EXTPURPOSE[purpose];
-					der.writeOID(oid);
-				});
-				der.endSequence();
-				der.endSequence();
-			} else if (exts[i].oid === EXTS.keyUsage) {
-				der.startSequence(asn1.Ber.OctetString);
-				/*
-				 * If we parsed this certificate from a byte
-				 * stream (i.e. we didn't generate it in sshpk)
-				 * then we'll have a ".bits" property on the
-				 * ext with the original raw byte contents.
-				 *
-				 * If we have this, use it here instead of
-				 * regenerating it. This guarantees we output
-				 * the same data we parsed, so signatures still
-				 * validate.
-				 */
-				if (exts[i].bits !== undefined) {
-					der.writeBuffer(exts[i].bits,
-					    asn1.Ber.BitString);
-				} else {
-					var bits = writeBitField(cert.purposes,
-					    KEYUSEBITS);
-					der.writeBuffer(bits,
-					    asn1.Ber.BitString);
-				}
-				der.endSequence();
-			} else {
-				der.writeBuffer(exts[i].data,
-				    asn1.Ber.OctetString);
-			}
-
-			der.endSequence();
-		}
-
-		der.endSequence();
-		der.endSequence();
-	}
-
-	der.endSequence();
-}
-
-/*
- * Reads an ASN.1 BER bitfield out of the Buffer produced by doing
- * `BerReader#readString(asn1.Ber.BitString)`. That function gives us the raw
- * contents of the BitString tag, which is a count of unused bits followed by
- * the bits as a right-padded byte string.
- *
- * `bits` is the Buffer, `bitIndex` should contain an array of string names
- * for the bits in the string, ordered starting with bit #0 in the ASN.1 spec.
- *
- * Returns an array of Strings, the names of the bits that were set to 1.
- */
-function readBitField(bits, bitIndex) {
-	var bitLen = 8 * (bits.length - 1) - bits[0];
-	var setBits = {};
-	for (var i = 0; i < bitLen; ++i) {
-		var byteN = 1 + Math.floor(i / 8);
-		var bit = 7 - (i % 8);
-		var mask = 1 << bit;
-		var bitVal = ((bits[byteN] & mask) !== 0);
-		var name = bitIndex[i];
-		if (bitVal && typeof (name) === 'string') {
-			setBits[name] = true;
-		}
-	}
-	return (Object.keys(setBits));
-}
-
-/*
- * `setBits` is an array of strings, containing the names for each bit that
- * sould be set to 1. `bitIndex` is same as in `readBitField()`.
- *
- * Returns a Buffer, ready to be written out with `BerWriter#writeString()`.
- */
-function writeBitField(setBits, bitIndex) {
-	var bitLen = bitIndex.length;
-	var blen = Math.ceil(bitLen / 8);
-	var unused = blen * 8 - bitLen;
-	var bits = Buffer.alloc(1 + blen); // zero-filled
-	bits[0] = unused;
-	for (var i = 0; i < bitLen; ++i) {
-		var byteN = 1 + Math.floor(i / 8);
-		var bit = 7 - (i % 8);
-		var mask = 1 << bit;
-		var name = bitIndex[i];
-		if (name === undefined)
-			continue;
-		var bitVal = (setBits.indexOf(name) !== -1);
-		if (bitVal) {
-			bits[byteN] |= mask;
-		}
-	}
-	return (bits);
-}
-
-
-/***/ }),
+/* 866 */,
 /* 867 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -50243,46 +51019,7 @@ function getCertType(key) {
 
 
 /***/ }),
-/* 894 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-"use strict";
-
-
-//all requires must be explicit because browserify won't work with dynamic requires
-module.exports = {
-  '$ref': __webpack_require__(266),
-  allOf: __webpack_require__(107),
-  anyOf: __webpack_require__(902),
-  '$comment': __webpack_require__(28),
-  const: __webpack_require__(662),
-  contains: __webpack_require__(154),
-  dependencies: __webpack_require__(233),
-  'enum': __webpack_require__(281),
-  format: __webpack_require__(687),
-  'if': __webpack_require__(479),
-  items: __webpack_require__(643),
-  maximum: __webpack_require__(341),
-  minimum: __webpack_require__(341),
-  maxItems: __webpack_require__(85),
-  minItems: __webpack_require__(85),
-  maxLength: __webpack_require__(772),
-  minLength: __webpack_require__(772),
-  maxProperties: __webpack_require__(560),
-  minProperties: __webpack_require__(560),
-  multipleOf: __webpack_require__(397),
-  not: __webpack_require__(673),
-  oneOf: __webpack_require__(653),
-  pattern: __webpack_require__(542),
-  properties: __webpack_require__(343),
-  propertyNames: __webpack_require__(35),
-  required: __webpack_require__(858),
-  uniqueItems: __webpack_require__(899),
-  validate: __webpack_require__(967)
-};
-
-
-/***/ }),
+/* 894 */,
 /* 895 */,
 /* 896 */,
 /* 897 */
@@ -51800,7 +52537,25 @@ function isLooseTypedArray(arr) {
 /* 948 */,
 /* 949 */,
 /* 950 */,
-/* 951 */,
+/* 951 */
+/***/ (function(module) {
+
+"use strict";
+
+module.exports = function HTTPOrNetworkError(httpError, networkError) {
+  /**
+   * @param  {Null | Object} err
+   * @param  {Object} response
+   * @return {Boolean} true if the request had a recoverable HTTP or network error
+   */
+  return function HTTPError(err, response) {
+    return httpError(err, response) || networkError(err, response);
+  };
+
+};
+
+
+/***/ }),
 /* 952 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -53542,8 +54297,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tr = __webpack_require__(9);
+const tr = __importStar(__webpack_require__(9));
 /**
  * Exec a command.
  * Output will be streamed to the live console.

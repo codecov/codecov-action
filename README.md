@@ -25,6 +25,7 @@ steps:
     flags: unittests # optional
     name: codecov-umbrella # optional
     fail_ci_if_error: true # optional (default = false)
+    verbose: true # optional (default = false)
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories.
 
@@ -45,6 +46,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `name`  | Custom defined name for the upload | Optional
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `path_to_write_report` | Write upload file to path before uploading | Optional
+| `verbose` | Specify whether the Codecov output should be verbose | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -83,6 +85,7 @@ jobs:
         name: codecov-umbrella
         fail_ci_if_error: true
         path_to_write_report: ./coverage/codecov_report.gz
+        verbose: true
 ```
 ## Contributing
 

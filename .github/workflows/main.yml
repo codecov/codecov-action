@@ -17,3 +17,11 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: unittest
           name: codecov-1
+      - name: Upload coverage to Codecov (verbose)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: unittest
+          name: codecov-1
+          verbose: true
