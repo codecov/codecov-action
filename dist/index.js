@@ -2531,19 +2531,13 @@ try {
   const write_path = core.getInput("path_to_write_report");
   const verbose = core.getInput("verbose");
 
-  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
+  const truthy = ["yes","y","true","t","1"];
+  fail_ci = truthy.includes(core.getInput("fail_ci_if_error").toLowerCase());
 
-  if (
-    fail_ci === "yes" ||
-    fail_ci === "y" ||
-    fail_ci === "true" ||
-    fail_ci === "t" ||
-    fail_ci === "1"
-  ) {
-    fail_ci = true;
-  } else {
-    fail_ci = false;
-  }
+  const bash_args = core.getInput("bash_args");
+  core.debug(`bash_args: ${bash_args}`);
+  const bash_args_clean = bash_args.split(/[\n]+/).map(s => s.trim()).filter(i => i !== '');
+  core.debug(`bash_args_clean (${bash_args_clean.length}: ${bash_args_clean}`);
 
   request({
     json: false,
@@ -2647,6 +2641,16 @@ try {
           execArgs.push(
             "-v"
           );
+        }
+
+        if (bash_args_clean.length) {
+          for(const x of bash_args_clean) {
+            const arg = x.slice(0,2);
+            const val = x.slice(2).trim();
+            execArgs.push(
+              `${arg}`, `${val}`
+            );
+          }
         }
 
         exec.exec("bash", execArgs, options)
