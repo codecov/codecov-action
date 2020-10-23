@@ -2612,20 +2612,17 @@ try {
           );
         }
 
-        if (bash_args_clean.length) {
-          for(const x of bash_args_clean) {
-            const arg = x.slice(0,2);
-            const val = x.slice(2).trim();
-            execArgs.push(
-              `${arg}`, `${val}`
-            );
-          }
+        if (name) {
+          execArgs.push(
+            "-n", `${name}`
+          );
         }
 
-        execArgs.push(
-          "-n", `${name}`,
-          "-F", `${flags}`
-        );
+        if (flags) {
+          execArgs.push(
+            "-F", `${flags}`
+          );
+        }
 
         if (fail_ci) {
           execArgs.push(
@@ -2649,6 +2646,16 @@ try {
           execArgs.push(
             "-v"
           );
+        }
+
+        if (bash_args_clean.length) {
+          for(const x of bash_args_clean) {
+            const arg = x.slice(0,2);
+            const val = x.slice(2).trim();
+            execArgs.push(
+              `${arg}`, `${val}`
+            );
+          }
         }
 
         exec.exec("bash", execArgs, options)
