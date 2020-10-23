@@ -96,6 +96,16 @@ try {
           );
         }
 
+        if (bash_args_clean.length) {
+          for(const x of bash_args_clean) {
+            const arg = x.slice(0,2);
+            const val = x.slice(2).trim();
+            execArgs.push(
+              `${arg}`, `${val}`
+            );
+          }
+        }
+
         execArgs.push(
           "-n", `${name}`,
           "-F", `${flags}`
@@ -123,16 +133,6 @@ try {
           execArgs.push(
             "-v"
           );
-        }
-
-        if (bash_args_clean.length) {
-          for(const x of bash_args_clean) {
-            const arg = x.slice(0,2);
-            const val = x.slice(2).trim();
-            execArgs.push(
-              `${arg}`, `${val}`
-            );
-          }
         }
 
         exec.exec("bash", execArgs, options)
