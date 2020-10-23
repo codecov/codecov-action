@@ -32,6 +32,9 @@ inputs:
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
     required: false
+  bash_args:
+    description: 'Extra arguments to pass into the codecov bash script.  One argument per line.'
+    required: false
 branding:
   color: 'red'
   icon: 'umbrella'
