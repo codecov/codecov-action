@@ -31,7 +31,7 @@ steps:
 
 ## Arguments
 
-Codecov's Action currently supports five inputs from the user: `token`, `file`, `flags`,`name`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below:
+Codecov's Action currently supports a number of inputs, along with their descriptions and usage contexts, listed in the table below:
 
 >**Update**: We've removed the `yml` parameter with the latest release of this action. Please put your custom codecov yaml file at the root of the repo because other locations will no longer be supported in the future.
 
