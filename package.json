@@ -32,7 +32,7 @@
     "request": "^2.88.2",
     "requestretry": "^4.1.1",
     "ts-jest": "^26.4.3",
-    "typescript": "^4.0.3",
+    "typescript": "^4.0.5",
     "yarn": "^1.22.10"
   },
   "devDependencies": {}
