@@ -84,6 +84,8 @@ try {
         }
 
         const execArgs = ["codecov.sh"];
+        execArgs.push("-Q", "github-action");
+
         if (file) {
           execArgs.push(
             "-f", `${file}`
