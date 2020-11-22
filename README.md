@@ -84,7 +84,7 @@ jobs:
         env_vars: OS,PYTHON
         name: codecov-umbrella
         fail_ci_if_error: true
-        path_to_write_report: ./coverage/codecov_report.gz
+        path_to_write_report: ./coverage/codecov_report.txt
         verbose: true
 ```
 ## Contributing
