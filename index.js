@@ -14,6 +14,8 @@ try {
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
   const verbose = core.getInput("verbose");
+  const xcode_derived_data = core.getInput("xcode_derived_data");
+  const xcode_package = core.getInput("xcode_package");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
 
@@ -132,6 +134,18 @@ try {
         if (verbose) {
           execArgs.push(
             "-v"
+          );
+        }
+
+        if (xcode_derived_data) {
+          execArgs.push(
+            "-D", `${xcode_derived_data}`
+          );
+        }
+
+        if (xcode_package) {
+          execArgs.push(
+            "-J", `${xcode_package}`
           );
         }
 
