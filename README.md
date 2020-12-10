@@ -47,6 +47,8 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `path_to_write_report` | Write upload file to path before uploading | Optional
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
+| `xcode_derived_data` | Custom Derived Data Path for Coverage.profdata and gcov processing | Optional
+| `xcode_package` | Specify packages to build coverage. Uploader will only build these packages. This can significantly reduces time to build coverage reports. -J 'MyAppName' Will match "MyAppName" and "MyAppNameTests" -J '^ExampleApp$' Will match only "ExampleApp" not "ExampleAppTests" | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
