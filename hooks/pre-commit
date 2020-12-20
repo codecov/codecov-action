@@ -2,3 +2,4 @@
 
 npm i --package-lock-only
 npm run build
+git add dist/index.js
