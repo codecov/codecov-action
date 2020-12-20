@@ -1,7 +1,7 @@
 ### 1.1.1
 
 #### Fixes
-- #184 Makefile
+- #184 Add automations ensure proper builds and deployments
 
 ### 1.1.0
 
