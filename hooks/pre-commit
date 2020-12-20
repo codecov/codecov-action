@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+npm i --package-lock-only
+npm run build
