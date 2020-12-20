@@ -2,6 +2,7 @@
 
 #### Fixes
 - #184 Add automations ensure proper builds and deployments
+- #184 Fixes verbose flag
 
 ### 1.1.0
 
