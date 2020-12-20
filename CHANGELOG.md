@@ -1,3 +1,8 @@
+### 1.1.1
+
+#### Fixes
+- #184 Makefile
+
 ### 1.1.0
 
 #### Features
