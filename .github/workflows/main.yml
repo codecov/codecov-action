@@ -13,7 +13,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: ./
         with:
-          fail_ci: true
+          fail_ci_if_error: true
           file: ./coverage/coverage-final.json
           files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
           flags: unittest
@@ -21,7 +21,7 @@ jobs:
       - name: Upload coverage to Codecov (verbose)
         uses: ./
         with:
-          fail_ci: true
+          fail_ci_if_error: true
           file: ./coverage/coverage-final.json
           files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
           flags: unittest
@@ -30,7 +30,7 @@ jobs:
       - name: Upload coverage to Codecov (working_dir)
         uses: ./
         with:
-          fail_ci: true
+          fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: unittest
