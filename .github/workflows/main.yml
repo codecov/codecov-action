@@ -13,15 +13,26 @@ jobs:
       - name: Upload coverage to Codecov
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          fail_ci: true
           file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
           flags: unittest
           name: codecov-1
       - name: Upload coverage to Codecov (verbose)
         uses: ./
         with:
+          fail_ci: true
+          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          flags: unittest
+          name: codecov-1
+          verbose: true
+      - name: Upload coverage to Codecov (working_dir)
+        uses: ./
+        with:
+          fail_ci: true
           files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: unittest
           name: codecov-1
-          verbose: true
+          working_dir: src/

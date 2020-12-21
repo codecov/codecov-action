@@ -3,8 +3,18 @@ const exec = require("@actions/exec");
 const fs = require("fs");
 const request = require('requestretry');
 
-let fail_ci;
-let verbose;
+let isTrue = (var) => {
+  const lowerVar = var.toLowerCase();
+
+  return (
+    var === "yes" ||
+    var === "y" ||
+    var === "true" ||
+    var === "t" ||
+    var === "1"
+  ) ? true : false;
+}
+
 try {
   const name = core.getInput("name");
   const token = core.getInput("token");
@@ -18,32 +28,8 @@ try {
   const xcode_derived_data = core.getInput("xcode_derived_data");
   const xcode_package = core.getInput("xcode_package");
 
-  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
-  verbose = core.getInput("verbose").toLowerCase();
-
-  if (
-    fail_ci === "yes" ||
-    fail_ci === "y" ||
-    fail_ci === "true" ||
-    fail_ci === "t" ||
-    fail_ci === "1"
-  ) {
-    fail_ci = true;
-  } else {
-    fail_ci = false;
-  }
-
-  if (
-    verbose === "yes" ||
-    verbose === "y" ||
-    verbose === "true" ||
-    verbose === "t" ||
-    verbose === "1"
-  ) {
-    verbose = true;
-  } else {
-    verbose = false;
-  }
+  const fail_ci = isTrue(core.getInput("fail_ci_if_error"));
+  const verbose = isTrue(core.getInput("verbose"));
 
   request({
     json: false,
