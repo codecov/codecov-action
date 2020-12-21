@@ -2519,9 +2519,19 @@ const exec = __webpack_require__(986);
 const fs = __webpack_require__(747);
 const request = __webpack_require__(335);
 
-let fail_ci;
-let verbose;
 try {
+  const isTrue = arg => {
+    const lowerVar = arg.toLowerCase();
+
+    return (
+      arg === "yes" ||
+      arg === "y" ||
+      arg === "true" ||
+      arg === "t" ||
+      arg === "1"
+    ) ? true : false;
+  }
+
   const name = core.getInput("name");
   const token = core.getInput("token");
   const flags = core.getInput("flags");
@@ -2534,32 +2544,8 @@ try {
   const xcode_derived_data = core.getInput("xcode_derived_data");
   const xcode_package = core.getInput("xcode_package");
 
-  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
-  verbose = core.getInput("verbose").toLowerCase();
-
-  if (
-    fail_ci === "yes" ||
-    fail_ci === "y" ||
-    fail_ci === "true" ||
-    fail_ci === "t" ||
-    fail_ci === "1"
-  ) {
-    fail_ci = true;
-  } else {
-    fail_ci = false;
-  }
-
-  if (
-    verbose === "yes" ||
-    verbose === "y" ||
-    verbose === "true" ||
-    verbose === "t" ||
-    verbose === "1"
-  ) {
-    verbose = true;
-  } else {
-    verbose = false;
-  }
+  const fail_ci = isTrue(core.getInput("fail_ci_if_error"));
+  const verbose = isTrue(core.getInput("verbose"));
 
   request({
     json: false,

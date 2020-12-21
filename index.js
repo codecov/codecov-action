@@ -4,15 +4,15 @@ const fs = require("fs");
 const request = require('requestretry');
 
 try {
-  const isTrue = (var) => {
-    const lowerVar = var.toLowerCase();
+  const isTrue = arg => {
+    const lowerVar = arg.toLowerCase();
 
     return (
-      var === "yes" ||
-      var === "y" ||
-      var === "true" ||
-      var === "t" ||
-      var === "1"
+      arg === "yes" ||
+      arg === "y" ||
+      arg === "true" ||
+      arg === "t" ||
+      arg === "1"
     ) ? true : false;
   }
 
