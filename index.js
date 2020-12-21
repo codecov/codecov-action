@@ -3,19 +3,19 @@ const exec = require("@actions/exec");
 const fs = require("fs");
 const request = require('requestretry');
 
-const isTrue = (var) => {
-  const lowerVar = var.toLowerCase();
-
-  return (
-    var === "yes" ||
-    var === "y" ||
-    var === "true" ||
-    var === "t" ||
-    var === "1"
-  ) ? true : false;
-}
-
 try {
+  const isTrue = (var) => {
+    const lowerVar = var.toLowerCase();
+
+    return (
+      var === "yes" ||
+      var === "y" ||
+      var === "true" ||
+      var === "t" ||
+      var === "1"
+    ) ? true : false;
+  }
+
   const name = core.getInput("name");
   const token = core.getInput("token");
   const flags = core.getInput("flags");
