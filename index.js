@@ -3,7 +3,7 @@ const exec = require("@actions/exec");
 const fs = require("fs");
 const request = require('requestretry');
 
-let isTrue = (var) => {
+const isTrue = (var) => {
   const lowerVar = var.toLowerCase();
 
   return (
