@@ -2520,6 +2520,7 @@ const fs = __webpack_require__(747);
 const request = __webpack_require__(335);
 
 let fail_ci;
+let verbose;
 try {
   const name = core.getInput("name");
   const token = core.getInput("token");
@@ -2529,9 +2530,12 @@ try {
   const env_vars = core.getInput("env_vars");
   const dir = core.getInput("directory");
   const write_path = core.getInput("path_to_write_report");
-  const verbose = core.getInput("verbose");
+  const working_dir = core.getInput("working-directory");
+  const xcode_derived_data = core.getInput("xcode_derived_data");
+  const xcode_package = core.getInput("xcode_package");
 
   fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
+  verbose = core.getInput("verbose").toLowerCase();
 
   if (
     fail_ci === "yes" ||
@@ -2543,6 +2547,18 @@ try {
     fail_ci = true;
   } else {
     fail_ci = false;
+  }
+
+  if (
+    verbose === "yes" ||
+    verbose === "y" ||
+    verbose === "true" ||
+    verbose === "t" ||
+    verbose === "1"
+  ) {
+    verbose = true;
+  } else {
+    verbose = false;
   }
 
   request({
@@ -2648,6 +2664,22 @@ try {
         if (verbose) {
           execArgs.push(
             "-v"
+          );
+        }
+
+        if (working_dir) {
+          options.cwd = working_dir;
+        }
+
+        if (xcode_derived_data) {
+          execArgs.push(
+            "-D", `${xcode_derived_data}`
+          );
+        }
+
+        if (xcode_package) {
+          execArgs.push(
+            "-J", `${xcode_package}`
           );
         }
 
