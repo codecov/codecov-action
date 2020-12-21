@@ -35,4 +35,4 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: unittest
           name: codecov-1
-          working_dir: src/
+          working-directory: src/
