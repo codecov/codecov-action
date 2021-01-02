@@ -10,18 +10,17 @@ jobs:
         run: npm install
       - name: Run tests and collect coverage
         run: yarn run test-all
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage/coverage-final.json
           file: ./coverage/coverage-final.json
-          flags: unittest
+          flags: demo
           name: codecov-1
-      - name: Upload coverage to Codecov (verbose)
+      - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
-          file: ./coverage/coverage-final.json
-          flags: unittest
+          files: ./coverage/script/coverage-final.json
+          flags: script
           name: codecov-1
           verbose: true

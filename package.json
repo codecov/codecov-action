@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "test-calculator": "jest --testPathPattern=src/calculator/ --coverage --coverageDirectory=coverage/calculator",
-    "test-index": "jest --testPathPattern=src/index --coverage --coverageDirectory=coverage/index",
+    "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
+    "test-coverage": "jest --testPathPattern=demo/coverage --coverage --coverageDirectory=coverage/coverage",
+    "test-script": "jest --testPathPattern=src --coverage --coverageDirectory=coverage/script",
     "test-all": "yarn run test && yarn run test-calculator && yarn run test-index && eslint",
     "build": "ncc build src/index.ts"
   },
