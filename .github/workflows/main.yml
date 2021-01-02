@@ -13,7 +13,7 @@ jobs:
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: demo
           name: codecov-1

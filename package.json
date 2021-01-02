@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
-    "test-coverage": "jest --testPathPattern=demo/coverage/ --coverage --coverageDirectory=coverage/coverage",
+    "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
     "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script",
     "test-all": "yarn run test-script && yarn run test-calculator && yarn run test-coverage && eslint",
     "build": "ncc build src/index.ts"
