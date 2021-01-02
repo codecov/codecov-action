@@ -38,7 +38,7 @@ let buildExec = () => {
   const search_dir = core.getInput("directory");
   const token = core.getInput("token");
   const verbose = isTrue(core.getInput("verbose"));
-  const working_dir = core.getInput("working_directory");
+  const working_dir = core.getInput("working-directory");
   const write_path = core.getInput("path_to_write_report");
   const xcode_derived_data = core.getInput("xcode_derived_data");
   const xcode_package = core.getInput("xcode_package");

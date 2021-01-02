@@ -70,7 +70,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `path_to_write_report` | Write upload file to path before uploading | Optional
 | `root_dir` | Used when not in git/hg project to identify project root directory | Optional
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
-| `working_directory` | Directory in which to execute `codecov.sh` | Optional
+| `working-directory` | Directory in which to execute `codecov.sh` | Optional
 | `xcode_derived_data` | Custom Derived Data Path for Coverage.profdata and gcov processing | Optional
 | `xcode_package` | Specify packages to build coverage. Uploader will only build these packages. This can significantly reduces time to build coverage reports. -J 'MyAppName' Will match "MyAppName" and "MyAppNameTests" -J '^ExampleApp$' Will match only "ExampleApp" not "ExampleAppTests" | Optional
 

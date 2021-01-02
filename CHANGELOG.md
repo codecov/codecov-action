@@ -1,10 +1,10 @@
 ### 1.2.0
 
 #### Features
-- #185 [Placeholder]
+- #193 Add all the bash params
 
 #### Fixes
-- #185 [Placeholder]
+- #193 Fixes issue with working-directory
 
 ### 1.1.1
 
