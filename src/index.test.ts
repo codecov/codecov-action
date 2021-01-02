@@ -1,8 +1,16 @@
 import { buildExec } from "./index";
 
 test('no arguments', () => {
-  let { execArgs, filepath, fail_ci } = buildExec();
-  expect(execArgs).toEqual([]);
+  let { execArgs, options, filepath, fail_ci } = buildExec();
+  expect(execArgs).toEqual([
+    "codecov.sh",
+    "-n",
+    "",
+    "-F",
+    "",
+    "-Q",
+    "github-action"
+  ]);
   expect(filepath).toEqual('codecov.sh');
   expect(fail_ci).toBeFalsy();
 });
