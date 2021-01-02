@@ -1,4 +1,4 @@
-import { buildExec } from "./index";
+import buildExec from "./buildExec";
 
 test('no arguments', () => {
   let { execArgs, options, filepath, fail_ci } = buildExec();

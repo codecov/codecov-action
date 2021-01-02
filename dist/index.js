@@ -12298,159 +12298,11 @@ module.exports = {"$id":"log.json#","$schema":"http://json-schema.org/draft-06/s
 "use strict";
 
 exports.__esModule = true;
-exports.buildExec = void 0;
 var core = __webpack_require__(470);
 var exec = __webpack_require__(986);
 var fs = __webpack_require__(747);
 var request = __webpack_require__(335);
-var isTrue = function (variable) {
-    var lowercase = variable.toLowerCase();
-    return (lowercase === "1" ||
-        lowercase === "t" ||
-        lowercase === "true" ||
-        lowercase === "y" ||
-        lowercase === "yes");
-};
-var buildExec = function () {
-    var clean = core.getInput("move_coverage_to_trash");
-    var commit_parent = core.getInput("commit_parent");
-    var curl_aws_args = core.getInput("aws_curl_args");
-    var curl_codecov_args = core.getInput("codecov_curl_args");
-    var env_vars = core.getInput("env_vars");
-    var fail_ci = isTrue(core.getInput("fail_ci_if_error"));
-    var file = core.getInput("file");
-    var files = core.getInput("files");
-    var flags = core.getInput("flags");
-    var functionalities = core.getInput("functionalities");
-    var gcov_args = core.getInput("gcov_args");
-    var gcov_dir = core.getInput("gcov_root_dir");
-    var gcov_exclude = core.getInput("gcov_path_exclude");
-    var gcov_exec = core.getInput("gcov_executable");
-    var gcov_include = core.getInput("gcov_path_include");
-    var gcov_prefix = core.getInput("gcov_prefix");
-    var name = core.getInput("name");
-    var override_branch = core.getInput("override_branch");
-    var override_build = core.getInput("override_build");
-    var override_commit = core.getInput("override_commit");
-    var override_pr = core.getInput("override_pr");
-    var override_tag = core.getInput("override_tag");
-    var root_dir = core.getInput("root_dir");
-    var search_dir = core.getInput("directory");
-    var token = core.getInput("token");
-    var verbose = isTrue(core.getInput("verbose"));
-    var working_dir = core.getInput("working_directory");
-    var write_path = core.getInput("path_to_write_report");
-    var xcode_derived_data = core.getInput("xcode_derived_data");
-    var xcode_package = core.getInput("xcode_package");
-    var filepath = working_dir ?
-        working_dir + "/codecov.sh" : "codecov.sh";
-    var execArgs = [filepath];
-    execArgs.push("-n", "" + name, "-F", "" + flags, "-Q", "github-action");
-    var options = {};
-    options.env = Object.assign(process.env, {
-        GITHUB_ACTION: process.env.GITHUB_ACTION,
-        GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
-        GITHUB_REF: process.env.GITHUB_REF,
-        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
-        GITHUB_SHA: process.env.GITHUB_SHA,
-        GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
-    });
-    var env_vars_arg = [];
-    for (var _i = 0, _a = env_vars.split(","); _i < _a.length; _i++) {
-        var env_var = _a[_i];
-        var env_var_clean = env_var.trim();
-        if (env_var_clean) {
-            options.env[env_var_clean] = process.env[env_var_clean];
-            env_vars_arg.push(env_var_clean);
-        }
-    }
-    if (token) {
-        options.env.CODECOV_TOKEN = token;
-    }
-    if (clean) {
-        execArgs.push("-c");
-    }
-    if (commit_parent) {
-        execArgs.push("-N", "" + commit_parent);
-    }
-    if (curl_aws_args) {
-        execArgs.push("-A", "" + curl_aws_args);
-    }
-    if (curl_codecov_args) {
-        execArgs.push("-U", "" + curl_codecov_args);
-    }
-    if (env_vars_arg.length) {
-        execArgs.push("-e", env_vars_arg.join(","));
-    }
-    if (fail_ci) {
-        execArgs.push("-Z");
-    }
-    if (file) {
-        execArgs.push("-f", "" + file);
-    }
-    if (files) {
-        files.split(',').forEach(function (f) { execArgs.push("-f", "" + f); });
-    }
-    if (functionalities) {
-        functionalities.split(',').forEach(function (f) { execArgs.push("-X", "" + f); });
-    }
-    if (gcov_args) {
-        execArgs.push("-a", "" + gcov_args);
-    }
-    if (gcov_dir) {
-        execArgs.push("-p", "" + gcov_dir);
-    }
-    if (gcov_exclude) {
-        execArgs.push("-g", "" + gcov_exclude);
-    }
-    if (gcov_exec) {
-        execArgs.push("-x", "" + gcov_exec);
-    }
-    if (gcov_include) {
-        execArgs.push("-G", "" + gcov_include);
-    }
-    if (gcov_prefix) {
-        execArgs.push("-k", "" + gcov_prefix);
-    }
-    if (override_branch) {
-        execArgs.push("-B", "" + override_branch);
-    }
-    if (override_build) {
-        execArgs.push("-b", "" + override_build);
-    }
-    if (override_commit) {
-        execArgs.push("-C", "" + override_commit);
-    }
-    if (override_pr) {
-        execArgs.push("-P", "" + override_pr);
-    }
-    if (override_tag) {
-        execArgs.push("-T", "" + override_tag);
-    }
-    if (root_dir) {
-        execArgs.push("-N", "" + root_dir);
-    }
-    if (search_dir) {
-        execArgs.push("-s", "" + search_dir);
-    }
-    if (verbose) {
-        execArgs.push("-v");
-    }
-    if (working_dir) {
-        options.cwd = working_dir;
-    }
-    if (write_path) {
-        execArgs.push("-q", "" + write_path);
-    }
-    if (xcode_derived_data) {
-        execArgs.push("-D", "" + xcode_derived_data);
-    }
-    if (xcode_package) {
-        execArgs.push("-J", "" + xcode_package);
-    }
-    return { execArgs: execArgs, options: options, filepath: filepath, fail_ci: fail_ci };
-};
-exports.buildExec = buildExec;
+var buildExec_1 = __webpack_require__(983);
 var fail_ci;
 try {
     request({
@@ -12459,7 +12311,7 @@ try {
         timeout: 3000,
         url: "https://codecov.io/bash"
     }, function (error, response, body) {
-        var _a = buildExec(), execArgs = _a.execArgs, options = _a.options, filepath = _a.filepath, fail_ci = _a.fail_ci;
+        var _a = buildExec_1["default"](), execArgs = _a.execArgs, options = _a.options, filepath = _a.filepath, fail_ci = _a.fail_ci;
         try {
             if (error && fail_ci) {
                 throw error;
@@ -54242,7 +54094,164 @@ function write(key, options) {
 
 
 /***/ }),
-/* 983 */,
+/* 983 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var core = __webpack_require__(470);
+var isTrue = function (variable) {
+    var lowercase = variable.toLowerCase();
+    return (lowercase === "1" ||
+        lowercase === "t" ||
+        lowercase === "true" ||
+        lowercase === "y" ||
+        lowercase === "yes");
+};
+var buildExec = function () {
+    var clean = core.getInput("move_coverage_to_trash");
+    var commit_parent = core.getInput("commit_parent");
+    var curl_aws_args = core.getInput("aws_curl_args");
+    var curl_codecov_args = core.getInput("codecov_curl_args");
+    var env_vars = core.getInput("env_vars");
+    var fail_ci = isTrue(core.getInput("fail_ci_if_error"));
+    var file = core.getInput("file");
+    var files = core.getInput("files");
+    var flags = core.getInput("flags");
+    var functionalities = core.getInput("functionalities");
+    var gcov_args = core.getInput("gcov_args");
+    var gcov_dir = core.getInput("gcov_root_dir");
+    var gcov_exclude = core.getInput("gcov_path_exclude");
+    var gcov_exec = core.getInput("gcov_executable");
+    var gcov_include = core.getInput("gcov_path_include");
+    var gcov_prefix = core.getInput("gcov_prefix");
+    var name = core.getInput("name");
+    var override_branch = core.getInput("override_branch");
+    var override_build = core.getInput("override_build");
+    var override_commit = core.getInput("override_commit");
+    var override_pr = core.getInput("override_pr");
+    var override_tag = core.getInput("override_tag");
+    var root_dir = core.getInput("root_dir");
+    var search_dir = core.getInput("directory");
+    var token = core.getInput("token");
+    var verbose = isTrue(core.getInput("verbose"));
+    var working_dir = core.getInput("working_directory");
+    var write_path = core.getInput("path_to_write_report");
+    var xcode_derived_data = core.getInput("xcode_derived_data");
+    var xcode_package = core.getInput("xcode_package");
+    var filepath = working_dir ?
+        working_dir + "/codecov.sh" : "codecov.sh";
+    var execArgs = [filepath];
+    execArgs.push("-n", "" + name, "-F", "" + flags, "-Q", "github-action");
+    var options = {};
+    options.env = Object.assign(process.env, {
+        GITHUB_ACTION: process.env.GITHUB_ACTION,
+        GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+        GITHUB_REF: process.env.GITHUB_REF,
+        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+        GITHUB_SHA: process.env.GITHUB_SHA,
+        GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
+    });
+    var env_vars_arg = [];
+    for (var _i = 0, _a = env_vars.split(","); _i < _a.length; _i++) {
+        var env_var = _a[_i];
+        var env_var_clean = env_var.trim();
+        if (env_var_clean) {
+            options.env[env_var_clean] = process.env[env_var_clean];
+            env_vars_arg.push(env_var_clean);
+        }
+    }
+    if (token) {
+        options.env.CODECOV_TOKEN = token;
+    }
+    if (clean) {
+        execArgs.push("-c");
+    }
+    if (commit_parent) {
+        execArgs.push("-N", "" + commit_parent);
+    }
+    if (curl_aws_args) {
+        execArgs.push("-A", "" + curl_aws_args);
+    }
+    if (curl_codecov_args) {
+        execArgs.push("-U", "" + curl_codecov_args);
+    }
+    if (env_vars_arg.length) {
+        execArgs.push("-e", env_vars_arg.join(","));
+    }
+    if (fail_ci) {
+        execArgs.push("-Z");
+    }
+    if (file) {
+        execArgs.push("-f", "" + file);
+    }
+    if (files) {
+        files.split(',').forEach(function (f) { execArgs.push("-f", "" + f); });
+    }
+    if (functionalities) {
+        functionalities.split(',').forEach(function (f) { execArgs.push("-X", "" + f); });
+    }
+    if (gcov_args) {
+        execArgs.push("-a", "" + gcov_args);
+    }
+    if (gcov_dir) {
+        execArgs.push("-p", "" + gcov_dir);
+    }
+    if (gcov_exclude) {
+        execArgs.push("-g", "" + gcov_exclude);
+    }
+    if (gcov_exec) {
+        execArgs.push("-x", "" + gcov_exec);
+    }
+    if (gcov_include) {
+        execArgs.push("-G", "" + gcov_include);
+    }
+    if (gcov_prefix) {
+        execArgs.push("-k", "" + gcov_prefix);
+    }
+    if (override_branch) {
+        execArgs.push("-B", "" + override_branch);
+    }
+    if (override_build) {
+        execArgs.push("-b", "" + override_build);
+    }
+    if (override_commit) {
+        execArgs.push("-C", "" + override_commit);
+    }
+    if (override_pr) {
+        execArgs.push("-P", "" + override_pr);
+    }
+    if (override_tag) {
+        execArgs.push("-T", "" + override_tag);
+    }
+    if (root_dir) {
+        execArgs.push("-N", "" + root_dir);
+    }
+    if (search_dir) {
+        execArgs.push("-s", "" + search_dir);
+    }
+    if (verbose) {
+        execArgs.push("-v");
+    }
+    if (working_dir) {
+        options.cwd = working_dir;
+    }
+    if (write_path) {
+        execArgs.push("-q", "" + write_path);
+    }
+    if (xcode_derived_data) {
+        execArgs.push("-D", "" + xcode_derived_data);
+    }
+    if (xcode_package) {
+        execArgs.push("-J", "" + xcode_package);
+    }
+    return { execArgs: execArgs, options: options, filepath: filepath, fail_ci: fail_ci };
+};
+exports["default"] = buildExec;
+
+
+/***/ }),
 /* 984 */,
 /* 985 */
 /***/ (function(module) {
