@@ -90,6 +90,7 @@ let buildExec = () => {
   if (xcode_derived_data) { execArgs.push("-D", `${xcode_derived_data}`); }
   if (xcode_package) { execArgs.push("-J", `${xcode_package}`); }
 
+  console.log(execArgs);
   return execArgs, filepath, fail_ci;
 }
 
