@@ -52,6 +52,16 @@ let buildExec = () => {
   const execArgs = [filepath];
   execArgs.push( "-n", `${name}`, "-F", `${flags}`, "-Q", "github-action" );
 
+  const options:any = {};
+  options.env = Object.assign(process.env, {
+    GITHUB_ACTION: process.env.GITHUB_ACTION,
+    GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+    GITHUB_REF: process.env.GITHUB_REF,
+    GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+    GITHUB_SHA: process.env.GITHUB_SHA,
+    GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
+  });
+
   const env_vars_arg = []
   for (let env_var of env_vars.split(",")) {
     let env_var_clean = env_var.trim();
@@ -90,9 +100,10 @@ let buildExec = () => {
   if (xcode_derived_data) { execArgs.push("-D", `${xcode_derived_data}`); }
   if (xcode_package) { execArgs.push("-J", `${xcode_package}`); }
 
-  return { execArgs, filepath, fail_ci };
+  return { execArgs, options, filepath, fail_ci };
 }
 
+let fail_ci;
 try {
   request({
     json: false,
@@ -100,12 +111,9 @@ try {
     timeout: 3000,
     url: "https://codecov.io/bash"
   }, (error, response, body) => {
+    let { execArgs, options, filepath, fail_ci } = buildExec();
+
     try {
-      let { execArgs, filepath, fail_ci } = buildExec();
-
-      console.log(execArgs);
-      console.log(filepath);
-
       if (error && fail_ci) {
         throw error;
       } else if (error) {
@@ -121,7 +129,6 @@ try {
 
         let output = "";
         let execError = "";
-        const options = {};
         options.listeners = {
           stdout: data => {
             output += data.toString();
@@ -130,15 +137,6 @@ try {
             execError += data.toString();
           }
         };
-
-        options.env = Object.assign(process.env, {
-          GITHUB_ACTION: process.env.GITHUB_ACTION,
-          GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
-          GITHUB_REF: process.env.GITHUB_REF,
-          GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
-          GITHUB_SHA: process.env.GITHUB_SHA,
-          GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
-        });
 
         exec.exec("bash", execArgs, options)
           .catch(err => {
@@ -177,3 +175,5 @@ try {
     core.warning(`Codecov warning: ${error.message}`);
   }
 }
+
+export { buildExec };
