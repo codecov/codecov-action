@@ -90,7 +90,7 @@ let buildExec = () => {
   if (xcode_derived_data) { execArgs.push("-D", `${xcode_derived_data}`); }
   if (xcode_package) { execArgs.push("-J", `${xcode_package}`); }
 
-  return execArgs, filepath, fail_ci;
+  return { execArgs, filepath, fail_ci };
 }
 
 try {
@@ -101,7 +101,7 @@ try {
     url: "https://codecov.io/bash"
   }, (error, response, body) => {
     try {
-      let execArgs, filepath, fail_ci = buildExec();
+      let { execArgs, filepath, fail_ci } = buildExec();
 
       console.log(execArgs);
       console.log(filepath);
