@@ -101,7 +101,7 @@ try {
     url: "https://codecov.io/bash"
   }, (error, response, body) => {
     try {
-      const execArgs, filepath, fail_ci = buildExec();
+      let execArgs, filepath, fail_ci = buildExec();
 
       if (error && fail_ci) {
         throw error;
