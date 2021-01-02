@@ -43,14 +43,14 @@ test('all arguments', () => {
     "directory": "coverage/",
     "token": "d3859757-ab80-4664-924d-aef22fa7557b",
     "verbose": "t",
-    "working-directory": "src/",
+    "working_directory": "src/",
     "path_to_write_report": "codecov/",
     "xcode_derived_data": "~/Library/Developer/Xcode/DerivedData",
     "xcode_package": "MyApp"
   }
 
   for (let env of Object.keys(envs)) {
-    process.env[env] = envs[env];
+    process.env["INPUT_" + env.toUpperCase()] = envs[env];
   }
 
   let { execArgs, options, filepath, fail_ci } = buildExec();
@@ -67,6 +67,6 @@ test('all arguments', () => {
   expect(fail_ci).toBeFalsy();
 
   for (let env of Object.keys(envs)) {
-    delete process.env[env];
+    delete process.env["INPUT_" + env.toUpperCase()];
   }
 });
