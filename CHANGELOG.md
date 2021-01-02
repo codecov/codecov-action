@@ -1,3 +1,11 @@
+### 1.2.0
+
+#### Features
+- #185 [Placeholder]
+
+#### Fixes
+- #185 [Placeholder]
+
 ### 1.1.1
 
 #### Fixes
