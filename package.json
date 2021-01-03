@@ -4,11 +4,11 @@
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage",
+    "lint": "eslint",
+    "test": "yarn run test-script && yarn run test-calculator && yarn run test-coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
     "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
     "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script",
-    "test-all": "yarn run test-script && yarn run test-calculator && yarn run test-coverage && eslint",
     "build": "ncc build src/index.ts"
   },
   "repository": {
@@ -37,6 +37,9 @@
     "yarn": "^1.22.10"
   },
   "devDependencies": {
-    "eslint": "^7.17.0"
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
+    "eslint": "^7.17.0",
+    "eslint-config-google": "^0.14.0"
   }
 }

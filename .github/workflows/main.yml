@@ -5,11 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm i -g eslint
+      - name: Lint
+        run: npm run lint
       - name: Run tests and collect coverage
-        run: yarn run test-all
+        run: yarn run test
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
