@@ -1,7 +1,7 @@
 import buildExec from './buildExec';
 
 test('no arguments', () => {
-  const {execArgs, options, filepath, fail_ci} = buildExec();
+  const {execArgs, filepath, failCi} = buildExec();
   expect(execArgs).toEqual([
     'codecov.sh',
     '-n',
@@ -12,7 +12,7 @@ test('no arguments', () => {
     'github-action',
   ]);
   expect(filepath).toEqual('codecov.sh');
-  expect(fail_ci).toBeFalsy();
+  expect(failCi).toBeFalsy();
 });
 
 test('all arguments', () => {
@@ -26,7 +26,8 @@ test('all arguments', () => {
     'file': 'coverage.xml',
     'files': 'dir1/coverage.xml,dir2/coverage.xml',
     'flags': 'test',
-    'functionalities': 'gcov,coveragepy,fix,search,code,network,gcovout,html,recursesubs',
+    'functionalities':
+      'gcov,coveragepy,fix,search,code,network,gcovout,html,recursesubs',
     'gcov_args': '--timeout 3',
     'gcov_root_dr': 'gcov_dir/',
     'gcov_path_exclude': '**/exclude-dir/*.*',
@@ -53,7 +54,7 @@ test('all arguments', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {execArgs, options, filepath, fail_ci} = buildExec();
+  const {execArgs, filepath, failCi} = buildExec();
   expect(execArgs).toEqual([
     'src/codecov.sh',
     '-n',
@@ -129,7 +130,7 @@ test('all arguments', () => {
     'MyApp',
   ]);
   expect(filepath).toEqual('src/codecov.sh');
-  expect(fail_ci).toBeTruthy();
+  expect(failCi).toBeTruthy();
 
   for (const env of Object.keys(envs)) {
     delete process.env['INPUT_' + env.toUpperCase()];

@@ -12303,7 +12303,7 @@ var exec = __webpack_require__(986);
 var fs = __webpack_require__(747);
 var request = __webpack_require__(335);
 var buildExec_1 = __webpack_require__(983);
-var fail_ci;
+var failCi;
 try {
     request({
         json: false,
@@ -12311,33 +12311,23 @@ try {
         timeout: 3000,
         url: 'https://codecov.io/bash',
     }, function (error, response, body) {
-        var _a = buildExec_1["default"](), execArgs = _a.execArgs, options = _a.options, filepath = _a.filepath, fail_ci = _a.fail_ci;
+        var _a = buildExec_1["default"](), execArgs = _a.execArgs, options = _a.options, filepath = _a.filepath, failCi = _a.failCi;
         try {
-            if (error && fail_ci) {
+            if (error && failCi) {
                 throw error;
             }
             else if (error) {
                 core.warning("Codecov warning: " + error.message);
             }
             fs.writeFile(filepath, body, function (err) {
-                if (err && fail_ci) {
+                if (err && failCi) {
                     throw err;
                 }
                 else if (err) {
                     core.warning("Codecov warning: " + err.message);
                 }
-                var output = '';
-                var execError = '';
-                options.listeners = {
-                    stdout: function (data) {
-                        output += data.toString();
-                    },
-                    stderr: function (data) {
-                        execError += data.toString();
-                    },
-                };
                 exec.exec('bash', execArgs, options)["catch"](function (err) {
-                    if (fail_ci) {
+                    if (failCi) {
                         core.setFailed("Codecov failed with the following error: " + err.message);
                     }
                     else {
@@ -12349,7 +12339,7 @@ try {
                 });
                 var unlinkFile = function () {
                     fs.unlink(filepath, function (err) {
-                        if (err && fail_ci) {
+                        if (err && failCi) {
                             throw err;
                         }
                         else if (err) {
@@ -12365,7 +12355,7 @@ try {
     });
 }
 catch (error) {
-    if (fail_ci) {
+    if (failCi) {
         core.setFailed("Codecov failed with the following error: " + error.message);
     }
     else {
@@ -54111,37 +54101,37 @@ var isTrue = function (variable) {
 };
 var buildExec = function () {
     var clean = core.getInput('move_coverage_to_trash');
-    var commit_parent = core.getInput('commit_parent');
-    var curl_aws_args = core.getInput('aws_curl_args');
-    var curl_codecov_args = core.getInput('codecov_curl_args');
-    var env_vars = core.getInput('env_vars');
-    var fail_ci = isTrue(core.getInput('fail_ci_if_error'));
+    var commitParent = core.getInput('commit_parent');
+    var curlAwsArgs = core.getInput('aws_curl_args');
+    var curlCodecovArgs = core.getInput('codecov_curl_args');
+    var envVars = core.getInput('env_vars');
+    var failCi = isTrue(core.getInput('fail_ci_if_error'));
     var file = core.getInput('file');
     var files = core.getInput('files');
     var flags = core.getInput('flags');
     var functionalities = core.getInput('functionalities');
-    var gcov_args = core.getInput('gcov_args');
-    var gcov_dir = core.getInput('gcov_root_dir');
-    var gcov_exclude = core.getInput('gcov_path_exclude');
-    var gcov_exec = core.getInput('gcov_executable');
-    var gcov_include = core.getInput('gcov_path_include');
-    var gcov_prefix = core.getInput('gcov_prefix');
+    var gcovArgs = core.getInput('gcov_args');
+    var gcovDir = core.getInput('gcov_root_dir');
+    var gcovExclude = core.getInput('gcov_path_exclude');
+    var gcovExec = core.getInput('gcov_executable');
+    var gcovInclude = core.getInput('gcov_path_include');
+    var gcovPrefix = core.getInput('gcov_prefix');
     var name = core.getInput('name');
-    var override_branch = core.getInput('override_branch');
-    var override_build = core.getInput('override_build');
-    var override_commit = core.getInput('override_commit');
-    var override_pr = core.getInput('override_pr');
-    var override_tag = core.getInput('override_tag');
-    var root_dir = core.getInput('root_dir');
-    var search_dir = core.getInput('directory');
+    var overrideBranch = core.getInput('override_branch');
+    var overrideBuild = core.getInput('override_build');
+    var overrideCommit = core.getInput('override_commit');
+    var overridePr = core.getInput('override_pr');
+    var overrideTag = core.getInput('override_tag');
+    var rootDir = core.getInput('root_dir');
+    var searchDir = core.getInput('directory');
     var token = core.getInput('token');
     var verbose = isTrue(core.getInput('verbose'));
-    var working_dir = core.getInput('working-directory');
-    var write_path = core.getInput('path_to_write_report');
-    var xcode_derived_data = core.getInput('xcode_derived_data');
-    var xcode_package = core.getInput('xcode_package');
-    var filepath = working_dir ?
-        working_dir + '/codecov.sh' : 'codecov.sh';
+    var workingDir = core.getInput('working-directory');
+    var writePath = core.getInput('path_to_write_report');
+    var xcodeDerivedData = core.getInput('xcode_derived_data');
+    var xcodePackage = core.getInput('xcode_package');
+    var filepath = workingDir ?
+        workingDir + '/codecov.sh' : 'codecov.sh';
     var execArgs = [filepath];
     execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', 'github-action');
     var options = {};
@@ -54153,13 +54143,13 @@ var buildExec = function () {
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
     });
-    var env_vars_arg = [];
-    for (var _i = 0, _a = env_vars.split(','); _i < _a.length; _i++) {
-        var env_var = _a[_i];
-        var env_var_clean = env_var.trim();
-        if (env_var_clean) {
-            options.env[env_var_clean] = process.env[env_var_clean];
-            env_vars_arg.push(env_var_clean);
+    var envVarsArg = [];
+    for (var _i = 0, _a = envVars.split(','); _i < _a.length; _i++) {
+        var envVar = _a[_i];
+        var envVarClean = envVar.trim();
+        if (envVarClean) {
+            options.env[envVarClean] = process.env[envVarClean];
+            envVarsArg.push(envVarClean);
         }
     }
     if (token) {
@@ -54168,19 +54158,19 @@ var buildExec = function () {
     if (clean) {
         execArgs.push('-c');
     }
-    if (commit_parent) {
-        execArgs.push('-N', "" + commit_parent);
+    if (commitParent) {
+        execArgs.push('-N', "" + commitParent);
     }
-    if (curl_aws_args) {
-        execArgs.push('-A', "" + curl_aws_args);
+    if (curlAwsArgs) {
+        execArgs.push('-A', "" + curlAwsArgs);
     }
-    if (curl_codecov_args) {
-        execArgs.push('-U', "" + curl_codecov_args);
+    if (curlCodecovArgs) {
+        execArgs.push('-U', "" + curlCodecovArgs);
     }
-    if (env_vars_arg.length) {
-        execArgs.push('-e', env_vars_arg.join(','));
+    if (envVarsArg.length) {
+        execArgs.push('-e', envVarsArg.join(','));
     }
-    if (fail_ci) {
+    if (failCi) {
         execArgs.push('-Z');
     }
     if (file) {
@@ -54196,61 +54186,61 @@ var buildExec = function () {
             execArgs.push('-X', "" + f);
         });
     }
-    if (gcov_args) {
-        execArgs.push('-a', "" + gcov_args);
+    if (gcovArgs) {
+        execArgs.push('-a', "" + gcovArgs);
     }
-    if (gcov_dir) {
-        execArgs.push('-p', "" + gcov_dir);
+    if (gcovDir) {
+        execArgs.push('-p', "" + gcovDir);
     }
-    if (gcov_exclude) {
-        execArgs.push('-g', "" + gcov_exclude);
+    if (gcovExclude) {
+        execArgs.push('-g', "" + gcovExclude);
     }
-    if (gcov_exec) {
-        execArgs.push('-x', "" + gcov_exec);
+    if (gcovExec) {
+        execArgs.push('-x', "" + gcovExec);
     }
-    if (gcov_include) {
-        execArgs.push('-G', "" + gcov_include);
+    if (gcovInclude) {
+        execArgs.push('-G', "" + gcovInclude);
     }
-    if (gcov_prefix) {
-        execArgs.push('-k', "" + gcov_prefix);
+    if (gcovPrefix) {
+        execArgs.push('-k', "" + gcovPrefix);
     }
-    if (override_branch) {
-        execArgs.push('-B', "" + override_branch);
+    if (overrideBranch) {
+        execArgs.push('-B', "" + overrideBranch);
     }
-    if (override_build) {
-        execArgs.push('-b', "" + override_build);
+    if (overrideBuild) {
+        execArgs.push('-b', "" + overrideBuild);
     }
-    if (override_commit) {
-        execArgs.push('-C', "" + override_commit);
+    if (overrideCommit) {
+        execArgs.push('-C', "" + overrideCommit);
     }
-    if (override_pr) {
-        execArgs.push('-P', "" + override_pr);
+    if (overridePr) {
+        execArgs.push('-P', "" + overridePr);
     }
-    if (override_tag) {
-        execArgs.push('-T', "" + override_tag);
+    if (overrideTag) {
+        execArgs.push('-T', "" + overrideTag);
     }
-    if (root_dir) {
-        execArgs.push('-N', "" + root_dir);
+    if (rootDir) {
+        execArgs.push('-N', "" + rootDir);
     }
-    if (search_dir) {
-        execArgs.push('-s', "" + search_dir);
+    if (searchDir) {
+        execArgs.push('-s', "" + searchDir);
     }
     if (verbose) {
         execArgs.push('-v');
     }
-    if (working_dir) {
-        options.cwd = working_dir;
+    if (workingDir) {
+        options.cwd = workingDir;
     }
-    if (write_path) {
-        execArgs.push('-q', "" + write_path);
+    if (writePath) {
+        execArgs.push('-q', "" + writePath);
     }
-    if (xcode_derived_data) {
-        execArgs.push('-D', "" + xcode_derived_data);
+    if (xcodeDerivedData) {
+        execArgs.push('-D', "" + xcodeDerivedData);
     }
-    if (xcode_package) {
-        execArgs.push('-J', "" + xcode_package);
+    if (xcodePackage) {
+        execArgs.push('-J', "" + xcodePackage);
     }
-    return { execArgs: execArgs, options: options, filepath: filepath, fail_ci: fail_ci };
+    return { execArgs: execArgs, options: options, filepath: filepath, failCi: failCi };
 };
 exports["default"] = buildExec;
 
