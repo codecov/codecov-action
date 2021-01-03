@@ -20,11 +20,10 @@ jobs:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: demo
-          name: codecov-1
+          name: codecov-demo
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           flags: script
-          name: codecov-1
-          verbose: true
+          name: codecov-script
