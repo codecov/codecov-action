@@ -4,7 +4,7 @@
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint src/*.*",
     "test": "yarn run test-script && yarn run test-calculator && yarn run test-coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
     "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
