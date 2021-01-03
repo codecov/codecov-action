@@ -1,9 +1,9 @@
-const core = require("@actions/core");
-const exec = require("@actions/exec");
-const fs = require("fs");
+const core = require('@actions/core');
+const exec = require('@actions/exec');
+const fs = require('fs');
 const request = require('requestretry');
 
-import buildExec from "./buildExec";
+import buildExec from './buildExec';
 
 let fail_ci;
 try {
@@ -11,9 +11,9 @@ try {
     json: false,
     maxAttempts: 10,
     timeout: 3000,
-    url: "https://codecov.io/bash"
+    url: 'https://codecov.io/bash',
   }, (error, response, body) => {
-    let { execArgs, options, filepath, fail_ci } = buildExec();
+    const {execArgs, options, filepath, fail_ci} = buildExec();
 
     try {
       if (error && fail_ci) {
@@ -22,40 +22,40 @@ try {
         core.warning(`Codecov warning: ${error.message}`);
       }
 
-      fs.writeFile(filepath, body, err => {
+      fs.writeFile(filepath, body, (err) => {
         if (err && fail_ci) {
           throw err;
         } else if (err) {
           core.warning(`Codecov warning: ${err.message}`);
         }
 
-        let output = "";
-        let execError = "";
+        let output = '';
+        let execError = '';
         options.listeners = {
-          stdout: data => {
+          stdout: (data) => {
             output += data.toString();
           },
-          stderr: data => {
+          stderr: (data) => {
             execError += data.toString();
-          }
+          },
         };
 
-        exec.exec("bash", execArgs, options)
-          .catch(err => {
-            if (fail_ci) {
-              core.setFailed(
-                `Codecov failed with the following error: ${err.message}`
-              );
-            } else {
-              core.warning(`Codecov warning: ${err.message}`);
-            }
-          })
-          .then(() => {
-            unlinkFile();
-          });
+        exec.exec('bash', execArgs, options)
+            .catch((err) => {
+              if (fail_ci) {
+                core.setFailed(
+                    `Codecov failed with the following error: ${err.message}`,
+                );
+              } else {
+                core.warning(`Codecov warning: ${err.message}`);
+              }
+            })
+            .then(() => {
+              unlinkFile();
+            });
 
         const unlinkFile = () => {
-          fs.unlink(filepath, err => {
+          fs.unlink(filepath, (err) => {
             if (err && fail_ci) {
               throw err;
             } else if (err) {
@@ -66,7 +66,7 @@ try {
       });
     } catch (error) {
       core.setFailed(
-        `Codecov failed with the following error: ${error.message}`
+          `Codecov failed with the following error: ${error.message}`,
       );
     }
   });
