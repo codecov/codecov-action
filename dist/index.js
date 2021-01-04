@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(104);
+/******/ 		return __webpack_require__(325);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -2511,218 +2511,7 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 /* 103 */,
-/* 104 */
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(470);
-const exec = __webpack_require__(986);
-const fs = __webpack_require__(747);
-const request = __webpack_require__(335);
-
-let fail_ci;
-let verbose;
-try {
-  const name = core.getInput("name");
-  const token = core.getInput("token");
-  const flags = core.getInput("flags");
-  const file = core.getInput("file");
-  const files = core.getInput("files");
-  const env_vars = core.getInput("env_vars");
-  const dir = core.getInput("directory");
-  const write_path = core.getInput("path_to_write_report");
-  const working_dir = core.getInput("working-directory");
-  const xcode_derived_data = core.getInput("xcode_derived_data");
-  const xcode_package = core.getInput("xcode_package");
-
-  fail_ci = core.getInput("fail_ci_if_error").toLowerCase();
-  verbose = core.getInput("verbose").toLowerCase();
-
-  if (
-    fail_ci === "yes" ||
-    fail_ci === "y" ||
-    fail_ci === "true" ||
-    fail_ci === "t" ||
-    fail_ci === "1"
-  ) {
-    fail_ci = true;
-  } else {
-    fail_ci = false;
-  }
-
-  if (
-    verbose === "yes" ||
-    verbose === "y" ||
-    verbose === "true" ||
-    verbose === "t" ||
-    verbose === "1"
-  ) {
-    verbose = true;
-  } else {
-    verbose = false;
-  }
-
-  request({
-    json: false,
-    maxAttempts: 10,
-    timeout: 3000,
-    url: "https://codecov.io/bash"
-  }, (error, response, body) => {
-    try {
-      if (error && fail_ci) {
-        throw error;
-      } else if (error) {
-        core.warning(`Codecov warning: ${error.message}`);
-      }
-
-      fs.writeFile("codecov.sh", body, err => {
-        if (err && fail_ci) {
-          throw err;
-        } else if (err) {
-          core.warning(`Codecov warning: ${err.message}`);
-        }
-
-        let output = "";
-        let execError = "";
-        const options = {};
-        options.listeners = {
-          stdout: data => {
-            output += data.toString();
-          },
-          stderr: data => {
-            execError += data.toString();
-          }
-        };
-
-        options.env = Object.assign(process.env, {
-          GITHUB_ACTION: process.env.GITHUB_ACTION,
-          GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
-          GITHUB_REF: process.env.GITHUB_REF,
-          GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
-          GITHUB_SHA: process.env.GITHUB_SHA,
-          GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || ''
-        });
-
-        if(token){
-          options.env.CODECOV_TOKEN = token
-        }
-
-        const env_vars_arg = []
-        for (let env_var of env_vars.split(",")) {
-          let env_var_clean = env_var.trim();
-          if (env_var_clean) {
-            options.env[env_var_clean] = process.env[env_var_clean];
-            env_vars_arg.push(env_var_clean)
-          }
-        }
-
-        const execArgs = ["codecov.sh"];
-        execArgs.push("-Q", "github-action");
-
-        if (file) {
-          execArgs.push(
-            "-f", `${file}`
-          );
-        }
-
-        if (files) {
-          files.split(',').forEach(f => {
-            execArgs.push(
-              "-f", `${f}`
-            );
-          });
-        }
-
-        if (dir) {
-          execArgs.push(
-            "-s", `${dir}`
-          );
-        }
-
-        execArgs.push(
-          "-n", `${name}`,
-          "-F", `${flags}`
-        );
-
-        if (fail_ci) {
-          execArgs.push(
-            "-Z"
-          );
-        }
-
-        if (env_vars_arg.length) {
-          execArgs.push(
-            "-e", env_vars_arg.join(",")
-          );
-        }
-
-        if (write_path) {
-          execArgs.push(
-            "-q", `${write_path}`
-          );
-        }
-
-        if (verbose) {
-          execArgs.push(
-            "-v"
-          );
-        }
-
-        if (working_dir) {
-          options.cwd = working_dir;
-        }
-
-        if (xcode_derived_data) {
-          execArgs.push(
-            "-D", `${xcode_derived_data}`
-          );
-        }
-
-        if (xcode_package) {
-          execArgs.push(
-            "-J", `${xcode_package}`
-          );
-        }
-
-        exec.exec("bash", execArgs, options)
-          .catch(err => {
-            if (fail_ci) {
-              core.setFailed(
-                `Codecov failed with the following error: ${err.message}`
-              );
-            } else {
-              core.warning(`Codecov warning: ${err.message}`);
-            }
-          })
-          .then(() => {
-            unlinkFile();
-          });
-
-        const unlinkFile = () => {
-          fs.unlink("codecov.sh", err => {
-            if (err && fail_ci) {
-              throw err;
-            } else if (err) {
-              core.warning(`Codecov warning: ${err.message}`);
-            }
-          });
-        };
-      });
-    } catch (error) {
-      core.setFailed(
-        `Codecov failed with the following error: ${error.message}`
-      );
-    }
-  });
-} catch (error) {
-  if (fail_ci) {
-    core.setFailed(`Codecov failed with the following error: ${error.message}`);
-  } else {
-    core.warning(`Codecov warning: ${error.message}`);
-  }
-}
-
-
-/***/ }),
+/* 104 */,
 /* 105 */,
 /* 106 */,
 /* 107 */
@@ -12503,7 +12292,79 @@ module.exports = {"$id":"log.json#","$schema":"http://json-schema.org/draft-06/s
 /* 322 */,
 /* 323 */,
 /* 324 */,
-/* 325 */,
+/* 325 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var core = __webpack_require__(470);
+var exec = __webpack_require__(986);
+var fs = __webpack_require__(747);
+var request = __webpack_require__(335);
+var buildExec_1 = __webpack_require__(983);
+var failCi;
+try {
+    request({
+        json: false,
+        maxAttempts: 10,
+        timeout: 3000,
+        url: 'https://codecov.io/bash',
+    }, function (error, response, body) {
+        var _a = buildExec_1["default"](), execArgs = _a.execArgs, options = _a.options, filepath = _a.filepath, failCi = _a.failCi;
+        try {
+            if (error && failCi) {
+                throw error;
+            }
+            else if (error) {
+                core.warning("Codecov warning: " + error.message);
+            }
+            fs.writeFile(filepath, body, function (err) {
+                if (err && failCi) {
+                    throw err;
+                }
+                else if (err) {
+                    core.warning("Codecov warning: " + err.message);
+                }
+                exec.exec('bash', execArgs, options)["catch"](function (err) {
+                    if (failCi) {
+                        core.setFailed("Codecov failed with the following error: " + err.message);
+                    }
+                    else {
+                        core.warning("Codecov warning: " + err.message);
+                    }
+                })
+                    .then(function () {
+                    unlinkFile();
+                });
+                var unlinkFile = function () {
+                    fs.unlink(filepath, function (err) {
+                        if (err && failCi) {
+                            throw err;
+                        }
+                        else if (err) {
+                            core.warning("Codecov warning: " + err.message);
+                        }
+                    });
+                };
+            });
+        }
+        catch (error) {
+            core.setFailed("Codecov failed with the following error: " + error.message);
+        }
+    });
+}
+catch (error) {
+    if (failCi) {
+        core.setFailed("Codecov failed with the following error: " + error.message);
+    }
+    else {
+        core.warning("Codecov warning: " + error.message);
+    }
+}
+
+
+/***/ }),
 /* 326 */
 /***/ (function(module) {
 
@@ -12558,6 +12419,16 @@ var DEFAULTS = {
 // Default promise factory which use bluebird
 function defaultPromiseFactory(resolver) {
   return when.promise(resolver);
+}
+
+function _cloneOptions(options) {
+  const cloned = {};
+  for (let key in options) {
+    if (options.hasOwnProperty(key)) {
+      cloned[key] = key === 'agent' ? options[key] : _.cloneDeep(options[key]);
+    }
+  }
+  return cloned;
 }
 
 /**
@@ -12665,7 +12536,7 @@ Request.prototype._tryUntilFail = function () {
       err.attempts = this.attempts;
     }
 
-    var mustRetry = await Promise.resolve(this.retryStrategy(err, response, body, _.cloneDeep(this.options)));
+    var mustRetry = await Promise.resolve(this.retryStrategy(err, response, body, _cloneOptions(this.options)));
     if (_.isObject(mustRetry) && _.has(mustRetry, 'mustRetry')) {
       if (_.isObject(mustRetry.options)) {
         this.options = mustRetry.options; //if retryStrategy supposes different request options for retry
@@ -54213,7 +54084,168 @@ function write(key, options) {
 
 
 /***/ }),
-/* 983 */,
+/* 983 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var core = __webpack_require__(470);
+var isTrue = function (variable) {
+    var lowercase = variable.toLowerCase();
+    return (lowercase === '1' ||
+        lowercase === 't' ||
+        lowercase === 'true' ||
+        lowercase === 'y' ||
+        lowercase === 'yes');
+};
+var buildExec = function () {
+    var clean = core.getInput('move_coverage_to_trash');
+    var commitParent = core.getInput('commit_parent');
+    var curlAwsArgs = core.getInput('aws_curl_args');
+    var curlCodecovArgs = core.getInput('codecov_curl_args');
+    var envVars = core.getInput('env_vars');
+    var failCi = isTrue(core.getInput('fail_ci_if_error'));
+    var file = core.getInput('file');
+    var files = core.getInput('files');
+    var flags = core.getInput('flags');
+    var functionalities = core.getInput('functionalities');
+    var gcovArgs = core.getInput('gcov_args');
+    var gcovDir = core.getInput('gcov_root_dir');
+    var gcovExclude = core.getInput('gcov_path_exclude');
+    var gcovExec = core.getInput('gcov_executable');
+    var gcovInclude = core.getInput('gcov_path_include');
+    var gcovPrefix = core.getInput('gcov_prefix');
+    var name = core.getInput('name');
+    var overrideBranch = core.getInput('override_branch');
+    var overrideBuild = core.getInput('override_build');
+    var overrideCommit = core.getInput('override_commit');
+    var overridePr = core.getInput('override_pr');
+    var overrideTag = core.getInput('override_tag');
+    var rootDir = core.getInput('root_dir');
+    var searchDir = core.getInput('directory');
+    var token = core.getInput('token');
+    var verbose = isTrue(core.getInput('verbose'));
+    var workingDir = core.getInput('working-directory');
+    var writePath = core.getInput('path_to_write_report');
+    var xcodeDerivedData = core.getInput('xcode_derived_data');
+    var xcodePackage = core.getInput('xcode_package');
+    var filepath = workingDir ?
+        workingDir + '/codecov.sh' : 'codecov.sh';
+    var execArgs = [filepath];
+    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', 'github-action');
+    var options = {};
+    options.env = Object.assign(process.env, {
+        GITHUB_ACTION: process.env.GITHUB_ACTION,
+        GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+        GITHUB_REF: process.env.GITHUB_REF,
+        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+        GITHUB_SHA: process.env.GITHUB_SHA,
+        GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
+    });
+    var envVarsArg = [];
+    for (var _i = 0, _a = envVars.split(','); _i < _a.length; _i++) {
+        var envVar = _a[_i];
+        var envVarClean = envVar.trim();
+        if (envVarClean) {
+            options.env[envVarClean] = process.env[envVarClean];
+            envVarsArg.push(envVarClean);
+        }
+    }
+    if (token) {
+        options.env.CODECOV_TOKEN = token;
+    }
+    if (clean) {
+        execArgs.push('-c');
+    }
+    if (commitParent) {
+        execArgs.push('-N', "" + commitParent);
+    }
+    if (curlAwsArgs) {
+        execArgs.push('-A', "" + curlAwsArgs);
+    }
+    if (curlCodecovArgs) {
+        execArgs.push('-U', "" + curlCodecovArgs);
+    }
+    if (envVarsArg.length) {
+        execArgs.push('-e', envVarsArg.join(','));
+    }
+    if (failCi) {
+        execArgs.push('-Z');
+    }
+    if (file) {
+        execArgs.push('-f', "" + file);
+    }
+    if (files) {
+        files.split(',').forEach(function (f) {
+            execArgs.push('-f', "" + f);
+        });
+    }
+    if (functionalities) {
+        functionalities.split(',').forEach(function (f) {
+            execArgs.push('-X', "" + f);
+        });
+    }
+    if (gcovArgs) {
+        execArgs.push('-a', "" + gcovArgs);
+    }
+    if (gcovDir) {
+        execArgs.push('-p', "" + gcovDir);
+    }
+    if (gcovExclude) {
+        execArgs.push('-g', "" + gcovExclude);
+    }
+    if (gcovExec) {
+        execArgs.push('-x', "" + gcovExec);
+    }
+    if (gcovInclude) {
+        execArgs.push('-G', "" + gcovInclude);
+    }
+    if (gcovPrefix) {
+        execArgs.push('-k', "" + gcovPrefix);
+    }
+    if (overrideBranch) {
+        execArgs.push('-B', "" + overrideBranch);
+    }
+    if (overrideBuild) {
+        execArgs.push('-b', "" + overrideBuild);
+    }
+    if (overrideCommit) {
+        execArgs.push('-C', "" + overrideCommit);
+    }
+    if (overridePr) {
+        execArgs.push('-P', "" + overridePr);
+    }
+    if (overrideTag) {
+        execArgs.push('-T', "" + overrideTag);
+    }
+    if (rootDir) {
+        execArgs.push('-N', "" + rootDir);
+    }
+    if (searchDir) {
+        execArgs.push('-s', "" + searchDir);
+    }
+    if (verbose) {
+        execArgs.push('-v');
+    }
+    if (workingDir) {
+        options.cwd = workingDir;
+    }
+    if (writePath) {
+        execArgs.push('-q', "" + writePath);
+    }
+    if (xcodeDerivedData) {
+        execArgs.push('-D', "" + xcodeDerivedData);
+    }
+    if (xcodePackage) {
+        execArgs.push('-J', "" + xcodePackage);
+    }
+    return { execArgs: execArgs, options: options, filepath: filepath, failCi: failCi };
+};
+exports["default"] = buildExec;
+
+
+/***/ }),
 /* 984 */,
 /* 985 */
 /***/ (function(module) {

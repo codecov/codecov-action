@@ -1,3 +1,11 @@
+### 1.2.0
+
+#### Features
+- #193 Add all the bash params
+
+#### Fixes
+- #193 Fixes issue with working-directory
+
 ### 1.1.1
 
 #### Fixes
