@@ -54,7 +54,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | | `recursesubs` Enable recurse submodules in git projects when searching for source files | |
 | | `search` Disable searching for reports |
 | | `xcode` Disable xcode processing |
-| `gcov path_include` | Paths to include during gcov gathering (as a glob) | Optional
+| `gcov_path_include` | Paths to include during gcov gathering (as a glob) | Optional
 | `gcov_args` | extra arguments to pass to gcov | Optional
 | `gcov_executable` | gcov executable to run. Defaults to 'gcov' | Optional
 | `gcov_path_exclude` | Paths to ignore during gcov gathering (as a glob) | Optional
