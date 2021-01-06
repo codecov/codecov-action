@@ -1,3 +1,8 @@
+### 1.2.1
+
+#### Fixes
+- #196 Add parameters to the action.yml
+
 ### 1.2.0
 
 #### Features
