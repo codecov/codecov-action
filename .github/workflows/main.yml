@@ -5,23 +5,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - name: Install dependencies
         run: npm install
+      - name: Lint
+        run: npm run lint
       - name: Run tests and collect coverage
-        run: yarn run test-all
-      - name: Upload coverage to Codecov
+        run: yarn run test
+      - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
-          flags: unittest
-          name: codecov-1
-      - name: Upload coverage to Codecov (verbose)
+          flags: demo
+          name: codecov-demo
+      - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/index/coverage-final.json
-          file: ./coverage/coverage-final.json
-          flags: unittest
-          name: codecov-1
-          verbose: true
+          files: ./coverage/script/coverage-final.json
+          flags: script
+          name: codecov-script
