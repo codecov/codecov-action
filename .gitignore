@@ -76,7 +76,7 @@ typings/
 # nuxt.js build output
 .nuxt
 
-# react / gatsby 
+# react / gatsby
 public/
 
 # vuepress build output
@@ -90,3 +90,6 @@ public/
 
 # DynamoDB Local files
 .dynamodb/
+
+# macOS Finder metadata
+.DS_Store

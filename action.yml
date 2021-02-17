@@ -1,26 +1,100 @@
 name: 'Codecov'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
-author: 'Ibrahim Ali <@ibrahim0814> | Codecov'
-inputs: 
-  name:
-    description: 'User defined upload name. Visible in Codecov UI'
-    required: false 
+author: 'Ibrahim Ali <@ibrahim0814> & Thomas Hu <@thomasrockhu> | Codecov'
+inputs:
   token:
-    description: 'Repository upload token - get it from codecov.io'
-    required: true 
-  file:
-    description: 'Path to coverage file to upload'
+    description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
+    required: false
+  files:
+    description: 'Comma-separated list of files to upload'
+    required: false
+  directory:
+    description: 'Directory to search for coverage reports.'
     required: false
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
-  yml:
-    description: 'Specify the location of the .codecov.yml config file'
+  aws_curl_args:
+    description: 'Extra curl arguments to communicate with AWS.'
+    required: false
+  codecov_curl_args:
+    description: 'Extra curl arguments to communicate with Codecov. e.g., -U "--proxy http://http-proxy"'
+    required: false
+  commit_parent:
+    description: 'The commit SHA of the parent for which you are uploading coverage. If not present, the parent will be determined using the API of your repository provider.  When using the repository providers API, the parent is determined via finding the closest ancestor to the commit.'
+    required: false
+  env_vars:
+    description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
+    required: false
+  fail_ci_if_error:
+    description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
+    required: false
+  file:
+    description: 'Path to coverage file to upload'
+    required: false
+  functionalities:
+    description: 'Comma-separated list, see the README for options and their usage'
+    required: false
+  gcov_args:
+    description: 'extra arguments to pass to gcov'
+    required: false
+  gcov_executable:
+    description: 'gcov executable to run. Defaults to gcov'
+    required: false
+  gcov_path_exclude:
+    description: 'Paths to ignore during gcov gathering (as a glob)'
+    required: false
+  gcov_path_include:
+    description: 'Paths to include during gcov gathering (as a glob)'
+    required: false
+  gcov_prefix:
+    description: 'Prefix filepaths to help resolve path fixing'
+    required: false
+  gcov_root_dir:
+    description: 'Project root directory, also used when preparing gcov'
+    required: false
+  move_coverage_to_trash:
+    description: 'Move discovered coverage reports to the trash'
+    required: false
+  name:
+    description: 'User defined upload name. Visible in Codecov UI'
+    required: false
+  override_branch:
+    description: 'Specify the branch name'
+    required: false
+  override_build:
+    description: 'Specify the build number'
+    required: false
+  override_commit:
+    description: 'Specify the commit SHA'
+    required: false
+  override_pr:
+    description: 'Specify the pull request number'
+    required: false
+  override_tag:
+    description: 'Specify the git tag'
+    required: false
+  path_to_write_report:
+    description: 'Write upload file to path before uploading'
+    required: false
+  root_dir:
+    description: 'Used when not in git/hg project to identify project root directory'
+    required: false
+  verbose:
+    description: 'Specify whether the Codecov output should be verbose'
+    required: false
+  working-directory:
+    description: 'Directory in which to execute codecov.sh'
+    required: false
+  xcode_derived_data:
+    description: 'Custom Derived Data Path for Coverage.profdata and gcov processing'
+    required: false
+  xcode_package:
+    description: 'Specify packages to build coverage. Uploader will only build these packages'
     required: false
 branding:
-  color: 'red' 
+  color: 'red'
   icon: 'umbrella'
 runs:
   using: 'node12'
   main: 'dist/index.js'
-   
