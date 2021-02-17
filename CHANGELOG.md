@@ -1,3 +1,22 @@
+### 1.2.1
+
+#### Fixes
+- #196 Add parameters to the action.yml
+
+### 1.2.0
+
+#### Features
+- #193 Add all the bash params
+
+#### Fixes
+- #193 Fixes issue with working-directory
+
+### 1.1.1
+
+#### Fixes
+- #184 Add automations ensure proper builds and deployments
+- #184 Fixes verbose flag
+
 ### 1.1.0
 
 #### Features

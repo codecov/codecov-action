@@ -1,14 +1,15 @@
 {
   "name": "codecov-action",
-  "version": "1.0.16",
+  "version": "1.2.1",
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage",
-    "test-calculator": "jest --testPathPattern=src/calculator/ --coverage --coverageDirectory=coverage/calculator",
-    "test-index": "jest --testPathPattern=src/index --coverage --coverageDirectory=coverage/index",
-    "test-all": "yarn run test && yarn run test-calculator && yarn run test-index",
-    "build": "ncc build index.js"
+    "lint": "eslint src/*.*",
+    "test": "yarn run test-script && yarn run test-calculator && yarn run test-coverage",
+    "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
+    "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
+    "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script",
+    "build": "ncc build src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -24,16 +25,21 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.20",
     "@zeit/ncc": "^0.22.3",
     "fs": "0.0.1-security",
     "jest": "^26.6.3",
     "jest-junit": "^12.0.0",
     "request": "^2.88.2",
-    "requestretry": "^4.1.1",
+    "requestretry": "^4.1.2",
     "ts-jest": "^26.4.4",
-    "typescript": "^4.0.5",
+    "typescript": "^4.1.5",
     "yarn": "^1.22.10"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.19.0",
+    "eslint-config-google": "^0.14.0"
+  }
 }
