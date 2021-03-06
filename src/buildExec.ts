@@ -136,7 +136,7 @@ const buildExec = () => {
     execArgs.push('-T', `${overrideTag}`);
   }
   if (rootDir) {
-    execArgs.push('-N', `${rootDir}`);
+    execArgs.push('-R', `${rootDir}`);
   }
   if (searchDir) {
     execArgs.push('-s', `${searchDir}`);

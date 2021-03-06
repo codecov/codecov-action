@@ -16282,7 +16282,7 @@ Fingerprint._oldVersionDetect = function (obj) {
 "use strict";
 
 
-var RETRIABLE_ERRORS = ['ECONNRESET', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'EHOSTUNREACH', 'EPIPE', 'EAI_AGAIN'];
+var RETRIABLE_ERRORS = ['ECONNRESET', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'EHOSTUNREACH', 'EPIPE', 'EAI_AGAIN', 'EBUSY'];
 var _ = __webpack_require__(557);
 
 /**
@@ -54220,7 +54220,7 @@ var buildExec = function () {
         execArgs.push('-T', "" + overrideTag);
     }
     if (rootDir) {
-        execArgs.push('-N', "" + rootDir);
+        execArgs.push('-R', "" + rootDir);
     }
     if (searchDir) {
         execArgs.push('-s', "" + searchDir);

@@ -117,7 +117,7 @@ test('all arguments', () => {
     '2',
     '-T',
     'v1.2',
-    '-N',
+    '-R',
     'root/',
     '-s',
     'coverage/',
