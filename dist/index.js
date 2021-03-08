@@ -42756,7 +42756,13 @@ strategies.HTTPOrNetworkError = __webpack_require__(951)(strategies.HTTPError, s
 
 
 /***/ }),
-/* 690 */,
+/* 690 */
+/***/ (function(module) {
+
+module.exports = eval("require")("@actions/github");
+
+
+/***/ }),
 /* 691 */
 /***/ (function(module) {
 
@@ -54091,6 +54097,8 @@ function write(key, options) {
 
 exports.__esModule = true;
 var core = __webpack_require__(470);
+var github = __webpack_require__(690);
+var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
     return (lowercase === '1' ||
@@ -54212,6 +54220,9 @@ var buildExec = function () {
     }
     if (overrideCommit) {
         execArgs.push('-C', "" + overrideCommit);
+    }
+    else {
+        execArgs.push('-C', "" + context.sha);
     }
     if (overridePr) {
         execArgs.push('-P', "" + overridePr);
