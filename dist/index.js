@@ -59564,6 +59564,7 @@ var buildExec = function () {
             envVarsArg.push(envVarClean);
         }
     }
+    console.log(context);
     if (token) {
         options.env.CODECOV_TOKEN = token;
     }
@@ -59626,6 +59627,7 @@ var buildExec = function () {
         execArgs.push('-C', "" + overrideCommit);
     }
     else {
+        // attempt commit detection
         execArgs.push('-C', "" + context.sha);
     }
     if (overridePr) {

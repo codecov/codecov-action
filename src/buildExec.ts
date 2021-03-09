@@ -71,6 +71,8 @@ const buildExec = () => {
     }
   }
 
+  console.log(context);
+
   if (token) {
     options.env.CODECOV_TOKEN = token;
   }
@@ -132,6 +134,7 @@ const buildExec = () => {
   if (overrideCommit) {
     execArgs.push('-C', `${overrideCommit}`);
   } else {
+    // attempt commit detection
     execArgs.push('-C', `${context.sha}`);
   }
   if (overridePr) {
