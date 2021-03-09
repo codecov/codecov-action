@@ -1,4 +1,7 @@
 const core = require('@actions/core');
+const github = require('@actions/github');
+
+const context = github.context;
 
 const isTrue = (variable) => {
   const lowercase = variable.toLowerCase();
@@ -128,6 +131,11 @@ const buildExec = () => {
   }
   if (overrideCommit) {
     execArgs.push('-C', `${overrideCommit}`);
+  } else if (
+    `${context.eventName}` == 'pull_request' ||
+    `${context.eventName}` == 'pull_request_target'
+  ) {
+    execArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
   if (overridePr) {
     execArgs.push('-P', `${overridePr}`);
