@@ -1,3 +1,8 @@
+### 1.2.2
+
+#### Fixes
+- #244 Overwrite the commit on pull_request* events
+
 ### 1.2.1
 
 #### Fixes
