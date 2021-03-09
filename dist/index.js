@@ -59628,7 +59628,7 @@ var buildExec = function () {
     }
     else if ("" + context.eventName == 'pull_request' ||
         "" + context.eventName == 'pull_request_target') {
-        execArgs.push('-C', "" + context.event.pull_request.head.sha);
+        execArgs.push('-C', "" + context.pull_request.head.sha);
     }
     if (overridePr) {
         execArgs.push('-P', "" + overridePr);
