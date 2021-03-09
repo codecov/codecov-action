@@ -2,7 +2,7 @@ import buildExec from './buildExec';
 
 test('no arguments', () => {
   const {execArgs, filepath, failCi} = buildExec();
-  expect(execArgs.slice(0, -1)).toEqual([
+  expect(execArgs.slice(0, -2)).toEqual([
     'codecov.sh',
     '-n',
     '',
@@ -10,7 +10,6 @@ test('no arguments', () => {
     '',
     '-Q',
     'github-action',
-    '-C',
   ]);
   expect(filepath).toEqual('codecov.sh');
   expect(failCi).toBeFalsy();
