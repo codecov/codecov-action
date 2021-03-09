@@ -5,7 +5,7 @@ const context = github.context;
 test('no arguments', () => {
   const {execArgs, filepath, failCi} = buildExec();
 
-  args = [
+  const args = [
     'codecov.sh',
     '-n',
     '',
