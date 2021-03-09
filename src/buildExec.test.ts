@@ -1,8 +1,11 @@
 import buildExec from './buildExec';
+const github = require('@actions/github');
+const context = github.context;
 
 test('no arguments', () => {
   const {execArgs, filepath, failCi} = buildExec();
-  expect(execArgs.slice(0, -2)).toEqual([
+
+  args = [
     'codecov.sh',
     '-n',
     '',
@@ -10,7 +13,11 @@ test('no arguments', () => {
     '',
     '-Q',
     'github-action',
-  ]);
+  ];
+  if (context.eventName == 'pull_request') {
+    args.push('-C', `${context.payload.pull_request.head.sha}`);
+  }
+  expect(execArgs).toEqual(args);
   expect(filepath).toEqual('codecov.sh');
   expect(failCi).toBeFalsy();
 });

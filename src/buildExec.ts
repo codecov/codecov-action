@@ -71,8 +71,6 @@ const buildExec = () => {
     }
   }
 
-  console.log(context);
-
   if (token) {
     options.env.CODECOV_TOKEN = token;
   }
