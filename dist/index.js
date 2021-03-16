@@ -17533,7 +17533,7 @@ Fingerprint._oldVersionDetect = function (obj) {
 "use strict";
 
 
-var RETRIABLE_ERRORS = ['ECONNRESET', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'EHOSTUNREACH', 'EPIPE', 'EAI_AGAIN', 'EBUSY'];
+var RETRIABLE_ERRORS = ['ECONNRESET', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'EHOSTUNREACH', 'EPIPE', 'EAI_AGAIN'];
 var _ = __webpack_require__(557);
 
 /**
@@ -59529,6 +59529,7 @@ var buildExec = function () {
     var gcovInclude = core.getInput('gcov_path_include');
     var gcovPrefix = core.getInput('gcov_prefix');
     var name = core.getInput('name');
+    var networkFilter = core.getInput('network_filter');
     var overrideBranch = core.getInput('override_branch');
     var overrideBuild = core.getInput('override_build');
     var overrideCommit = core.getInput('override_commit');
@@ -59615,6 +59616,9 @@ var buildExec = function () {
     }
     if (gcovPrefix) {
         execArgs.push('-k', "" + gcovPrefix);
+    }
+    if (networkFilter) {
+        execArgs.push('-i', "" + networkFilter);
     }
     if (overrideBranch) {
         execArgs.push('-B', "" + overrideBranch);

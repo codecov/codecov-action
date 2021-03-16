@@ -1,3 +1,8 @@
+### 1.3.0
+
+#### Features
+- #252 Add "network_filter" input
+
 ### 1.2.2
 
 #### Fixes

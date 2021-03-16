@@ -32,6 +32,7 @@ const buildExec = () => {
   const gcovInclude = core.getInput('gcov_path_include');
   const gcovPrefix = core.getInput('gcov_prefix');
   const name = core.getInput('name');
+  const networkFilter = core.getInput('network_filter');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
   const overrideCommit = core.getInput('override_commit');
@@ -122,6 +123,9 @@ const buildExec = () => {
   }
   if (gcovPrefix) {
     execArgs.push('-k', `${gcovPrefix}`);
+  }
+  if (networkFilter) {
+    execArgs.push('-i', `${networkFilter}`);
   }
   if (overrideBranch) {
     execArgs.push('-B', `${overrideBranch}`);
