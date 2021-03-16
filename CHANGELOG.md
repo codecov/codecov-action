@@ -1,43 +1,48 @@
-### 1.3.0
+## 1.3.1
 
-#### Features
+### Fixes
+- #253 Add `network_filter` to action manifest
+
+## 1.3.0
+
+### Features
 - #252 Add "network_filter" input
 
-### 1.2.2
+## 1.2.2
 
-#### Fixes
+### Fixes
 - #241 pass root_dir using proper bash arg
 - #244 Overwrite the commit on pull_request* events
 
-### 1.2.1
+## 1.2.1
 
-#### Fixes
+### Fixes
 - #196 Add parameters to the action.yml
 
-### 1.2.0
+## 1.2.0
 
-#### Features
+### Features
 - #193 Add all the bash params
 
-#### Fixes
+### Fixes
 - #193 Fixes issue with working-directory
 
-### 1.1.1
+## 1.1.1
 
-#### Fixes
+### Fixes
 - #184 Add automations ensure proper builds and deployments
 - #184 Fixes verbose flag
 
-### 1.1.0
+## 1.1.0
 
-#### Features
+### Features
 - #110 Add "working-directory:" input
 - #174 Support Xcode specificed parameters
 
-#### Fixes
+### Fixes
 - #172 File is saved as text
 
-#### Dependencies and Misc
+### Dependencies and Misc
 - #166 Bump requestretry from 4.1.1 to 4.1.2
 - #169 Bump typescript from 4.0.5 to 4.1.2
 - #178 Bump @types/jest from 26.0.15 to 26.0.19
