@@ -59636,6 +59636,9 @@ var buildExec = function () {
     if (overridePr) {
         execArgs.push('-P', "" + overridePr);
     }
+    else if ("" + context.eventName == 'pull_request_target') {
+        execArgs.push('-P', "" + context.payload.number);
+    }
     if (overrideTag) {
         execArgs.push('-T', "" + overrideTag);
     }
