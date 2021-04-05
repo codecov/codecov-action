@@ -1,5 +1,5 @@
 ## 1.3.2
-- # Overwrites pr number for pull_request_target events
+- #264 Overwrites pr number for pull_request_target events
 
 ## 1.3.1
 
