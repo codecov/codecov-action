@@ -14,6 +14,9 @@ try {
     timeout: 3000,
     url: 'https://codecov.io/bash',
   }, (error, response, body) => {
+    const bashVersion = body.match('VERSION=\"(.*)\"');
+    conosole.log(bashVersion);
+
     const {execArgs, options, filepath, failCi} = buildExec();
 
     try {
