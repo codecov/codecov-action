@@ -1,29 +1,29 @@
+## 1.4.0
+### Features
+- #282 Add checksum verification of bash script
+
 ## 1.3.2
-- # Overwrites pr number for pull_request_target events
+### Fixes
+- #264 Overwrites pr number for pull_request_target events
 
 ## 1.3.1
-
 ### Fixes
 - #253 Add `network_filter` to action manifest
 
 ## 1.3.0
-
 ### Features
 - #252 Add "network_filter" input
 
 ## 1.2.2
-
 ### Fixes
 - #241 pass root_dir using proper bash arg
 - #244 Overwrite the commit on pull_request* events
 
 ## 1.2.1
-
 ### Fixes
 - #196 Add parameters to the action.yml
 
 ## 1.2.0
-
 ### Features
 - #193 Add all the bash params
 
@@ -31,13 +31,11 @@
 - #193 Fixes issue with working-directory
 
 ## 1.1.1
-
 ### Fixes
 - #184 Add automations ensure proper builds and deployments
 - #184 Fixes verbose flag
 
 ## 1.1.0
-
 ### Features
 - #110 Add "working-directory:" input
 - #174 Support Xcode specificed parameters
