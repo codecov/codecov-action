@@ -26,21 +26,21 @@ const validateUploader = async (body) => {
   return true;
 };
 
-const retrieveChecksum = async (version, encryption) => {
+export const retrieveChecksum = async (version, encryption) => {
   const url = `https://raw.githubusercontent.com/codecov/codecov-bash/${version}/SHA${encryption}SUM`;
-  try {
-    const response = await request({
-      maxAttempts: 10,
-      timeout: 3000,
-      url: url,
-    });
-    return response.body;
-  } catch (err) {
+  const response = await request({
+    maxAttempts: 10,
+    timeout: 3000,
+    url: url,
+  });
+
+  if (response.statusCode != 200) {
     core.warning(
         `Codecov could not retrieve checksum SHA${encryption} at ${url}`,
     );
-    return false;
+    return '';
   }
+  return response.body;
 };
 
 const calculateChecksum = (body, i) => {

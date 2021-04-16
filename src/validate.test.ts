@@ -1,4 +1,4 @@
-import validateUploader from './validate';
+import validateUploader, {retrieveChecksum} from './validate';
 
 const request = require('requestretry');
 
@@ -16,19 +16,24 @@ const bashScript = (async () => {
   }
 });
 
-test('validChecksums', async () => {
+test('valid checksums', async () => {
   const valid = await validateUploader(await bashScript());
   expect(valid).toBeTruthy();
 });
 
-test('invalidChecksums', async () => {
+test('invalid checksums', async () => {
   const script = await bashScript();
   const valid = await validateUploader(script.substring(0, script.length - 1));
   expect(valid).toBeFalsy();
 });
 
-test('invalidVersion', async () => {
+test('invalid script version', async () => {
   const script = await bashScript();
   const valid = await validateUploader(script.substring(0, 20));
   expect(valid).toBeFalsy();
+});
+
+test('invalid public checksum file', async () => {
+	const checksum = await retrieveChecksum('foo', 'bar');
+  expect(checksum).toBeFalsy();
 });

@@ -49215,6 +49215,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.retrieveChecksum = void 0;
 var crypto = __webpack_require__(417);
 var core = __webpack_require__(470);
 var request = __webpack_require__(335);
@@ -49233,7 +49234,7 @@ var validateUploader = function (body) { return __awaiter(void 0, void 0, void 0
             case 1:
                 if (!(_i < _a.length)) return [3 /*break*/, 4];
                 i = _a[_i];
-                return [4 /*yield*/, retrieveChecksum(version, i)];
+                return [4 /*yield*/, exports.retrieveChecksum(version, i)];
             case 2:
                 publicChecksum = _b.sent();
                 uploaderChecksum = calculateChecksum(body, i);
@@ -49252,30 +49253,27 @@ var validateUploader = function (body) { return __awaiter(void 0, void 0, void 0
     });
 }); };
 var retrieveChecksum = function (version, encryption) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, response, err_1;
+    var url, response;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 url = "https://raw.githubusercontent.com/codecov/codecov-bash/" + version + "/SHA" + encryption + "SUM";
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, request({
                         maxAttempts: 10,
                         timeout: 3000,
                         url: url,
                     })];
-            case 2:
+            case 1:
                 response = _a.sent();
+                if (response.statusCode != 200) {
+                    core.warning("Codecov could not retrieve checksum SHA" + encryption + " at " + url);
+                    return [2 /*return*/, ''];
+                }
                 return [2 /*return*/, response.body];
-            case 3:
-                err_1 = _a.sent();
-                core.warning("Codecov could not retrieve checksum SHA" + encryption + " at " + url);
-                return [2 /*return*/, false];
-            case 4: return [2 /*return*/];
         }
     });
 }); };
+exports.retrieveChecksum = retrieveChecksum;
 var calculateChecksum = function (body, i) {
     var shasum = crypto.createHash("sha" + i);
     shasum.update(body);
