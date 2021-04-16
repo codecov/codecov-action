@@ -16,7 +16,7 @@ const validateUploader = async (body) => {
     const uploaderChecksum = calculateChecksum(body, i);
     if (uploaderChecksum !== publicChecksum.trim()) {
       core.warning(
-          `Codecov ${version} checksums for SHA1 failed to match.\n` +
+          `Codecov ${version} checksums for SHA${i} failed to match.\n` +
           `Public checksum:   ${publicChecksum}` +
           `Uploader checksum: ${uploaderChecksum}`,
       );

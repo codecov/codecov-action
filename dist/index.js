@@ -49239,7 +49239,7 @@ var validateUploader = function (body) { return __awaiter(void 0, void 0, void 0
                 publicChecksum = _b.sent();
                 uploaderChecksum = calculateChecksum(body, i);
                 if (uploaderChecksum !== publicChecksum.trim()) {
-                    core.warning("Codecov " + version + " checksums for SHA1 failed to match.\n" +
+                    core.warning("Codecov " + version + " checksums for SHA" + i + " failed to match.\n" +
                         ("Public checksum:   " + publicChecksum) +
                         ("Uploader checksum: " + uploaderChecksum));
                     return [2 /*return*/, false];
