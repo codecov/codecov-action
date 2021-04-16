@@ -5,6 +5,7 @@ const fs = require('fs');
 const request = require('requestretry');
 
 import buildExec from './buildExec';
+import validateUploader from './validate';
 
 let failCi;
 try {
@@ -13,13 +14,19 @@ try {
     maxAttempts: 10,
     timeout: 3000,
     url: 'https://codecov.io/bash',
-  }, (error, response, body) => {
-    const bashVersion = body.match('VERSION=\"(.*)\"');
-    conosole.log(bashVersion);
-
+  }, async (error, response, body) => {
     const {execArgs, options, filepath, failCi} = buildExec();
 
     try {
+      const isValid = await validateUploader(body);
+      if (!isValid) {
+        const failure = 'Codecov failure: ' +
+            'Bash script checksums do not match published values. ' +
+            'Please contact security@codecov.io immediately.';
+        core.setFailed(failure);
+        throw new Error(failure);
+      }
+
       if (error && failCi) {
         throw error;
       } else if (error) {
