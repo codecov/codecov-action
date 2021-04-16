@@ -26,3 +26,9 @@ test('invalidChecksums', async () => {
   const valid = await validateUploader(script.substring(0, script.length - 1));
   expect(valid).toBeFalsy();
 });
+
+test('invalidVersion', async () => {
+  const script = await bashScript();
+  const valid = await validateUploader(script.substring(0, 20));
+  expect(valid).toBeFalsy();
+});
