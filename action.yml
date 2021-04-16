@@ -59,6 +59,9 @@ inputs:
   name:
     description: 'User defined upload name. Visible in Codecov UI'
     required: false
+  network_filter:
+    description: 'Used to restrict the set of git/hg files that can be matched with filenames in the coverage report. This is useful for monorepos or other setups where a full filepath may not be specified in the coverage report, and that shortened filepath may appear multiple times in a directory structure (e.g. __init__.py)'
+    required: false
   override_branch:
     description: 'Specify the branch name'
     required: false
@@ -73,9 +76,6 @@ inputs:
     required: false
   override_tag:
     description: 'Specify the git tag'
-    required: false
-  network_filter:
-    description: 'Used to restrict the set of git/hg files that can be matched with filenames in the coverage report. This is useful for monorepos or other setups where a full filepath may not be specified in the coverage report, and that shortened filepath may appear multiple times in a directory structure (e.g. __init__.py)'
     required: false
   path_to_write_report:
     description: 'Write upload file to path before uploading'
