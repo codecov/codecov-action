@@ -34,6 +34,6 @@ test('invalid script version', async () => {
 });
 
 test('invalid public checksum file', async () => {
-	const checksum = await retrieveChecksum('foo', 'bar');
+  const checksum = await retrieveChecksum('foo', 'bar');
   expect(checksum).toBeFalsy();
 });
