@@ -1,3 +1,7 @@
+## 1.4.1
+## Fixes
+- #287 Update VERSION regex to restrict on digits and dot
+
 ## 1.4.0
 ### Features
 - #282 Add checksum verification of bash script

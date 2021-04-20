@@ -49280,7 +49280,7 @@ var calculateChecksum = function (body, i) {
     return shasum.digest('hex') + "  codecov";
 };
 var getVersion = function (body) {
-    var regex = /VERSION="(.*)+"/g;
+    var regex = /VERSION="([\d\.]+)"/g;
     var match = regex.exec(body);
     return match ? match[1] : null;
 };

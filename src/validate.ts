@@ -50,7 +50,7 @@ const calculateChecksum = (body, i) => {
 };
 
 const getVersion = (body) => {
-  const regex = /VERSION="(.*)+"/g;
+  const regex = /VERSION="([\d\.]+)"/g;
   const match = regex.exec(body);
   return match ? match[1] : null;
 };
