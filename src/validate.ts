@@ -4,7 +4,7 @@ const core = require('@actions/core');
 
 const request = require('requestretry');
 
-const validateUploader = async (body) => {
+const validateUploader = (body) => {
   const version = getVersion(body);
   if (version === null) {
     core.warning('Codecov could not identify the bash uploader version.');
@@ -12,9 +12,9 @@ const validateUploader = async (body) => {
   }
 
   for (const i of [1, 256, 512]) {
-    const publicChecksum = await retrieveChecksum(version, i);
+    const publicChecksum = retrieveChecksum(version, i);
     const uploaderChecksum = calculateChecksum(body, i);
-    if (uploaderChecksum !== publicChecksum.trim()) {
+    if (uploaderChecksum !== publicChecksum) {
       core.warning(
           `Codecov ${version} checksums for SHA${i} failed to match.\n` +
           `Public checksum:   ${publicChecksum}` +
@@ -26,27 +26,30 @@ const validateUploader = async (body) => {
   return true;
 };
 
-export const retrieveChecksum = async (version, encryption) => {
-  const url = `https://raw.githubusercontent.com/codecov/codecov-bash/${version}/SHA${encryption}SUM`;
-  const response = await request({
-    maxAttempts: 10,
-    timeout: 3000,
-    url: url,
-  });
+export const retrieveChecksum = (version, encryption) => {
+  const checksums = {
+    '1.0.1': {
+      '1': '0ddc61a9408418c73b19a1375f63bb460dc947a8',
+      '256': '89c658e261d5f25533598a222fd96cf17a5fa0eb3772f2defac754d9970b2ec8',
+      '512': 'd075b412a362a9a2b7aedfec3b8b9a9a927b3b99e98c7c15a2b76ef09862aeb005e91d76a5fd71b511141496d0fd23d1b42095f722ebcd509d768fba030f159e',
+    },
+    '1.0.2': {
+      '1': '537069158a6f72b145cfe5f782dceb608d9ef594',
+      '256': 'd6aa3207c4908d123bd8af62ec0538e3f2b9f257c3de62fad4e29cd3b59b41d9',
+      '512': 'b6492196dd844cd81a688536bb42463d28bd666448335c4a8fc7f8f9b9b9afc346a467e3401e3fc49e6047442a30d93a4adfaa1590101224a186013c6179c48d',
+    }
+  };
 
-  if (response.statusCode != 200) {
-    core.warning(
-        `Codecov could not retrieve checksum SHA${encryption} at ${url}`,
-    );
-    return '';
+  if (version in checksums && encryption in checksums[version]) {
+    return checksums[version][encryption];
   }
-  return response.body;
+  return null;
 };
 
 const calculateChecksum = (body, i) => {
   const shasum = crypto.createHash(`sha${i}`);
   shasum.update(body);
-  return `${shasum.digest('hex')}  codecov`;
+  return `${shasum.digest('hex')}`;
 };
 
 const getVersion = (body) => {

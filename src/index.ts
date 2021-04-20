@@ -18,7 +18,7 @@ try {
     const {execArgs, options, filepath, failCi} = buildExec();
 
     try {
-      const isValid = await validateUploader(body);
+      const isValid = validateUploader(body);
       if (!isValid) {
         const failure = 'Codecov failure: ' +
             'Bash script checksums do not match published values. ' +
