@@ -12,6 +12,8 @@ jobs:
         run: npm run lint
       - name: Run tests and collect coverage
         run: yarn run test
+      - name: Run env
+        run: env
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
