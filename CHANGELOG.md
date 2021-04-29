@@ -1,5 +1,19 @@
+## 1.5.0
+### Features
+- #299 Pull Codecov bash script into the action
+
+### Dependencies
+- #271 Bump typescript from 4.2.3 to 4.2.4
+- #277 Bump @typescript-eslint/eslint-plugin from 4.16.1 to 4.22.0
+- #278 Bump @typescript-eslint/parser from 4.20.0 to 4.22.0
+- #279 Bump @actions/core from 1.2.6 to 1.2.7
+- #292 Bump ts-jest from 26.5.3 to 26.5.5
+- #293 Bump eslint from 7.21.0 to 7.25.0
+- #297 Bump @types/jest from 26.0.20 to 26.0.23
+- #298 Upgrade to GitHub-native Dependabot
+
 ## 1.4.1
-## Fixes
+### Fixes
 - #287 Update VERSION regex to restrict on digits and dot and move checksums into script
 
 ## 1.4.0
