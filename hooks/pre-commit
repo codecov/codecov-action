@@ -4,5 +4,5 @@ npm i --package-lock-only
 npm run lint --fix
 npm run build
 git add src/
-git add dist/index.js
+git add dist/
 git add package-lock.json
