@@ -1,6 +1,8 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+const VERSION = require('./version');
+
 const context = github.context;
 
 const isTrue = (variable) => {
@@ -51,7 +53,14 @@ const buildExec = () => {
     workingDir + '/codecov.sh' : 'codecov.sh';
 
   const execArgs = [filepath];
-  execArgs.push( '-n', `${name}`, '-F', `${flags}`, '-Q', 'github-action' );
+  execArgs.push(
+      '-n',
+      `${name}`,
+      '-F',
+      `${flags}`,
+      '-Q',
+      `github-action-${VERSION}`,
+  );
 
   const options:any = {};
   options.env = Object.assign(process.env, {

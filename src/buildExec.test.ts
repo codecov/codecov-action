@@ -1,5 +1,8 @@
 import buildExec from './buildExec';
 const github = require('@actions/github');
+
+const VERSION = require('./version');
+
 const context = github.context;
 
 test('no arguments', () => {
@@ -12,7 +15,7 @@ test('no arguments', () => {
     '-F',
     '',
     '-Q',
-    'github-action',
+    `github-action-${VERSION}`,
   ];
   if (context.eventName == 'pull_request') {
     args.push('-C', `${context.payload.pull_request.head.sha}`);
@@ -70,7 +73,7 @@ test('all arguments', () => {
     '-F',
     'test',
     '-Q',
-    'github-action',
+    `github-action-${VERSION}`,
     '-c',
     '-N',
     '83231650328f11695dfb754ca0f540516f188d27',
