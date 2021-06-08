@@ -1,3 +1,30 @@
+## 1.5.1
+### Fixes
+- #320 doc: add github actions badge
+- #336 Update bash uploader to 1.0.3
+- #339 fix: Add action version
+
+### Dependencies
+- #302 Bump @typescript-eslint/eslint-plugin from 4.22.0 to 4.22.1
+- #303 Bump @typescript-eslint/parser from 4.22.0 to 4.22.1
+- #304 Bump ts-jest from 26.5.5 to 26.5.6
+- #309 Bump lodash from 4.17.19 to 4.17.21
+- #310 Bump hosted-git-info from 2.8.8 to 2.8.9
+- #311 Bump @actions/github from 4.0.0 to 5.0.0
+- #314 Bump eslint from 7.25.0 to 7.27.0
+- #315 Bump @actions/core from 1.2.7 to 1.3.0
+- #316 Bump @typescript-eslint/parser from 4.22.1 to 4.25.0
+- #317 Bump @typescript-eslint/eslint-plugin from 4.22.1 to 4.25.0
+- #319 Bump jest-junit from 12.0.0 to 12.1.0
+- #321 Bump typescript from 4.2.4 to 4.3.2
+- #323 Bump ws from 7.3.1 to 7.4.6
+- #331 Bump eslint from 7.27.0 to 7.28.0
+- #332 Bump @actions/exec from 1.0.4 to 1.1.0
+- #333 Bump @typescript-eslint/parser from 4.25.0 to 4.26.1
+- #334 Bump @typescript-eslint/eslint-plugin from 4.25.0 to 4.26.1
+- #335 Bump @actions/core from 1.3.0 to 1.4.0
+- #337 Bump glob-parent from 5.1.1 to 5.1.2
+
 ## 1.5.0
 ### Features
 - #299 Pull Codecov bash script into the action
