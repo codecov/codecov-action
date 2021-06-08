@@ -51,7 +51,7 @@ const buildExec = () => {
     workingDir + '/codecov.sh' : 'codecov.sh';
 
   const execArgs = [filepath];
-  execArgs.push( '-n', `${name}`, '-F', `${flags}`, '-Q', 'github-action' );
+  execArgs.push( '-n', `${name}`, '-F', `${flags}`, '-Q', 'github-action-1.5.1' );
 
   const options:any = {};
   options.env = Object.assign(process.env, {

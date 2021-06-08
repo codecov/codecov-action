@@ -7220,7 +7220,7 @@ var buildExec = function () {
     var filepath = workingDir ?
         workingDir + '/codecov.sh' : 'codecov.sh';
     var execArgs = [filepath];
-    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', 'github-action');
+    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', 'github-action-1.5.1');
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
