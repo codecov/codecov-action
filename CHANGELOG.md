@@ -2,6 +2,7 @@
 ### Fixes
 - #320 doc: add github actions badge
 - #336 Update bash uploader to 1.0.3
+- #339 fix: Add action version
 
 ### Dependencies
 - #302 Bump @typescript-eslint/eslint-plugin from 4.22.0 to 4.22.1
