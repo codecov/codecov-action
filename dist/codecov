@@ -5,7 +5,7 @@
 
 set -e +o pipefail
 
-VERSION="1.0.2"
+VERSION="1.0.3"
 
 codecov_flags=( )
 url="https://codecov.io"
@@ -1866,10 +1866,9 @@ else
         -H 'Accept: text/plain' \
         $curlargs \
         "$url/upload/v2?$query&attempt=$i" || echo 'HTTP 500')
-  # HTTP 200
-  # http://....
-  status=$(echo "$res" | head -1 | cut -d' ' -f2)
-  if [ "$status" = "" ] || [ "$status" = "200" ];
+  # {"message": "Coverage reports upload successfully", "uploaded": true, "queued": true, "id": "...", "url": "https://codecov.io/..."\}
+  uploaded=$(grep -o '\"uploaded\": [a-z]*' <<< "$res" | head -1 | cut -d' ' -f2)
+  if [ "$uploaded" = "true" ]
   then
     say "    Reports have been successfully queued for processing at ${b}$(echo "$res" | head -2 | tail -1)${x}"
     exit 0
