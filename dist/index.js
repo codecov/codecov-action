@@ -1109,7 +1109,7 @@ function onceStrict (fn) {
 "use strict";
 
 exports.__esModule = true;
-var VERSION = 'v1.5.0';
+var VERSION = 'v1.5.2';
 exports["default"] = VERSION;
 
 
@@ -7188,7 +7188,7 @@ exports.checkBypass = checkBypass;
 exports.__esModule = true;
 var core = __webpack_require__(470);
 var github = __webpack_require__(469);
-var VERSION = __webpack_require__(52);
+var version_1 = __webpack_require__(52);
 var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
@@ -7233,7 +7233,7 @@ var buildExec = function () {
     var filepath = workingDir ?
         workingDir + '/codecov.sh' : 'codecov.sh';
     var execArgs = [filepath];
-    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + VERSION);
+    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version_1["default"]);
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
