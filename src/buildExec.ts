@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const VERSION = require('./version');
+import VERSION from './version';
 
 const context = github.context;
 

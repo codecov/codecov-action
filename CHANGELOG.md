@@ -1,3 +1,7 @@
+## 1.5.2
+### Fixes
+- # fix: Import version properly as string not object
+
 ## 1.5.1
 ### Fixes
 - #320 doc: add github actions badge
