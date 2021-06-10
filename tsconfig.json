@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
   "include": [
     "src"
   ]

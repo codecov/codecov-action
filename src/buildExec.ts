@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-import VERSION from './version';
+import { version } from './version';
 
 const context = github.context;
 
@@ -59,7 +59,7 @@ const buildExec = () => {
       '-F',
       `${flags}`,
       '-Q',
-      `github-action-${VERSION}`,
+      `github-action-${version}`,
   );
 
   const options:any = {};
