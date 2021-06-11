@@ -2,7 +2,7 @@
 
 set -e
 
-npm i --package-lock-only
+npm install
 npm run lint --fix
 npm run build
 git add src/
