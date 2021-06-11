@@ -15,6 +15,7 @@ jobs:
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
+          fail_ci_if_error: false
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: demo
@@ -22,6 +23,7 @@ jobs:
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
+          fail_ci_if_error: true
           files: ./coverage/script/coverage-final.json
           flags: script
           name: codecov-script
