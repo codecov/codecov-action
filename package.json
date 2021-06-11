@@ -25,16 +25,14 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0",
-    "fs": "0.0.1-security",
-    "request": "^2.88.2"
+    "@actions/github": "^5.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/node": "^14.17.3",
     "@typescript-eslint/eslint-plugin": "^4.26.1",
     "@typescript-eslint/parser": "^4.26.1",
-    "@zeit/ncc": "^0.22.3",
+    "@vercel/ncc": "^0.28.6",
     "eslint": "^7.28.0",
     "eslint-config-google": "^0.14.0",
     "jest": "^26.6.3",
