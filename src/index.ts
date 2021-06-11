@@ -20,6 +20,8 @@ try {
 
     exec.exec('bash', execArgs, options)
         .catch((err) => {
+          console.log(status);
+          console.log(err);
           if (failCi) {
             core.setFailed(
                 `Codecov failed with the following error: ${err.message}`,
@@ -28,7 +30,8 @@ try {
             core.warning(`Codecov warning: ${err.message}`);
           }
         })
-        .then(() => {
+        .then((status) => {
+          console.log(status);
           unlinkFile();
         });
 

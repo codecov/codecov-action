@@ -1886,6 +1886,8 @@ try {
             core.warning("Codecov warning: " + err.message);
         }
         exec.exec('bash', execArgs_1, options_1)["catch"](function (err) {
+            console.log(status);
+            console.log(err);
             if (failCi_1) {
                 core.setFailed("Codecov failed with the following error: " + err.message);
             }
@@ -1893,7 +1895,8 @@ try {
                 core.warning("Codecov warning: " + err.message);
             }
         })
-            .then(function () {
+            .then(function (status) {
+            console.log(status);
             unlinkFile();
         });
         var unlinkFile = function () {
