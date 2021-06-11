@@ -6,10 +6,10 @@ import VERSION from './version';
 const context = github.context;
 
 test('no arguments', () => {
-  const {execArgs, filepath, failCi} = buildExec();
+  const {execArgs, failCi} = buildExec();
 
   const args = [
-    'codecov.sh',
+    'codecov',
     '-n',
     '',
     '-F',
@@ -21,7 +21,6 @@ test('no arguments', () => {
     args.push('-C', `${context.payload.pull_request.head.sha}`);
   }
   expect(execArgs).toEqual(args);
-  expect(filepath).toEqual('codecov.sh');
   expect(failCi).toBeFalsy();
 });
 
@@ -65,9 +64,9 @@ test('all arguments', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {execArgs, filepath, failCi} = buildExec();
+  const {execArgs, failCi} = buildExec();
   expect(execArgs).toEqual([
-    'src/codecov.sh',
+    'src/codecov',
     '-n',
     'codecov',
     '-F',
@@ -142,7 +141,6 @@ test('all arguments', () => {
     '-J',
     'MyApp',
   ]);
-  expect(filepath).toEqual('src/codecov.sh');
   expect(failCi).toBeTruthy();
 
   for (const env of Object.keys(envs)) {

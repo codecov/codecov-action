@@ -50,7 +50,7 @@ const buildExec = () => {
   const xcodePackage = core.getInput('xcode_package');
 
   const filepath = workingDir ?
-    workingDir + '/codecov.sh' : 'codecov.sh';
+    workingDir + '/codecov' : 'codecov';
 
   const execArgs = [filepath];
   execArgs.push(
@@ -182,7 +182,7 @@ const buildExec = () => {
     execArgs.push('-J', `${xcodePackage}`);
   }
 
-  return {execArgs, options, filepath, failCi};
+  return {execArgs, options, failCi};
 };
 
 export default buildExec;
