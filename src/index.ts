@@ -20,7 +20,6 @@ try {
 
     exec.exec('bash', execArgs, options)
         .catch((err) => {
-          console.log(status);
           console.log(err);
           if (failCi) {
             core.setFailed(
