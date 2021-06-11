@@ -7539,7 +7539,7 @@ var buildExec = function () {
     var xcodeDerivedData = core.getInput('xcode_derived_data');
     var xcodePackage = core.getInput('xcode_package');
     var filepath = workingDir ?
-        workingDir + '/codecov.sh' : 'codecov.sh';
+        workingDir + '/codecov' : 'codecov';
     var execArgs = [filepath];
     execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version);
     var options = {};
@@ -7658,57 +7658,23 @@ var buildExec = function () {
     if (xcodePackage) {
         execArgs.push('-J', "" + xcodePackage);
     }
-    return { execArgs: execArgs, options: options, filepath: filepath, failCi: failCi };
+    return { execArgs: execArgs, options: options, failCi: failCi };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
-var fs = __nccwpck_require__(5747);
 
-var codecovScript = fs.readFileSync(__nccwpck_require__.ab + "codecov");
-var failCi;
-try {
-    var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options, filepath_1 = _a.filepath, failCi_1 = _a.failCi;
-    fs.writeFile(filepath_1, codecovScript, function (err) {
-        if (err && failCi_1) {
-            throw err;
-        }
-        else if (err) {
-            src_core.warning("Codecov warning: " + err.message);
-        }
-        exec.exec('bash', execArgs_1, options_1)["catch"](function (err) {
-            if (failCi_1) {
-                src_core.setFailed("Codecov failed with the following error: " + err.message);
-            }
-            else {
-                src_core.warning("Codecov warning: " + err.message);
-            }
-        })
-            .then(function () {
-            unlinkFile();
-        });
-        var unlinkFile = function () {
-            fs.unlink(filepath_1, function (err) {
-                if (err && failCi_1) {
-                    throw err;
-                }
-                else if (err) {
-                    src_core.warning("Codecov warning: " + err.message);
-                }
-            });
-        };
-    });
-}
-catch (error) {
+var _a = src_buildExec(), execArgs = _a.execArgs, options = _a.options, failCi = _a.failCi;
+exec.exec('bash', execArgs, options)["catch"](function (err) {
     if (failCi) {
-        src_core.setFailed("Codecov failed with the following error: " + error.message);
+        src_core.setFailed("Codecov failed with the following error: " + err.message);
     }
     else {
-        src_core.warning("Codecov warning: " + error.message);
+        src_core.warning("Codecov warning: " + err.message);
     }
-}
+});
 
 })();
 
