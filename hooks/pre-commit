@@ -2,9 +2,8 @@
 
 set -e
 
-npm i --package-lock-only
-npm run lint --fix
+npm install
+npm run lint
 npm run build
-git add src/
 git add dist/
 git add package-lock.json
