@@ -1,7 +1,7 @@
 import buildExec from './buildExec';
 const github = require('@actions/github');
 
-const pjson = require('../package.json');
+const { version } = require('../package.json');
 
 const context = github.context;
 
@@ -15,7 +15,7 @@ test('no arguments', () => {
     '-F',
     '',
     '-Q',
-    `github-action-${pjson.version}`,
+    `github-action-${version}`,
   ];
   if (context.eventName == 'pull_request') {
     args.push('-C', `${context.payload.pull_request.head.sha}`);
@@ -72,7 +72,7 @@ test('all arguments', () => {
     '-F',
     'test',
     '-Q',
-    `github-action-${pjson.version}`,
+    `github-action-${version}`,
     '-c',
     '-N',
     '83231650328f11695dfb754ca0f540516f188d27',

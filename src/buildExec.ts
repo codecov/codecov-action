@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const pjson = require('../package.json');
+const { version } = require('../package.json');
 
 const context = github.context;
 
@@ -59,7 +59,7 @@ const buildExec = () => {
       '-F',
       `${flags}`,
       '-Q',
-      `github-action-${pjson.version}`,
+      `github-action-${version}`,
   );
 
   const options:any = {};
