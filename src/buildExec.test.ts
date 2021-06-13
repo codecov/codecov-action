@@ -1,7 +1,7 @@
 import buildExec from './buildExec';
 const github = require('@actions/github');
 
-const { version } = require('../package.json');
+const {version} = require('../package.json');
 
 const context = github.context;
 
