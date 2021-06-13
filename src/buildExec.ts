@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const { version } = require('../package.json');
+const {version} = require('../package.json');
 
 const context = github.context;
 
