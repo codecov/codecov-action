@@ -5,24 +5,13 @@ const pjson = require('../package.json');
 
 const context = github.context;
 
-const isTrue = (variable) => {
-  const lowercase = variable.toLowerCase();
-  return (
-    lowercase === '1' ||
-    lowercase === 't' ||
-    lowercase === 'true' ||
-    lowercase === 'y' ||
-    lowercase === 'yes'
-  );
-};
-
 const buildExec = () => {
   const clean = core.getInput('move_coverage_to_trash');
   const commitParent = core.getInput('commit_parent');
   const curlAwsArgs = core.getInput('aws_curl_args');
   const curlCodecovArgs = core.getInput('codecov_curl_args');
   const envVars = core.getInput('env_vars');
-  const failCi = isTrue(core.getInput('fail_ci_if_error'));
+  const failCi = core.getBooleanInput('fail_ci_if_error');
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
@@ -43,7 +32,7 @@ const buildExec = () => {
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const token = core.getInput('token');
-  const verbose = isTrue(core.getInput('verbose'));
+  const verbose = core.getBooleanInput('verbose');
   const workingDir = core.getInput('working-directory');
   const writePath = core.getInput('path_to_write_report');
   const xcodeDerivedData = core.getInput('xcode_derived_data');

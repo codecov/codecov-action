@@ -7502,21 +7502,13 @@ var core = __nccwpck_require__(2186);
 var github = __nccwpck_require__(5438);
 var pjson = __nccwpck_require__(306);
 var context = github.context;
-var isTrue = function (variable) {
-    var lowercase = variable.toLowerCase();
-    return (lowercase === '1' ||
-        lowercase === 't' ||
-        lowercase === 'true' ||
-        lowercase === 'y' ||
-        lowercase === 'yes');
-};
 var buildExec = function () {
     var clean = core.getInput('move_coverage_to_trash');
     var commitParent = core.getInput('commit_parent');
     var curlAwsArgs = core.getInput('aws_curl_args');
     var curlCodecovArgs = core.getInput('codecov_curl_args');
     var envVars = core.getInput('env_vars');
-    var failCi = isTrue(core.getInput('fail_ci_if_error'));
+    var failCi = core.getBooleanInput('fail_ci_if_error');
     var file = core.getInput('file');
     var files = core.getInput('files');
     var flags = core.getInput('flags');
@@ -7537,7 +7529,7 @@ var buildExec = function () {
     var rootDir = core.getInput('root_dir');
     var searchDir = core.getInput('directory');
     var token = core.getInput('token');
-    var verbose = isTrue(core.getInput('verbose'));
+    var verbose = core.getBooleanInput('verbose');
     var workingDir = core.getInput('working-directory');
     var writePath = core.getInput('path_to_write_report');
     var xcodeDerivedData = core.getInput('xcode_derived_data');
