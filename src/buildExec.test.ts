@@ -53,7 +53,7 @@ test('all arguments', () => {
     'root_dir': 'root/',
     'directory': 'coverage/',
     'token': 'd3859757-ab80-4664-924d-aef22fa7557b',
-    'verbose': 't',
+    'verbose': 'true',
     'working-directory': 'src',
     'path_to_write_report': 'codecov/',
     'xcode_derived_data': '~/Library/Developer/Xcode/DerivedData',
