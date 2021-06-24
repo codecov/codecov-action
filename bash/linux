@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -e
+
+say() {
+  echo -e "$1"
+}
+
+curl -Os https://uploader.codecov.io/latest/codecov-linux
+
+check=0
+
+r="\033[0;31m"
+g="\033[0;32m"
+x="\033[0m"
+
+if [ $# != 0 ];
+then
+  while getopts "cv-" o
+  do
+    case "$o" in
+      "-")
+        say "${r}Long options are not supported${x}"
+        exit 2
+        ;;
+      "c")
+        check=1
+        ;;
+      "v")
+        ;;
+      *)
+        say "${r}Unexpected flag not supported${x}"
+        ;;
+    esac
+  done
+fi
+
+if [ "$check" != 0 ];
+then
+  gpg --import bash/pgp_keys.asc
+  curl -Os https://uploader.codecov.io/latest/codecov-linux
+  curl -Os https://uploader.codecov.io/latest/codecov-linux.SHA256SUM
+  curl -Os https://uploader.codecov.io/latest/codecov-linux.SHA256SUM.sig
+
+  # Verify the SHASUM
+  gpg --verify codecov-linux.SHA256SUM.sig codecov-linux.SHA256SUM || (say "${r}SHA256SUM verification failed${x}" && exit 1)
+  say "${g}->  codecov-linux.SHA256SUM verified${x}"
+  shasum -a 256 -c codecov-linux.SHA256SUM || (say "${r}codecov-linux SHASUM check failed${x}" && exit 1)
+  say "${g}->  codecov-linux verified${x}"
+
+  #Clean up
+  unlink codecov-linux.SHA256SUM.sig
+  unlink codecov-linux.SHA256SUM
+fi
+
+chmod +x codecov-linux
