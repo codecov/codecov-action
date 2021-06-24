@@ -7673,7 +7673,7 @@ var exec = __nccwpck_require__(1514);
 var failCi = src_buildExec().failCi;
 exec.exec('bash', ['bash/linux', '-c'])
     .then(function () {
-    exec.exec('codecov-linux')["catch"](function (err) {
+    exec.exec(__dirname + 'codecov-linux')["catch"](function (err) {
         if (failCi) {
             src_core.setFailed("Codecov failed with the following error: " + err.message);
         }

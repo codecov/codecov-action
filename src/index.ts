@@ -7,7 +7,7 @@ const {failCi} = buildExec();
 
 exec.exec('bash', ['bash/linux', '-c'])
     .then(() => {
-      exec.exec('codecov-linux')
+      exec.exec(__dirname + 'codecov-linux')
           .catch((err) => {
             if (failCi) {
               core.setFailed(
