@@ -1,6 +1,7 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
+/* eslint-disable  @typescript-eslint/no-var-requires */
 const {version} = require('../package.json');
 
 const context = github.context;
@@ -19,22 +20,14 @@ const isTrue = (variable) => {
 const buildExec = () => {
   const clean = core.getInput('move_coverage_to_trash');
   const commitParent = core.getInput('commit_parent');
-  const curlAwsArgs = core.getInput('aws_curl_args');
-  const curlCodecovArgs = core.getInput('codecov_curl_args');
   const envVars = core.getInput('env_vars');
+  const dryRun = isTrue(core.getInput('dry_run'));
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
   const functionalities = core.getInput('functionalities');
-  const gcovArgs = core.getInput('gcov_args');
-  const gcovDir = core.getInput('gcov_root_dir');
-  const gcovExclude = core.getInput('gcov_path_exclude');
-  const gcovExec = core.getInput('gcov_executable');
-  const gcovInclude = core.getInput('gcov_path_include');
-  const gcovPrefix = core.getInput('gcov_prefix');
   const name = core.getInput('name');
-  const networkFilter = core.getInput('network_filter');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
   const overrideCommit = core.getInput('override_commit');
@@ -42,22 +35,16 @@ const buildExec = () => {
   const overrideTag = core.getInput('override_tag');
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
+  const slug = core.getInput('slug');
   const token = core.getInput('token');
   const verbose = isTrue(core.getInput('verbose'));
+  const url = core.getInput('url');
   const workingDir = core.getInput('working-directory');
-  const writePath = core.getInput('path_to_write_report');
-  const xcodeDerivedData = core.getInput('xcode_derived_data');
-  const xcodePackage = core.getInput('xcode_package');
 
-  const filepath = workingDir ?
-    workingDir + '/codecov' : 'codecov';
-
-  const execArgs = [filepath];
+  const execArgs = [];
   execArgs.push(
       '-n',
       `${name}`,
-      '-F',
-      `${flags}`,
       '-Q',
       `github-action-${version}`,
   );
@@ -90,14 +77,16 @@ const buildExec = () => {
   if (commitParent) {
     execArgs.push('-N', `${commitParent}`);
   }
-  if (curlAwsArgs) {
-    execArgs.push('-A', `${curlAwsArgs}`);
-  }
-  if (curlCodecovArgs) {
-    execArgs.push('-U', `${curlCodecovArgs}`);
+  if (dryRun) {
+    execArgs.push('-d');
   }
   if (envVarsArg.length) {
     execArgs.push('-e', envVarsArg.join(','));
+  }
+  if (functionalities) {
+    functionalities.split(',').forEach((f) => {
+      execArgs.push('-X', `${f}`);
+    });
   }
   if (failCi) {
     execArgs.push('-Z');
@@ -110,31 +99,10 @@ const buildExec = () => {
       execArgs.push('-f', `${f}`);
     });
   }
-  if (functionalities) {
-    functionalities.split(',').forEach((f) => {
-      execArgs.push('-X', `${f}`);
+  if (flags) {
+    flags.split(',').forEach((f) => {
+      execArgs.push('-F', `${f}`);
     });
-  }
-  if (gcovArgs) {
-    execArgs.push('-a', `${gcovArgs}`);
-  }
-  if (gcovDir) {
-    execArgs.push('-p', `${gcovDir}`);
-  }
-  if (gcovExclude) {
-    execArgs.push('-g', `${gcovExclude}`);
-  }
-  if (gcovExec) {
-    execArgs.push('-x', `${gcovExec}`);
-  }
-  if (gcovInclude) {
-    execArgs.push('-G', `${gcovInclude}`);
-  }
-  if (gcovPrefix) {
-    execArgs.push('-k', `${gcovPrefix}`);
-  }
-  if (networkFilter) {
-    execArgs.push('-i', `${networkFilter}`);
   }
   if (overrideBranch) {
     execArgs.push('-B', `${overrideBranch}`);
@@ -166,20 +134,17 @@ const buildExec = () => {
   if (searchDir) {
     execArgs.push('-s', `${searchDir}`);
   }
+  if (slug) {
+    execArgs.push('-r', `${slug}`);
+  }
+  if (url) {
+    execArgs.push('-u', `${url}`);
+  }
   if (verbose) {
     execArgs.push('-v');
   }
   if (workingDir) {
     options.cwd = workingDir;
-  }
-  if (writePath) {
-    execArgs.push('-q', `${writePath}`);
-  }
-  if (xcodeDerivedData) {
-    execArgs.push('-D', `${xcodeDerivedData}`);
-  }
-  if (xcodePackage) {
-    execArgs.push('-J', `${xcodePackage}`);
   }
 
   return {execArgs, options, failCi};
