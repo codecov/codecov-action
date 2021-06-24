@@ -7671,16 +7671,18 @@ var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 
 var failCi = src_buildExec().failCi;
-exec.exec('bash', ['bash/linux', '-c'])["catch"](function (err) {
+exec.exec('bash', ['bash/linux', '-c'])
+    .then(function () {
+    exec.exec('codecov-linux')["catch"](function (err) {
+        if (failCi) {
+            src_core.setFailed("Codecov failed with the following error: " + err.message);
+        }
+        else {
+            src_core.warning("Codecov warning: " + err.message);
+        }
+    });
+})["catch"](function (err) {
     src_core.setFailed("Codecov failed with the following error: " + err.message);
-});
-exec.exec('codecov-linux')["catch"](function (err) {
-    if (failCi) {
-        src_core.setFailed("Codecov failed with the following error: " + err.message);
-    }
-    else {
-        src_core.warning("Codecov warning: " + err.message);
-    }
 });
 
 })();
