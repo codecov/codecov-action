@@ -14708,8 +14708,9 @@ try {
             core.setFailed('Codecov: Could not properly download uploader binary: ' +
                 ("" + err.message));
         }
+        console.log(res.body);
         var filename = __dirname + '/uploader';
-        fs.writeFile(filename, res, function (err) {
+        fs.writeFile(filename, res.body, function (err) {
             console.log('Did it');
             if (err) {
                 core.setFailed('Codecov: Could not properly write uploader binary: ' +

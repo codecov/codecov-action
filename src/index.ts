@@ -17,8 +17,9 @@ try {
           `${err.message}`,
       );
     }
+    console.log(res.body);
     const filename = __dirname + '/uploader';
-    fs.writeFile(filename, res, (err) => {
+    fs.writeFile(filename, res.body, (err) => {
       console.log('Did it');
       if (err) {
         core.setFailed(
