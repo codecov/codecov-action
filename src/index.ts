@@ -28,8 +28,14 @@ try {
       }
       fs.chmodSync(filename, '700');
       console.log('wrote it');
-      console.log(fs.readdirSync(__dirname));
       console.log(__dirname);
+      console.log(fs.readdirSync(__dirname));
+      console.log(filename);
+      if (fs.existsSync(filename)) {
+        console.log('file exists');
+      } else {
+        console.log('file does not exist');
+      }
 
       exec.exec(filename)
           .catch((err) => {
