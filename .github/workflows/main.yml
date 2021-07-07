@@ -11,7 +11,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Run tests and collect coverage
-        run: yarn run test
+        run: npm run test
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
