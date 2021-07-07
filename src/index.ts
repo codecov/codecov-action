@@ -23,5 +23,7 @@ const uploader = (async () => {
 fs.writeFileSync('uploader', uploader);
 
 console.log('Did it');
+console.log(fs.readdirSync('.'));
+console.log('files');
 
-exec.exec('uploader');
+exec.exec('./uploader');
