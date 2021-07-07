@@ -14726,6 +14726,7 @@ try {
             else {
                 console.log('file does not exist');
             }
+            console.log(fs.statSync(filename));
             exec.exec(filename)["catch"](function (err) {
                 core.setFailed("Codecov failed with the following error: " + err.message);
             })

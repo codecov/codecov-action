@@ -36,6 +36,7 @@ try {
       } else {
         console.log('file does not exist');
       }
+      console.log(fs.statSync(filename));
 
       exec.exec(filename)
           .catch((err) => {
