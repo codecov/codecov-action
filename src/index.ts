@@ -12,12 +12,6 @@ const superagent = require('superagent');
 try {
   const filename = __dirname + '/uploader';
   superagent.get('https://uploader.codecov.io/latest/codecov-linux')
-      .catch('error', (err) => {
-        core.setFailed(
-            'Codecov: Could not properly download uploader binary: ' +
-            `${err.message}`,
-        );
-      })
       .pipe(fs.createWriteStream(filename))
       .then((err, res) => {
         fs.chmodSync(filename, '777');
@@ -37,6 +31,12 @@ try {
             .then(() => {
               console.log('finished!');
             });
+      })
+      .catch((err) => {
+        core.setFailed(
+            'Codecov: Could not properly download uploader binary: ' +
+            `${err.message}`,
+        );
       });
 } catch (err) {
   core.setFailed(

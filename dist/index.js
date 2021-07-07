@@ -14704,10 +14704,7 @@ var superagent = __nccwpck_require__(1524);
 // const {failCi} = buildExec();
 try {
     var filename_1 = __dirname + '/uploader';
-    superagent.get('https://uploader.codecov.io/latest/codecov-linux')["catch"]('error', function (err) {
-        core.setFailed('Codecov: Could not properly download uploader binary: ' +
-            ("" + err.message));
-    })
+    superagent.get('https://uploader.codecov.io/latest/codecov-linux')
         .pipe(fs.createWriteStream(filename_1))
         .then(function (err, res) {
         fs.chmodSync(filename_1, '777');
@@ -14724,6 +14721,9 @@ try {
             .then(function () {
             console.log('finished!');
         });
+    })["catch"](function (err) {
+        core.setFailed('Codecov: Could not properly download uploader binary: ' +
+            ("" + err.message));
     });
 }
 catch (err) {
