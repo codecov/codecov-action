@@ -14524,13 +14524,13 @@ var uploader = (function () { return __awaiter(_this, void 0, void 0, function (
         }
     });
 }); })();
+console.log(uploader);
 var filename = __dirname + '/uploader';
 fs.writeFileSync(filename, uploader);
 console.log('wrote it');
 fs.chmodSync(filename, '700');
 console.log('Did it');
 console.log(fs.readdirSync(__dirname));
-console.log('files');
 console.log(__dirname);
 (function () { return __awaiter(_this, void 0, void 0, function () {
     var err_2;

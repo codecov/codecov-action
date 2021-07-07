@@ -20,6 +20,7 @@ const uploader = (async () => {
   }
 })();
 
+console.log(uploader);
 const filename = __dirname + '/uploader';
 fs.writeFileSync(filename, uploader);
 console.log('wrote it');
@@ -28,7 +29,6 @@ fs.chmodSync(filename, '700');
 
 console.log('Did it');
 console.log(fs.readdirSync(__dirname));
-console.log('files');
 console.log(__dirname);
 
 (async () => {
