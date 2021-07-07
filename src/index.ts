@@ -10,42 +10,31 @@ const superagent = require('superagent');
 // const {failCi} = buildExec();
 
 try {
-  const uploader = () => {
-    return async () => {
-      try {
-        const uploadBinary = await superagent.get('https://uploader.codecov.io/latest/codecov-linux');
-        return uploadBinary;
-      } catch (err) {
+  superagent.get('https://uploader.codecov.io/latest/codecov-linux').end((err, res) => {
+    if (err) {
+      core.setFailed(
+          'Codecov: Could not properly download uploader binary: ' +
+          `${err.message}`,
+      );
+    }
+    console.log(res);
+    const filename = __dirname + '/uploader';
+    fs.writeFile(filename, res, (err) => {
+      console.log('Did it');
+      if (err) {
         core.setFailed(
-            'Codecov: Could not properly download uploader binary: ' +
+            'Codecov: Could not properly write uploader binary: ' +
             `${err.message}`,
         );
       }
-    };
-  };
-  console.log(uploader);
-  const filename = __dirname + '/uploader';
-  fs.writeFileSync(filename, uploader);
-  console.log('wrote it');
+      fs.chmodSync(filename, '700');
+      console.log('wrote it');
+      console.log(fs.readdirSync(__dirname));
+      console.log(__dirname);
 
-  fs.chmodSync(filename, '700');
-
-  console.log('Did it');
-  console.log(fs.readdirSync(__dirname));
-  console.log(__dirname);
-
-  () => {
-    return async () => {
-      try {
-        await exec.exec(filename);
-      } catch (err) {
-        core.setFailed(
-            'Codecov: Could not properly run uploader binary: ' +
-            `${err.message}`,
-        );
-      }
-    };
-  };
+      exec.exec(filename);
+    });
+  });
 } catch (err) {
   core.setFailed(
       `Codecov: Encountered an unexpected error: ${err.message}`,
