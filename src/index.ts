@@ -10,46 +10,34 @@ const superagent = require('superagent');
 // const {failCi} = buildExec();
 
 try {
-  superagent.get('https://uploader.codecov.io/latest/codecov-linux').end((err, res) => {
-    if (err) {
-      core.setFailed(
-          'Codecov: Could not properly download uploader binary: ' +
-          `${err.message}`,
-      );
-    }
-    console.log(res.body);
-    const filename = __dirname + '/uploader';
-    fs.writeFile(filename, res.body, (err) => {
-      console.log('Did it');
-      if (err) {
+  const filename = __dirname + '/uploader';
+  superagent.get('https://uploader.codecov.io/latest/codecov-linux')
+      .catch('error', (err) => {
         core.setFailed(
-            'Codecov: Could not properly write uploader binary: ' +
+            'Codecov: Could not properly download uploader binary: ' +
             `${err.message}`,
         );
-      }
-      fs.chmodSync(filename, '777');
-      console.log('wrote it');
-      console.log(__dirname);
-      console.log(fs.readdirSync(__dirname));
-      console.log(filename);
-      if (fs.existsSync(filename)) {
-        console.log('file exists');
-      } else {
-        console.log('file does not exist');
-      }
-      console.log(fs.statSync(filename));
+      })
+      .pipe(fs.createWriteStream(filename))
+      .then((err, res) => {
+        fs.chmodSync(filename, '777');
+        if (fs.existsSync(filename)) {
+          console.log('file exists');
+        } else {
+          console.log('file does not exist');
+        }
+        console.log(fs.statSync(filename));
 
-      exec.exec(filename)
-          .catch((err) => {
-            core.setFailed(
-                `Codecov failed with the following error: ${err.message}`,
-            );
-          })
-          .then(() => {
-            console.log('finished!');
-          });
-    });
-  });
+        exec.exec(filename)
+            .catch((err) => {
+              core.setFailed(
+                  `Codecov failed with the following error: ${err.message}`,
+              );
+            })
+            .then(() => {
+              console.log('finished!');
+            });
+      });
 } catch (err) {
   core.setFailed(
       `Codecov: Encountered an unexpected error: ${err.message}`,

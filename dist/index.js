@@ -14703,37 +14703,26 @@ var superagent = __nccwpck_require__(1524);
 // import buildExec from './buildExec';
 // const {failCi} = buildExec();
 try {
-    superagent.get('https://uploader.codecov.io/latest/codecov-linux').end(function (err, res) {
-        if (err) {
-            core.setFailed('Codecov: Could not properly download uploader binary: ' +
-                ("" + err.message));
+    var filename_1 = __dirname + '/uploader';
+    superagent.get('https://uploader.codecov.io/latest/codecov-linux')["catch"]('error', function (err) {
+        core.setFailed('Codecov: Could not properly download uploader binary: ' +
+            ("" + err.message));
+    })
+        .pipe(fs.createWriteStream(filename_1))
+        .then(function (err, res) {
+        fs.chmodSync(filename_1, '777');
+        if (fs.existsSync(filename_1)) {
+            console.log('file exists');
         }
-        console.log(res.body);
-        var filename = __dirname + '/uploader';
-        fs.writeFile(filename, res.body, function (err) {
-            console.log('Did it');
-            if (err) {
-                core.setFailed('Codecov: Could not properly write uploader binary: ' +
-                    ("" + err.message));
-            }
-            fs.chmodSync(filename, '777');
-            console.log('wrote it');
-            console.log(__dirname);
-            console.log(fs.readdirSync(__dirname));
-            console.log(filename);
-            if (fs.existsSync(filename)) {
-                console.log('file exists');
-            }
-            else {
-                console.log('file does not exist');
-            }
-            console.log(fs.statSync(filename));
-            exec.exec(filename)["catch"](function (err) {
-                core.setFailed("Codecov failed with the following error: " + err.message);
-            })
-                .then(function () {
-                console.log('finished!');
-            });
+        else {
+            console.log('file does not exist');
+        }
+        console.log(fs.statSync(filename_1));
+        exec.exec(filename_1)["catch"](function (err) {
+            core.setFailed("Codecov failed with the following error: " + err.message);
+        })
+            .then(function () {
+            console.log('finished!');
         });
     });
 }
