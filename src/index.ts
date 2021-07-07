@@ -17,7 +17,6 @@ try {
           `${err.message}`,
       );
     }
-    console.log(res);
     const filename = __dirname + '/uploader';
     fs.writeFile(filename, res, (err) => {
       console.log('Did it');
@@ -32,7 +31,10 @@ try {
       console.log(fs.readdirSync(__dirname));
       console.log(__dirname);
 
-      exec.exec(filename);
+      exec.exec(filename)
+          .then(() => {
+            console.log('finished!');
+          });
     });
   });
 } catch (err) {

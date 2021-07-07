@@ -14708,7 +14708,6 @@ try {
             core.setFailed('Codecov: Could not properly download uploader binary: ' +
                 ("" + err.message));
         }
-        console.log(res);
         var filename = __dirname + '/uploader';
         fs.writeFile(filename, res, function (err) {
             console.log('Did it');
@@ -14720,7 +14719,10 @@ try {
             console.log('wrote it');
             console.log(fs.readdirSync(__dirname));
             console.log(__dirname);
-            exec.exec(filename);
+            exec.exec(filename)
+                .then(function () {
+                console.log('finished!');
+            });
         });
     });
 }
