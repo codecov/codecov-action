@@ -27,8 +27,14 @@ console.log('wrote it');
 fs.chmodSync(filename, '700');
 
 console.log('Did it');
-console.log(fs.readdirSync('.'));
+console.log(fs.readdirSync(__dirname));
 console.log('files');
 console.log(__dirname);
 
-exec.exec(filename);
+exec
+    .exec(filename)
+    .catch((err) => {
+      core.setFailed(
+          `Codecov: Could not properly execute uploader binary: ${err.message}`,
+      );
+    });
