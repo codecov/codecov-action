@@ -14719,7 +14719,9 @@ try {
             console.log('wrote it');
             console.log(fs.readdirSync(__dirname));
             console.log(__dirname);
-            exec.exec(filename)
+            exec.exec(filename)["catch"](function (err) {
+                core.setFailed("Codecov failed with the following error: " + err.message);
+            })
                 .then(function () {
                 console.log('finished!');
             });

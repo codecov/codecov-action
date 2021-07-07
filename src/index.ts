@@ -32,6 +32,11 @@ try {
       console.log(__dirname);
 
       exec.exec(filename)
+          .catch((err) => {
+            core.setFailed(
+                `Codecov failed with the following error: ${err.message}`,
+            );
+          })
           .then(() => {
             console.log('finished!');
           });
