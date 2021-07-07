@@ -14507,49 +14507,61 @@ var exec = __nccwpck_require__(1514);
 var superagent = __nccwpck_require__(1524);
 // import buildExec from './buildExec';
 // const {failCi} = buildExec();
-console.log('oh hi');
-var uploader = (function () { return __awaiter(_this, void 0, void 0, function () {
-    var err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, superagent.get('https://uploader.codecov.io/latest/codecov-linux')];
-            case 1: return [2 /*return*/, _a.sent()];
-            case 2:
-                err_1 = _a.sent();
-                core.setFailed("Codecov: Could not properly download uploader binary: " + err_1.message);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+try {
+    var uploader = function () {
+        return function () { return __awaiter(_this, void 0, void 0, function () {
+            var uploadBinary, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, superagent.get('https://uploader.codecov.io/latest/codecov-linux')];
+                    case 1:
+                        uploadBinary = _a.sent();
+                        return [2 /*return*/, uploadBinary];
+                    case 2:
+                        err_1 = _a.sent();
+                        core.setFailed('Codecov: Could not properly download uploader binary: ' +
+                            ("" + err_1.message));
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+    };
+    console.log(uploader);
+    var filename_1 = __dirname + '/uploader';
+    fs.writeFileSync(filename_1, uploader);
+    console.log('wrote it');
+    fs.chmodSync(filename_1, '700');
+    console.log('Did it');
+    console.log(fs.readdirSync(__dirname));
+    console.log(__dirname);
+    (function () {
+        return function () { return __awaiter(_this, void 0, void 0, function () {
+            var err_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, exec.exec(filename_1)];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_2 = _a.sent();
+                        core.setFailed('Codecov: Could not properly run uploader binary: ' +
+                            ("" + err_2.message));
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
     });
-}); })();
-console.log(uploader);
-var filename = __dirname + '/uploader';
-fs.writeFileSync(filename, uploader);
-console.log('wrote it');
-fs.chmodSync(filename, '700');
-console.log('Did it');
-console.log(fs.readdirSync(__dirname));
-console.log(__dirname);
-(function () { return __awaiter(_this, void 0, void 0, function () {
-    var err_2;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exec.exec(filename)];
-            case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                err_2 = _a.sent();
-                core.setFailed("Codecov: Could not properly execute uploader binary: " + err_2.message);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); })();
+}
+catch (err) {
+    core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
+}
 
 
 /***/ }),
