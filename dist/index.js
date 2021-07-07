@@ -14525,9 +14525,11 @@ var uploader = (function () { return __awaiter(_this, void 0, void 0, function (
     });
 }); })();
 fs.writeFileSync('uploader', uploader);
+fs.chmod('uploader', 320);
 console.log('Did it');
 console.log(fs.readdirSync('.'));
 console.log('files');
+console.log(__dirname);
 exec.exec('./uploader');
 
 
