@@ -14715,7 +14715,7 @@ try {
                 core.setFailed('Codecov: Could not properly write uploader binary: ' +
                     ("" + err.message));
             }
-            fs.chmodSync(filename, '700');
+            fs.chmodSync(filename, '777');
             console.log('wrote it');
             console.log(__dirname);
             console.log(fs.readdirSync(__dirname));
