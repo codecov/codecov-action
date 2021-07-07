@@ -14532,10 +14532,24 @@ console.log('Did it');
 console.log(fs.readdirSync(__dirname));
 console.log('files');
 console.log(__dirname);
-exec
-    .exec(filename)["catch"](function (err) {
-    core.setFailed("Codecov: Could not properly execute uploader binary: " + err.message);
-});
+(function () { return __awaiter(_this, void 0, void 0, function () {
+    var err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, exec.exec(filename)];
+            case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                core.setFailed("Codecov: Could not properly execute uploader binary: " + err_2.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); })();
 
 
 /***/ }),
