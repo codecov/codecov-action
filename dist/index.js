@@ -7311,7 +7311,7 @@ module.exports = eval("require")("encoding");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"codecov-action","version":"1.5.2","description":"Upload coverage reports to Codecov from GitHub Actions","main":"index.js","scripts":{"lint":"eslint src/*.*","test":"yarn run test-script && yarn run test-calculator && yarn run test-coverage","test-calculator":"jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator","test-coverage":"jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test","test-script":"jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script","build":"ncc build src/index.ts"},"repository":{"type":"git","url":"git+https://github.com/codecov/codecov-action.git"},"keywords":[],"author":"Ibrahim Ali","license":"MIT","bugs":{"url":"https://github.com/codecov/codecov-action/issues"},"homepage":"https://github.com/codecov/codecov-action#readme","dependencies":{"@actions/core":"^1.4.0","@actions/exec":"^1.1.0","@actions/github":"^5.0.0"},"devDependencies":{"@types/jest":"^26.0.23","@types/node":"^15.12.2","@typescript-eslint/eslint-plugin":"^4.26.1","@typescript-eslint/parser":"^4.26.1","@vercel/ncc":"^0.28.6","eslint":"^7.28.0","eslint-config-google":"^0.14.0","jest":"^26.6.3","jest-junit":"^12.2.0","ts-jest":"^26.5.6","typescript":"^4.3.2","yarn":"^1.22.10"}}');
+module.exports = {"i8":"1.5.2"};
 
 /***/ }),
 
@@ -7500,7 +7500,7 @@ __nccwpck_require__.r(__webpack_exports__);
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 var core = __nccwpck_require__(2186);
 var github = __nccwpck_require__(5438);
-var pjson = __nccwpck_require__(306);
+var version = __nccwpck_require__(306)/* .version */ .i8;
 var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
@@ -7545,7 +7545,7 @@ var buildExec = function () {
     var filepath = workingDir ?
         workingDir + '/codecov' : 'codecov';
     var execArgs = [filepath];
-    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + pjson.version);
+    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version);
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
