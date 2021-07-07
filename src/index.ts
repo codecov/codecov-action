@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 
@@ -7,6 +9,7 @@ const superagent = require('superagent');
 
 // const {failCi} = buildExec();
 
+console.log('oh hi');
 const uploader = (async () => {
   try {
     return await superagent.get('https://uploader.codecov.io/latest/codecov-linux');
@@ -17,4 +20,8 @@ const uploader = (async () => {
   }
 })();
 
-exec.exec(uploader);
+fs.writeFileSync('uploader', uploader);
+
+console.log('Did it');
+
+exec.exec('uploader');

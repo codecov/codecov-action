@@ -100,4 +100,4 @@ branding:
   icon: 'umbrella'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'src/index.js'

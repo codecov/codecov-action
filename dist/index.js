@@ -14501,11 +14501,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _this = this;
+var fs = __nccwpck_require__(5747);
 var core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 var superagent = __nccwpck_require__(1524);
 // import buildExec from './buildExec';
 // const {failCi} = buildExec();
+console.log('oh hi');
 var uploader = (function () { return __awaiter(_this, void 0, void 0, function () {
     var err_1;
     return __generator(this, function (_a) {
@@ -14522,7 +14524,9 @@ var uploader = (function () { return __awaiter(_this, void 0, void 0, function (
         }
     });
 }); })();
-exec.exec(uploader);
+fs.writeFileSync('uploader', uploader);
+console.log('Did it');
+exec.exec('uploader');
 
 
 /***/ }),
