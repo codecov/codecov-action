@@ -21,7 +21,7 @@ const uploader = (async () => {
 })();
 
 fs.writeFileSync('uploader', uploader);
-fs.chmod('uploader', 0o500);
+fs.chmodSync('uploader', 0o500);
 
 console.log('Did it');
 console.log(fs.readdirSync('.'));
