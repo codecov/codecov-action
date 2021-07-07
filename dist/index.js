@@ -14524,14 +14524,15 @@ var uploader = (function () { return __awaiter(_this, void 0, void 0, function (
         }
     });
 }); })();
-fs.writeFileSync('uploader', uploader);
+var filename = __dirname + '/uploader';
+fs.writeFileSync(filename, uploader);
 console.log('wrote it');
-fs.chmodSync('uploader', '700');
+fs.chmodSync(filename, '700');
 console.log('Did it');
 console.log(fs.readdirSync('.'));
 console.log('files');
 console.log(__dirname);
-exec.exec('./uploader');
+exec.exec(filename);
 
 
 /***/ }),
