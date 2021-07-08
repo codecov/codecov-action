@@ -7685,10 +7685,12 @@ try {
             filePath.close();
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
-            exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
+            exec.exec(filename_1, execArgs_1, options_1)
+                .then(function () {
+                console.log('finished');
+            })["catch"](function (err) {
                 src_core.setFailed('Codecov: Failed to properly upload: ' +
                     ("" + err.message));
-                return;
             });
         });
     });
