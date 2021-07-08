@@ -12,6 +12,8 @@ try {
   const url = 'https://uploader.codecov.io/latest/codecov-linux';
   const filename = __dirname + '/uploader';
   const {execArgs, options} = buildExec();
+  console.log(execArgs);
+  console.log(options);
 
   https.get(url, (res) => {
     // Image will be stored at this path
@@ -22,15 +24,13 @@ try {
       // TODO - validate step
       fs.chmodSync(filename, '777');
 
-      try {
-        exec.exec(filename, execArgs, options);
-      } catch (err) {
+      exec.exec(filename, execArgs, options).catch((err) => {
         core.setFailed(
             'Codecov: Failed to properly upload: ' +
             `${err.message}`,
         );
         return;
-      }
+      });
     });
   });
 } catch (err) {
