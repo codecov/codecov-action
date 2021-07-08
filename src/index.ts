@@ -8,9 +8,8 @@ import buildExec from './buildExec';
 // const {failCi} = buildExec();
 
 try {
-  const {execArgs, options} = buildExec();
-  console.log(execArgs);
-  exec.exec(uploader, execArgs, options)
+  const {execArgs} = buildExec();
+  exec.exec(uploader, execArgs)
       .catch((err) => {
         core.setFailed(
             `Codecov: Encountered an unexpected error: ${err.message}`,

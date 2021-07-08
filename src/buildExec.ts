@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const {version} = require('../package.json');
+// const {version} = require('../package.json');
 
 const context = github.context;
 
@@ -49,17 +49,14 @@ const buildExec = () => {
   const xcodeDerivedData = core.getInput('xcode_derived_data');
   const xcodePackage = core.getInput('xcode_package');
 
-  const filepath = workingDir ?
-    workingDir + '/codecov' : 'codecov';
-
-  const execArgs = [filepath];
+  const execArgs = [];
   execArgs.push(
       '-n',
       `${name}`,
       '-F',
       `${flags}`,
-      '-Q',
-      `github-action-${version}`,
+      // '-Q',
+      // `github-action-${version}`,
   );
 
   const options:any = {};

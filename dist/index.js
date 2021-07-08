@@ -34301,7 +34301,7 @@ __nccwpck_require__.r(__webpack_exports__);
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 var core = __nccwpck_require__(2186);
 var github = __nccwpck_require__(5438);
-var version = __nccwpck_require__(306)/* .version */ .i8;
+// const {version} = require('../package.json');
 var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
@@ -34343,10 +34343,8 @@ var buildExec = function () {
     var writePath = core.getInput('path_to_write_report');
     var xcodeDerivedData = core.getInput('xcode_derived_data');
     var xcodePackage = core.getInput('xcode_package');
-    var filepath = workingDir ?
-        workingDir + '/codecov' : 'codecov';
-    var execArgs = [filepath];
-    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version);
+    var execArgs = [];
+    execArgs.push('-n', "" + name, '-F', "" + flags);
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
@@ -34474,9 +34472,8 @@ var uploader = __nccwpck_require__(696);
 
 // const {failCi} = buildExec();
 try {
-    var _a = src_buildExec(), execArgs = _a.execArgs, options = _a.options;
-    console.log(execArgs);
-    exec.exec(uploader, execArgs, options)["catch"](function (err) {
+    var execArgs = src_buildExec().execArgs;
+    exec.exec(uploader, execArgs)["catch"](function (err) {
         src_core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
     });
 }
@@ -39146,14 +39143,6 @@ function singletonify(inst) {
   });
 }
 
-
-/***/ }),
-
-/***/ 306:
-/***/ ((module) => {
-
-"use strict";
-module.exports = {"i8":"2.0.0"};
 
 /***/ }),
 
