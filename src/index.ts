@@ -21,7 +21,6 @@ try {
       return;
     }
 
-    console.log(body);
     fs.writeFileSync(filename, body);
     fs.chmodSync(filename, '777');
 
