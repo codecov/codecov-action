@@ -1,6 +1,7 @@
 const core = require('@actions/core');
+const exec = require('@actions/exec');
 
-const uploader = require('../uploader/src/index');
+const uploader = require('../uploader/bin/codecov');
 
 import buildExec from './buildExec';
 
@@ -9,8 +10,7 @@ import buildExec from './buildExec';
 try {
   const {execArgs, options} = buildExec();
   console.log(execArgs);
-  uploader
-      .main(execArgs, options)
+  exec.exec(uploader, execArgs, options)
       .catch((err) => {
         core.setFailed(
             `Codecov: Encountered an unexpected error: ${err.message}`,
