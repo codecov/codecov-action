@@ -33266,6 +33266,7 @@ try {
                 ("" + err.message));
             return;
         }
+        console.log(body);
         fs.writeFileSync(filename_1, body);
         fs.chmodSync(filename_1, '777');
         try {
