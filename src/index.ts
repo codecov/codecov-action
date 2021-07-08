@@ -12,10 +12,12 @@ const request = require('request');
 try {
   const filename = __dirname + '/uploader';
   request.get('https://uploader.codecov.io/latest/codecov-linux', (err, res, body) => {
+    console.log(`err ${err}`);
+    console.log(`res ${res}`);
     if (err || !res.ok) {
       core.setFailed(
           'Codecov: Could not properly download uploader binary' +
-          err ? `: ${err.message}` : '',
+          err ? `: ${err}` : '',
       );
     }
     fs.writeFileSync(res.body, filename);
