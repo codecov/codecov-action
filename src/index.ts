@@ -18,25 +18,22 @@ try {
           'Codecov: Could not properly download uploader binary: ' +
           `${err.message}`,
       );
+      return;
     }
+
     fs.writeFileSync(filename, body);
     fs.chmodSync(filename, '777');
-    if (fs.existsSync(filename)) {
-      console.log('file exists');
-    } else {
-      console.log('file does not exist');
-    }
-    console.log(fs.statSync(filename));
 
-    childProcess.execFile(filename, (err) => {
-      if (err) {
-        core.setFailed(
-            'Codecov: Failed to properly upload: ' +
-            `${err.message}`,
-        );
-      }
+    try {
+      childProcess.execFileSync(filename);
       console.log('finished!');
-    });
+    } catch (err) {
+      core.setFailed(
+          'Codecov: Failed to properly upload: ' +
+          `${err.message}`,
+      );
+      return;
+    };
   });
 } catch (err) {
   core.setFailed(
