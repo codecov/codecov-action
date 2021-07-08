@@ -14,38 +14,22 @@ try {
   const {execArgs, options} = buildExec();
 
   https.get(url, (res) => {
-    try {
-      // Image will be stored at this path
-      const filePath = fs.createWriteStream(filename);
-      res.pipe(filePath);
-      filePath.on('finish', () => {
-        filePath.close();
-        // TODO - validate step
-        fs.chmodSync(filename, '777');
+    // Image will be stored at this path
+    const filePath = fs.createWriteStream(filename);
+    res.pipe(filePath);
+    filePath.on('finish', () => {
+      filePath.close();
+      // TODO - validate step
+      fs.chmodSync(filename, '777');
 
-        try {
-          exec.exec(filename, execArgs, options).catch((err) => {
-            core.setFailed(
-                'Codecov: Failed to properly upload: ' +
-                `${err.message}`,
-            );
-            return;
-          });
-        } catch (err) {
-          core.setFailed(
-              'Codecov: Failed to properly upload: ' +
-              `${err.message}`,
-          );
-          return;
-        }
+      exec.exec(filename, execArgs, options).catch((err) => {
+        core.setFailed(
+            'Codecov: Failed to properly upload: ' +
+            `${err.message}`,
+        );
+        return;
       });
-    } catch (err) {
-      core.setFailed(
-          'Codecov: Failed to properly upload: ' +
-          `${err.message}`,
-      );
-      return;
-    }
+    });
   });
 } catch (err) {
   core.setFailed(
