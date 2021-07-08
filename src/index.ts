@@ -1,7 +1,8 @@
 const fs = require('fs');
 
 const core = require('@actions/core');
-const exec = require('@actions/exec');
+// const exec = require('@actions/exec');
+const childProcess = require('child_process');
 
 const request = require('request');
 
@@ -27,7 +28,7 @@ try {
     }
     console.log(fs.statSync(filename));
 
-    exec.exec(filename)
+    childProcess.execFile(filename)
         .catch((err) => {
           core.setFailed(
               `Codecov failed with the following error: ${err.message}`,
