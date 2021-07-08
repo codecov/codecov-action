@@ -1881,11 +1881,14 @@ try {
             filePath.close();
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
-            exec.exec(filename_1)["catch"](function (err) {
+            try {
+                exec.exec(filename_1);
+            }
+            catch (err) {
                 core.setFailed('Codecov: Failed to properly upload: ' +
                     ("" + err.message));
                 return;
-            });
+            }
         });
     });
 }
