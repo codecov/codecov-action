@@ -25,8 +25,7 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0",
-    "request": "^2.88.2"
+    "@actions/github": "^5.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
