@@ -31567,7 +31567,11 @@ var uploader = __nccwpck_require__(2729);
 // const {failCi} = buildExec();
 try {
     var _a = src_buildExec(), execArgs = _a.execArgs, options = _a.options;
-    uploader.main(execArgs, options);
+    console.log(execArgs);
+    uploader
+        .main(execArgs, options)["catch"](function (err) {
+        src_core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
+    });
 }
 catch (err) {
     src_core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
