@@ -23,13 +23,21 @@ try {
         // TODO - validate step
         fs.chmodSync(filename, '777');
 
-        exec.exec(filename, execArgs, options).catch((err) => {
+        try {
+          exec.exec(filename, execArgs, options).catch((err) => {
+            core.setFailed(
+                'Codecov: Failed to properly upload: ' +
+                `${err.message}`,
+            );
+            return;
+          });
+        } catch (err) {
           core.setFailed(
               'Codecov: Failed to properly upload: ' +
               `${err.message}`,
           );
           return;
-        });
+        }
       });
     } catch (err) {
       core.setFailed(

@@ -7686,11 +7686,18 @@ try {
                 filePath_1.close();
                 // TODO - validate step
                 fs.chmodSync(filename_1, '777');
-                exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
+                try {
+                    exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
+                        src_core.setFailed('Codecov: Failed to properly upload: ' +
+                            ("" + err.message));
+                        return;
+                    });
+                }
+                catch (err) {
                     src_core.setFailed('Codecov: Failed to properly upload: ' +
                         ("" + err.message));
                     return;
-                });
+                }
             });
         }
         catch (err) {
