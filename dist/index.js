@@ -33270,7 +33270,9 @@ try {
         fs.writeFileSync(filename_1, body);
         fs.chmodSync(filename_1, '777');
         try {
-            childProcess.execFileSync(filename_1);
+            childProcess.spawnSync(filename_1, {
+                stdio: ['pipe', process.stdout, process.stderr],
+            });
             console.log('finished!');
         }
         catch (err) {

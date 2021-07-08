@@ -26,7 +26,9 @@ try {
     fs.chmodSync(filename, '777');
 
     try {
-      childProcess.execFileSync(filename);
+      childProcess.spawnSync(filename, {
+        stdio: ['pipe', process.stdout, process.stderr],
+      });
       console.log('finished!');
     } catch (err) {
       core.setFailed(
