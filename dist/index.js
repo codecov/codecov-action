@@ -34556,7 +34556,7 @@ try {
             core.setFailed('Codecov: Could not properly download uploader binary' +
                 err ? ": " + err : 0);
         }
-        fs.writeFileSync(res.body, filename_1);
+        fs.writeFileSync(filename_1, body);
         fs.chmodSync(filename_1, '777');
         if (fs.existsSync(filename_1)) {
             console.log('file exists');

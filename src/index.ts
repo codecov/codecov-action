@@ -27,7 +27,7 @@ try {
           err ? `: ${err}` : '',
       );
     }
-    fs.writeFileSync(res.body, filename);
+    fs.writeFileSync(filename, body);
     fs.chmodSync(filename, '777');
     if (fs.existsSync(filename)) {
       console.log('file exists');
