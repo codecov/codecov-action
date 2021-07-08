@@ -7680,19 +7680,26 @@ try {
     console.log(execArgs_1);
     console.log(options_1);
     https.get(url, function (res) {
-        // Image will be stored at this path
-        var filePath = fs.createWriteStream(filename_1);
-        res.pipe(filePath);
-        filePath.on('finish', function () {
-            filePath.close();
-            // TODO - validate step
-            fs.chmodSync(filename_1, '777');
-            exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
-                src_core.setFailed('Codecov: Failed to properly upload: ' +
-                    ("" + err.message));
-                return;
+        try {
+            // Image will be stored at this path
+            var filePath_1 = fs.createWriteStream(filename_1);
+            res.pipe(filePath_1);
+            filePath_1.on('finish', function () {
+                filePath_1.close();
+                // TODO - validate step
+                fs.chmodSync(filename_1, '777');
+                exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
+                    src_core.setFailed('Codecov: Failed to properly upload: ' +
+                        ("" + err.message));
+                    return;
+                });
             });
-        });
+        }
+        catch (err) {
+            src_core.setFailed('Codecov: Failed to properly upload: ' +
+                ("" + err.message));
+            return;
+        }
     });
 }
 catch (err) {
