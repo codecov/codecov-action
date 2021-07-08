@@ -11,33 +11,32 @@ const request = require('request');
 
 try {
   const filename = __dirname + '/uploader';
-  request.get('https://uploader.codecov.io/latest/codecov-linux')
-      .end((res) => {
-        fs.writeFileSync(res.body, filename);
-        fs.chmodSync(filename, '777');
-        if (fs.existsSync(filename)) {
-          console.log('file exists');
-        } else {
-          console.log('file does not exist');
-        }
-        console.log(fs.statSync(filename));
+  request.get('https://uploader.codecov.io/latest/codecov-linux', (err, res, body) => {
+    if (err || !res.ok) {
+      core.setFailed(
+          'Codecov: Could not properly download uploader binary: ' +
+          `${err.message}`,
+      );
+    }
+    fs.writeFileSync(res.body, filename);
+    fs.chmodSync(filename, '777');
+    if (fs.existsSync(filename)) {
+      console.log('file exists');
+    } else {
+      console.log('file does not exist');
+    }
+    console.log(fs.statSync(filename));
 
-        exec.exec(filename)
-            .catch((err) => {
-              core.setFailed(
-                  `Codecov failed with the following error: ${err.message}`,
-              );
-            })
-            .then(() => {
-              console.log('finished!');
-            });
-      })
-      .catch((err) => {
-        core.setFailed(
-            'Codecov: Could not properly download uploader binary: ' +
-            `${err.message}`,
-        );
-      });
+    exec.exec(filename)
+        .catch((err) => {
+          core.setFailed(
+              `Codecov failed with the following error: ${err.message}`,
+          );
+        })
+        .then(() => {
+          console.log('finished!');
+        });
+  });
 } catch (err) {
   core.setFailed(
       `Codecov: Encountered an unexpected error: ${err.message}`,
