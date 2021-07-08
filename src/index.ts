@@ -25,9 +25,7 @@ try {
     // TODO - validate step
     fs.chmodSync(filename, '777');
 
-    exec.exec(filename, {
-      stdio: ['pipe', process.stdout, process.stderr],
-    }).catch((err) => {
+    exec.exec(filename).catch((err) => {
       core.setFailed(
           'Codecov: Failed to properly upload: ' +
           `${err.message}`,
