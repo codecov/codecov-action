@@ -34545,6 +34545,13 @@ try {
     request.get('https://uploader.codecov.io/latest/codecov-linux', function (err, res, body) {
         console.log("err " + err);
         console.log("res " + res);
+        console.log("res.ok " + res.ok);
+        if (err) {
+            console.log('there is err');
+        }
+        if (!res.ok) {
+            console.log('there is no res.ok');
+        }
         if (err || !res.ok) {
             core.setFailed('Codecov: Could not properly download uploader binary' +
                 err ? ": " + err : 0);
