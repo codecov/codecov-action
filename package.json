@@ -1,0 +1,72 @@
+{
+  "name": "codecov",
+  "version": "0.1.0",
+  "description": "Codecov Report Uploader",
+  "private": true,
+  "bin": "bin/codecov",
+  "scripts": {
+    "lint": "eslint --fix",
+    "test": "jest",
+    "build-linux": "pkg . --targets linux --output out/codecov-linux",
+    "build-macos": "pkg . --targets macos --output out/codecov-macos",
+    "build-alpine": "pkg . --targets node14-alpine-x64 --output out/codecov-alpine",
+    "build-windows": "pkg . --targets win --output out/codecov.exe",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codecov/uploader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codecov/uploader/issues"
+  },
+  "homepage": "https://github.com/codecov/uploader#readme",
+  "dependencies": {
+    "glob": "7.1.7",
+    "line-reader": "0.4.0",
+    "yargs": "16.2.0",
+    "validator": "13.6.0",
+    "superagent": "6.1.0"
+  },
+  "devDependencies": {
+    "eslint": "7.30.0",
+    "eslint-config-prettier": "8.3.0",
+    "husky": "7.0.1",
+    "jest": "27.0.6",
+    "lint-staged": "11.0.0",
+    "nock": "13.1.1",
+    "pkg": "5.1.0",
+    "prettier": "2.3.2",
+    "testdouble": "3.16.1",
+    "testdouble-jest": "2.0.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/ci_providers/provider_template.js",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ],
+    "coverageReporters": [
+      "text",
+      "cobertura",
+      "html"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/test_helpers.js"
+    ]
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "**/*.{json,md,yml,yaml,html}": [
+      "prettier --write"
+    ]
+  }
+}
