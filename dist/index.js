@@ -7677,8 +7677,6 @@ try {
     var url = 'https://uploader.codecov.io/latest/codecov-linux';
     var filename_1 = __dirname + '/uploader';
     var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options;
-    console.log(execArgs_1);
-    console.log(options_1);
     https.get(url, function (res) {
         try {
             // Image will be stored at this path

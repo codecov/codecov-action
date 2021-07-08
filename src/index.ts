@@ -12,8 +12,6 @@ try {
   const url = 'https://uploader.codecov.io/latest/codecov-linux';
   const filename = __dirname + '/uploader';
   const {execArgs, options} = buildExec();
-  console.log(execArgs);
-  console.log(options);
 
   https.get(url, (res) => {
     try {
