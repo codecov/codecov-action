@@ -14,8 +14,8 @@ try {
   request.get('https://uploader.codecov.io/latest/codecov-linux', (err, res, body) => {
     if (err || !res.ok) {
       core.setFailed(
-          'Codecov: Could not properly download uploader binary: ' +
-          `${err.message}`,
+          'Codecov: Could not properly download uploader binary' +
+          err ? `: ${err.message}` : '',
       );
     }
     fs.writeFileSync(res.body, filename);

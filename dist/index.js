@@ -34544,8 +34544,8 @@ try {
     var filename_1 = __dirname + '/uploader';
     request.get('https://uploader.codecov.io/latest/codecov-linux', function (err, res, body) {
         if (err || !res.ok) {
-            core.setFailed('Codecov: Could not properly download uploader binary: ' +
-                ("" + err.message));
+            core.setFailed('Codecov: Could not properly download uploader binary' +
+                err ? ": " + err.message : 0);
         }
         fs.writeFileSync(res.body, filename_1);
         fs.chmodSync(filename_1, '777');
