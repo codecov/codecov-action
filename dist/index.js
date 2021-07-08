@@ -33274,10 +33274,11 @@ try {
             console.log('file does not exist');
         }
         console.log(fs.statSync(filename_1));
-        childProcess.execFile(filename_1)["catch"](function (err) {
-            core.setFailed("Codecov failed with the following error: " + err.message);
-        })
-            .then(function () {
+        childProcess.execFile(filename_1, function (err) {
+            if (err) {
+                core.setFailed('Codecov: Failed to properly upload: ' +
+                    ("" + err.message));
+            }
             console.log('finished!');
         });
     });

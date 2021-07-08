@@ -28,15 +28,15 @@ try {
     }
     console.log(fs.statSync(filename));
 
-    childProcess.execFile(filename)
-        .catch((err) => {
-          core.setFailed(
-              `Codecov failed with the following error: ${err.message}`,
-          );
-        })
-        .then(() => {
-          console.log('finished!');
-        });
+    childProcess.execFile(filename, (err) => {
+      if (err) {
+        core.setFailed(
+            'Codecov: Failed to properly upload: ' +
+            `${err.message}`,
+        );
+      }
+      console.log('finished!');
+    });
   });
 } catch (err) {
   core.setFailed(
