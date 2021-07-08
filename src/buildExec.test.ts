@@ -9,7 +9,6 @@ test('no arguments', () => {
   const {execArgs, failCi} = buildExec();
 
   const args = [
-    'codecov',
     '-n',
     '',
     '-F',
@@ -66,7 +65,6 @@ test('all arguments', () => {
 
   const {execArgs, failCi} = buildExec();
   expect(execArgs).toEqual([
-    'src/codecov',
     '-n',
     'codecov',
     '-F',
