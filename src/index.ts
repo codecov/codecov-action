@@ -3,7 +3,7 @@ const fs = require('fs');
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 
-const superagent = require('superagent');
+const request = require('request');
 
 // import buildExec from './buildExec';
 
@@ -11,9 +11,9 @@ const superagent = require('superagent');
 
 try {
   const filename = __dirname + '/uploader';
-  superagent.get('https://uploader.codecov.io/latest/codecov-linux')
-      .pipe(fs.createWriteStream(filename))
-      .then((err, res) => {
+  request.get('https://uploader.codecov.io/latest/codecov-linux')
+      .end((res) => {
+        fs.writeFileSync(res.body, filename);
         fs.chmodSync(filename, '777');
         if (fs.existsSync(filename)) {
           console.log('file exists');
