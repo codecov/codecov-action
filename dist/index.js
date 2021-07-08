@@ -34552,18 +34552,13 @@ try {
         fs.writeFileSync(filename_1, body);
         // TODO - validate step
         fs.chmodSync(filename_1, '777');
-        try {
-            exec.exec(filename_1, {
-                stdio: ['pipe', process.stdout, process.stderr],
-            });
-            console.log('finished!');
-        }
-        catch (err) {
+        exec.exec(filename_1, {
+            stdio: ['pipe', process.stdout, process.stderr],
+        })["catch"](function (err) {
             core.setFailed('Codecov: Failed to properly upload: ' +
                 ("" + err.message));
             return;
-        }
-        ;
+        });
     });
 }
 catch (err) {

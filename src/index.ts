@@ -25,18 +25,15 @@ try {
     // TODO - validate step
     fs.chmodSync(filename, '777');
 
-    try {
-      exec.exec(filename, {
-        stdio: ['pipe', process.stdout, process.stderr],
-      });
-      console.log('finished!');
-    } catch (err) {
+    exec.exec(filename, {
+      stdio: ['pipe', process.stdout, process.stderr],
+    }).catch((err) => {
       core.setFailed(
           'Codecov: Failed to properly upload: ' +
           `${err.message}`,
       );
       return;
-    };
+    });
   });
 } catch (err) {
   core.setFailed(
