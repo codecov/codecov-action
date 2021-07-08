@@ -1,17 +1,17 @@
 const fs = require('fs');
+const https = require('https');
 
 const core = require('@actions/core');
 const exec = require('@actions/exec');
-// const childProcess = require('child_process');
-const https = require('https');
 
-// import buildExec from './buildExec';
+import buildExec from './buildExec';
 
 // const {failCi} = buildExec();
 
 try {
   const url = 'https://uploader.codecov.io/latest/codecov-linux';
   const filename = __dirname + '/uploader';
+  const {execArgs, options} = buildExec();
 
   https.get(url, (res) => {
     // Image will be stored at this path
@@ -23,7 +23,7 @@ try {
       fs.chmodSync(filename, '777');
 
       try {
-        exec.exec(filename);
+        exec.exec(filename, execArgs, options);
       } catch (err) {
         core.setFailed(
             'Codecov: Failed to properly upload: ' +
