@@ -1,8 +1,8 @@
 const fs = require('fs');
 
 const core = require('@actions/core');
-// const exec = require('@actions/exec');
-const childProcess = require('child_process');
+const exec = require('@actions/exec');
+// const childProcess = require('child_process');
 
 const request = require('request');
 
@@ -22,10 +22,11 @@ try {
     }
 
     fs.writeFileSync(filename, body);
+    // TODO - validate step
     fs.chmodSync(filename, '777');
 
     try {
-      childProcess.spawnSync(filename, {
+      exec.exec(filename, {
         stdio: ['pipe', process.stdout, process.stderr],
       });
       console.log('finished!');
@@ -42,3 +43,4 @@ try {
       `Codecov: Encountered an unexpected error: ${err.message}`,
   );
 }
+// TODO - unlink file
