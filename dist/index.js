@@ -34473,7 +34473,7 @@ var uploader = __nccwpck_require__(696);
 // const {failCi} = buildExec();
 try {
     var execArgs = src_buildExec().execArgs;
-    exec.exec(uploader, execArgs)["catch"](function (err) {
+    exec.exec('node', [uploader, execArgs])["catch"](function (err) {
         src_core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
     });
 }

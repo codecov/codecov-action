@@ -9,7 +9,7 @@ import buildExec from './buildExec';
 
 try {
   const {execArgs} = buildExec();
-  exec.exec(uploader, execArgs)
+  exec.exec('node', [uploader, execArgs])
       .catch((err) => {
         core.setFailed(
             `Codecov: Encountered an unexpected error: ${err.message}`,
