@@ -1,4 +1,4 @@
-import Coverage from "./coverage";
+import Coverage from './coverage';
 
 test('test uncovered if', () => {
   const coverageObj = new Coverage();

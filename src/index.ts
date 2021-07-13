@@ -6,11 +6,10 @@ const exec = require('@actions/exec');
 
 import buildExec from './buildExec';
 
-const {execArgs, options} = buildExec();
-
 try {
   const url = 'https://uploader.codecov.io/latest/codecov-linux';
   const filename = __dirname + '/uploader';
+  const {execArgs, options} = buildExec();
 
   https.get(url, (res) => {
     // Image will be stored at this path

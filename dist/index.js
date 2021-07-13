@@ -7662,10 +7662,10 @@ var https = __nccwpck_require__(7211);
 var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 
-var _a = src_buildExec(), execArgs = _a.execArgs, options = _a.options;
 try {
     var url = 'https://uploader.codecov.io/latest/codecov-linux';
     var filename_1 = __dirname + '/uploader';
+    var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options;
     https.get(url, function (res) {
         // Image will be stored at this path
         var filePath = fs.createWriteStream(filename_1);
@@ -7674,7 +7674,7 @@ try {
             filePath.close();
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
-            exec.exec(filename_1, execArgs, options)["catch"](function (err) {
+            exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
                 src_core.setFailed('Codecov: Failed to properly upload: ' +
                     ("" + err.message));
                 return;
