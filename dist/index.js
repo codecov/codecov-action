@@ -7686,6 +7686,9 @@ try {
             setFailure("Codecov: Failed to write uploader binary: " + err.message, failCi_1);
         }).on('finish', function () {
             filePath.close();
+            fs.readdir(__dirname, function (files) {
+                src_core.info(files);
+            });
             src_core.info('Uploader binary written.');
             // TODO - validate step
             fs.chmodSync(filename_1, '777');

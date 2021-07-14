@@ -37,6 +37,9 @@ try {
           );
         }).on('finish', () => {
           filePath.close();
+          fs.readdir(__dirname, (files) => {
+            core.info(files);
+          });
           core.info('Uploader binary written.');
 
           // TODO - validate step
