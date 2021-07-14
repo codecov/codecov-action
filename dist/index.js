@@ -7489,6 +7489,12 @@ var __webpack_exports__ = {};
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
 
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
+// EXTERNAL MODULE: external "https"
+var external_https_ = __nccwpck_require__(7211);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(5622);
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 var core = __nccwpck_require__(2186);
 var github = __nccwpck_require__(5438);
@@ -7658,9 +7664,9 @@ var buildExec = function () {
 /* harmony default export */ const src_buildExec = (buildExec);
 
 ;// CONCATENATED MODULE: ./src/index.ts
-var fs = __nccwpck_require__(5747);
-var https = __nccwpck_require__(7211);
-var path = __nccwpck_require__(5622);
+
+
+
 var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 
@@ -7676,29 +7682,29 @@ try {
         process.exit();
     }
     var url = "https://uploader.codecov.io/latest/codecov-" + platform;
-    var filename_1 = path.join(__dirname, 'uploader');
-    https.get(url, function (res) {
+    var filename_1 = external_path_.join(__dirname, 'uploader');
+    external_https_.get(url, function (res) {
         // Image will be stored at this path
-        var filePath = fs.createWriteStream(filename_1);
+        var filePath = external_fs_.createWriteStream(filename_1);
         res.pipe(filePath);
         filePath
             .on('error', function (err) {
             setFailure("Codecov: Failed to write uploader binary: " + err.message, failCi_1);
         }).on('finish', function () {
             filePath.close();
-            fs.readdir(__dirname, function (files) {
+            external_fs_.readdir(__dirname, function (err, files) {
                 src_core.info(files);
             });
             src_core.info('Uploader binary written.');
             // TODO - validate step
-            fs.chmodSync(filename_1, '777');
+            external_fs_.chmodSync(filename_1, '777');
             exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
                 setFailure("Codecov: Failed to properly upload: " + err.message, failCi_1);
             }).then(function () {
                 unlink();
             });
             var unlink = function () {
-                fs.unlink(filename_1, function (err) {
+                external_fs_.unlink(filename_1, function (err) {
                     if (err) {
                         setFailure("Codecov: Could not unlink uploader: " + err.message, failCi_1);
                     }

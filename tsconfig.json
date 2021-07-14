@@ -4,6 +4,7 @@
     "rootDir": "./src",
     "sourceMap": true
   },
+  "esModuleInterop": true,
   "include": [
     "src/**/*.ts"
   ],

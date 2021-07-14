@@ -1,6 +1,6 @@
-const fs = require('fs');
-const https = require('https');
-const path = require('path');
+import * as fs from 'fs';
+import * as https from 'https';
+import * as path from 'path';
 
 const core = require('@actions/core');
 const exec = require('@actions/exec');
@@ -37,7 +37,7 @@ try {
           );
         }).on('finish', () => {
           filePath.close();
-          fs.readdir(__dirname, (files) => {
+          fs.readdir(__dirname, (err, files) => {
             core.info(files);
           });
           core.info('Uploader binary written.');
