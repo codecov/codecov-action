@@ -7668,8 +7668,8 @@ try {
     var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options;
     https.get(url, function (res) {
         // Image will be stored at this path
-        var filePath = fs.createWriteStream(filename_1);
         src_core.setOutput('Writing uploader binary...');
+        var filePath = fs.createWriteStream(filename_1);
         res.pipe(filePath);
         filePath
             .on('error', function (err) {

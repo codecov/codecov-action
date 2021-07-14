@@ -13,8 +13,8 @@ try {
 
   https.get(url, (res) => {
     // Image will be stored at this path
-    const filePath = fs.createWriteStream(filename);
     core.setOutput('Writing uploader binary...');
+    const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
