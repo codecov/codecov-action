@@ -43,10 +43,6 @@ try {
           );
         }).on('finish', () => {
           filePath.close();
-          core.info(path.join(__dirname, '..', 'coverage'));
-          fs.readdir(path.join(__dirname, '..', 'coverage'), (err, files) => {
-            core.info(files);
-          });
           core.info('Uploader binary written.');
 
           // TODO - validate step

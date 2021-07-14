@@ -9,6 +9,9 @@ jobs:
         include:
           - os: windows-latest
             platform: windows
+            files-script: .\coverage\script\coverage-final.json
+            files-demo: .\coverage\calculator\coverage-final.json,.\coverage\coverage-test\coverage-final.json
+            file-demo: .\coverage\coverage-final.json
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,15 +24,15 @@ jobs:
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          files: ./coverage/script/coverage-final.json
+          files: ${{ matrix.files-script }}
           flags: script,${{ matrix.platform }}
           name: codecov-script
           platform: ${{ matrix.platform }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ${{ matrix.files-demo }}
+          file: ${{ matrix.file-demo }}
           flags: script,${{ matrix.platform }}
           name: codecov-demo
           platform: ${{ matrix.platform }}
