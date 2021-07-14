@@ -7680,11 +7680,22 @@ try {
             src_core.info('Uploader binary written.');
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
+            src_core.info('Uploader binary access changed.');
+            src_core.info(filename_1);
+            src_core.info(execArgs_1);
+            src_core.info(options_1);
             exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
                 src_core.setFailed('Codecov: Failed to properly upload: ' +
                     ("" + err.message));
                 return;
+            }).then(function () {
+                unlink();
             });
+            var unlink = function () {
+                fs.unlink(filename_1, function (err) {
+                    src_core.warning("Codecov warning: " + err.message);
+                });
+            };
         });
     });
 }

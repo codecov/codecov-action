@@ -27,14 +27,27 @@ try {
           core.info('Uploader binary written.');
           // TODO - validate step
           fs.chmodSync(filename, '777');
+          core.info('Uploader binary access changed.');
+          core.info(filename);
+          core.info(execArgs);
+          core.info(options);
 
-          exec.exec(filename, execArgs, options).catch((err) => {
-            core.setFailed(
-                'Codecov: Failed to properly upload: ' +
-                `${err.message}`,
-            );
-            return;
-          });
+          exec.exec(filename, execArgs, options)
+              .catch((err) => {
+                core.setFailed(
+                    'Codecov: Failed to properly upload: ' +
+                    `${err.message}`,
+                );
+                return;
+              }).then(() => {
+                unlink();
+              });
+
+          const unlink = () => {
+            fs.unlink(filename, (err) => {
+              core.warning(`Codecov warning: ${err.message}`);
+            });
+          };
         });
   });
 } catch (err) {
