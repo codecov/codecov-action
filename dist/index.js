@@ -7674,15 +7674,18 @@ var failCi;
 var setFailure = function (message, failCi) {
     failCi ? src_core.setFailed(message) : src_core.warning(message);
 };
+var isWindows = function (platform) {
+    return platform === 'windows';
+};
+var PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
 try {
     var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options, failCi_1 = _a.failCi, platform = _a.platform;
-    var PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
     if (!PLATFORMS.includes(platform)) {
         setFailure("Codecov: Encountered an unexpected platform: " + platform, failCi_1);
         process.exit();
     }
     var url = "https://uploader.codecov.io/latest/codecov-" + platform;
-    var filename_1 = external_path_.join(__dirname, 'uploader');
+    var filename_1 = external_path_.join(__dirname, "uploader" + (isWindows(platform) ? '.exe' : ''));
     external_https_.get(url, function (res) {
         // Image will be stored at this path
         var filePath = external_fs_.createWriteStream(filename_1);

@@ -11,10 +11,13 @@ let failCi;
 const setFailure = (message, failCi) => {
    failCi ? core.setFailed(message) : core.warning(message);
 };
+const isWindows = (platform) => {
+  return platform === 'windows';
+};
+const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
 
 try {
   const {execArgs, options, failCi, platform} = buildExec();
-  const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
   if (!PLATFORMS.includes(platform)) {
     setFailure(
         `Codecov: Encountered an unexpected platform: ${platform}`,
@@ -23,7 +26,10 @@ try {
     process.exit();
   }
   const url = `https://uploader.codecov.io/latest/codecov-${platform}`;
-  const filename = path.join(__dirname, 'uploader');
+  const filename = path.join(
+      __dirname,
+      `uploader${isWindows(platform) ? '.exe' : ''}`,
+  );
 
   https.get(url, (res) => {
     // Image will be stored at this path
