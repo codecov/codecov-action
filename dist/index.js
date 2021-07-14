@@ -7693,7 +7693,9 @@ try {
             });
             var unlink = function () {
                 fs.unlink(filename_1, function (err) {
-                    src_core.warning("Codecov warning: " + err.message);
+                    if (err) {
+                        src_core.warning("Codecov warning: " + err.message);
+                    }
                 });
             };
         });

@@ -45,7 +45,9 @@ try {
 
           const unlink = () => {
             fs.unlink(filename, (err) => {
-              core.warning(`Codecov warning: ${err.message}`);
+              if (err) {
+                core.warning(`Codecov warning: ${err.message}`);
+              }
             });
           };
         });
