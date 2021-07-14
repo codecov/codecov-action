@@ -7660,6 +7660,7 @@ var buildExec = function () {
 ;// CONCATENATED MODULE: ./src/index.ts
 var fs = __nccwpck_require__(5747);
 var https = __nccwpck_require__(7211);
+var path = __nccwpck_require__(5622);
 var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 
@@ -7675,7 +7676,7 @@ try {
         process.exit();
     }
     var url = "https://uploader.codecov.io/latest/codecov-" + platform;
-    var filename_1 = __dirname + '/uploader';
+    var filename_1 = path.join(__dirname, 'uploader');
     https.get(url, function (res) {
         // Image will be stored at this path
         var filePath = fs.createWriteStream(filename_1);

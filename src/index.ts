@@ -1,5 +1,6 @@
 const fs = require('fs');
 const https = require('https');
+const path = require('path');
 
 const core = require('@actions/core');
 const exec = require('@actions/exec');
@@ -22,7 +23,7 @@ try {
     process.exit();
   }
   const url = `https://uploader.codecov.io/latest/codecov-${platform}`;
-  const filename = __dirname + '/uploader';
+  const filename = path.join(__dirname, 'uploader');
 
   https.get(url, (res) => {
     // Image will be stored at this path
