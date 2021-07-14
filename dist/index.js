@@ -7695,8 +7695,8 @@ try {
             setFailure("Codecov: Failed to write uploader binary: " + err.message, failCi_1);
         }).on('finish', function () {
             filePath.close();
-            src_core.info(external_path_.join(__dirname, 'coverage'));
-            external_fs_.readdir(external_path_.join(__dirname, 'coverage'), function (err, files) {
+            src_core.info(__nccwpck_require__.ab + "coverage");
+            external_fs_.readdir(__nccwpck_require__.ab + "coverage", function (err, files) {
                 src_core.info(files);
             });
             src_core.info('Uploader binary written.');
