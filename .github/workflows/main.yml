@@ -26,7 +26,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
-          flags: script
+          flags: script,${{ matrix.platform }}
           name: codecov-script
           platform: ${{ matrix.platform }}
       - name: Upload coverage to Codecov (demo)
@@ -34,6 +34,6 @@ jobs:
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
-          flags: demo
+          flags: script,${{ matrix.platform }}
           name: codecov-demo
           platform: ${{ matrix.platform }}
