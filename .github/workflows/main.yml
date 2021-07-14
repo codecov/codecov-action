@@ -5,13 +5,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
+          - os: macos-latest
+            platform: macos
           - os: windows-latest
             platform: windows
-            files-script: .\coverage\script\coverage-final.json
-            files-demo: .\coverage\calculator\coverage-final.json,.\coverage\coverage-test\coverage-final.json
-            file-demo: .\coverage\coverage-final.json
+          - os: ubuntu-latest
+            platform: linux
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -22,17 +23,26 @@ jobs:
       - name: Run tests and collect coverage
         run: npm run test
       - name: Upload coverage to Codecov (script)
+        if: ${{ matrix.platform != 'windows' }}
         uses: ./
         with:
-          files: ${{ matrix.files-script }}
+          files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.platform }}
           name: codecov-script
           platform: ${{ matrix.platform }}
       - name: Upload coverage to Codecov (demo)
+        if: ${{ matrix.platform != 'windows' }}
         uses: ./
         with:
-          files: ${{ matrix.files-demo }}
-          file: ${{ matrix.file-demo }}
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
           flags: script,${{ matrix.platform }}
           name: codecov-demo
+          platform: ${{ matrix.platform }}
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.platform == 'windows' }}
+        uses: ./
+        with:
+          flags: ${{ matrix.platform }}
+          name: codecov-all
           platform: ${{ matrix.platform }}
