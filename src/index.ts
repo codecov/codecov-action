@@ -15,19 +15,25 @@ try {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
-    filePath.on('finish', () => {
-      filePath.close();
-      // TODO - validate step
-      fs.chmodSync(filename, '777');
+    filePath
+        .on('error', (err) => {
+          core.setFailed(
+              'Codecov: Failed to write uploader binary: ' +
+              `${err.message}`,
+          );
+        }).on('finish', () => {
+          filePath.close();
+          // TODO - validate step
+          fs.chmodSync(filename, '777');
 
-      exec.exec(filename, execArgs, options).catch((err) => {
-        core.setFailed(
-            'Codecov: Failed to properly upload: ' +
-            `${err.message}`,
-        );
-        return;
-      });
-    });
+          exec.exec(filename, execArgs, options).catch((err) => {
+            core.setFailed(
+                'Codecov: Failed to properly upload: ' +
+                `${err.message}`,
+            );
+            return;
+          });
+        });
   });
 } catch (err) {
   core.setFailed(

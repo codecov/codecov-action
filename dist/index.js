@@ -7670,7 +7670,11 @@ try {
         // Image will be stored at this path
         var filePath = fs.createWriteStream(filename_1);
         res.pipe(filePath);
-        filePath.on('finish', function () {
+        filePath
+            .on('error', function (err) {
+            src_core.setFailed('Codecov: Failed to write uploader binary: ' +
+                ("" + err.message));
+        }).on('finish', function () {
             filePath.close();
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
