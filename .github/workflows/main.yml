@@ -18,6 +18,7 @@ jobs:
           files: ./coverage/script/coverage-final.json
           flags: script
           name: codecov-script
+          platform: linux
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -25,3 +26,4 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo
           name: codecov-demo
+          platform: linux

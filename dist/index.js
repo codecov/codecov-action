@@ -7526,6 +7526,7 @@ var buildExec = function () {
     var overrideCommit = core.getInput('override_commit');
     var overridePr = core.getInput('override_pr');
     var overrideTag = core.getInput('override_tag');
+    var platform = core.getInput('platform');
     var rootDir = core.getInput('root_dir');
     var searchDir = core.getInput('directory');
     var token = core.getInput('token');
@@ -7652,7 +7653,7 @@ var buildExec = function () {
     if (xcodePackage) {
         execArgs.push('-J', "" + xcodePackage);
     }
-    return { execArgs: execArgs, options: options, failCi: failCi };
+    return { execArgs: execArgs, options: options, failCi: failCi, platform: platform };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
@@ -7662,39 +7663,39 @@ var https = __nccwpck_require__(7211);
 var src_core = __nccwpck_require__(2186);
 var exec = __nccwpck_require__(1514);
 
+var failCi;
+var setFailure = function (message, failCi) {
+    failCi ? src_core.setFailed(message) : src_core.warning(message);
+};
 try {
-    var url = 'https://uploader.codecov.io/latest/codecov-linux';
+    var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options, failCi_1 = _a.failCi, platform = _a.platform;
+    var PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
+    if (!PLATFORMS.includes(platform)) {
+        setFailure("Codecov: Encountered an unexpected platform: " + platform, failCi_1);
+    }
+    var url = "https://uploader.codecov.io/latest/codecov-" + platform;
     var filename_1 = __dirname + '/uploader';
-    var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options;
     https.get(url, function (res) {
         // Image will be stored at this path
-        src_core.info('Writing uploader binary...');
         var filePath = fs.createWriteStream(filename_1);
         res.pipe(filePath);
         filePath
             .on('error', function (err) {
-            src_core.setFailed('Codecov: Failed to write uploader binary: ' +
-                ("" + err.message));
+            setFailure("Codecov: Failed to write uploader binary: " + err.message, failCi_1);
         }).on('finish', function () {
             filePath.close();
             src_core.info('Uploader binary written.');
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
-            src_core.info('Uploader binary access changed.');
-            src_core.info(filename_1);
-            src_core.info(execArgs_1);
-            src_core.info(options_1);
             exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
-                src_core.setFailed('Codecov: Failed to properly upload: ' +
-                    ("" + err.message));
-                return;
+                setFailure("Codecov: Failed to properly upload: " + err.message, failCi_1);
             }).then(function () {
                 unlink();
             });
             var unlink = function () {
                 fs.unlink(filename_1, function (err) {
                     if (err) {
-                        src_core.warning("Codecov warning: " + err.message);
+                        setFailure("Codecov: Could not unlink uploader: " + err.message, failCi_1);
                     }
                 });
             };
@@ -7702,7 +7703,7 @@ try {
     });
 }
 catch (err) {
-    src_core.setFailed("Codecov: Encountered an unexpected error: " + err.message);
+    setFailure("Codecov: Encountered an unexpected error " + err.message, failCi);
 }
 
 })();
