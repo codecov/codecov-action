@@ -12,6 +12,12 @@ jobs:
         run: npm run lint
       - name: Run tests and collect coverage
         run: npm run test
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script
+          name: codecov-script
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -19,9 +25,3 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo
           name: codecov-demo
-      - name: Upload coverage to Codecov (script)
-        uses: ./
-        with:
-          files: ./coverage/script/coverage-final.json
-          flags: script
-          name: codecov-script
