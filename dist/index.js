@@ -7669,6 +7669,7 @@ try {
     https.get(url, function (res) {
         // Image will be stored at this path
         var filePath = fs.createWriteStream(filename_1);
+        src_core.setOutput('Writing uploader binary...');
         res.pipe(filePath);
         filePath
             .on('error', function (err) {
@@ -7676,6 +7677,7 @@ try {
                 ("" + err.message));
         }).on('finish', function () {
             filePath.close();
+            src_core.setOutput('Uploader binary written.');
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
             exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {

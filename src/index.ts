@@ -14,6 +14,7 @@ try {
   https.get(url, (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
+    core.setOutput('Writing uploader binary...');
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
@@ -23,6 +24,7 @@ try {
           );
         }).on('finish', () => {
           filePath.close();
+          core.setOutput('Uploader binary written.');
           // TODO - validate step
           fs.chmodSync(filename, '777');
 
