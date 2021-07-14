@@ -2,7 +2,17 @@ name: Workflow for Codecov Action
 on: [push, pull_request]
 jobs:
   run:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            platform: macos
+          - os: windows-latest
+            platform: windows
+          - os: ubuntu-latest
+            platform: linux
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -18,7 +28,7 @@ jobs:
           files: ./coverage/script/coverage-final.json
           flags: script
           name: codecov-script
-          platform: linux
+          platform: ${{ os.platform }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -26,12 +36,4 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo
           name: codecov-demo
-          platform: linux
-      - name: Handle invalid platform
-        uses: ./
-        with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
-          flags: demo
-          name: codecov-demo
-          platform: fake
+          platform: ${{ os.platform }}

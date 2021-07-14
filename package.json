@@ -7,7 +7,7 @@
     "build": "ncc build src/index.ts",
     "lint": "eslint src/*.*",
     "test": "npm run test-script && npm run test-calculator && npm run test-coverage",
-    "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirector=coverage/calculator",
+    "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
     "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
     "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script"
   },

@@ -19,6 +19,7 @@ try {
         `Codecov: Encountered an unexpected platform: ${platform}`,
         failCi,
     );
+    process.exit();
   }
   const url = `https://uploader.codecov.io/latest/codecov-${platform}`;
   const filename = __dirname + '/uploader';
