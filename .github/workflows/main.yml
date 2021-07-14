@@ -27,3 +27,11 @@ jobs:
           flags: demo
           name: codecov-demo
           platform: linux
+      - name: Handle invalid platform
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: demo
+          name: codecov-demo
+          platform: fake
