@@ -25,7 +25,7 @@ try {
     );
     process.exit();
   }
-  const url = `https://uploader.codecov.io/latest/codecov-${platform}`;
+  const url = `https://uploader.codecov.io/latest/codecov-${platform}${isWindows(platform) ? '.exe' : ''}`;
   const filename = path.join(
       __dirname,
       `uploader${isWindows(platform) ? '.exe' : ''}`,
@@ -41,22 +41,13 @@ try {
               `Codecov: Failed to write uploader binary: ${err.message}`,
               failCi,
           );
-        }).on('finish', () => {
+        }).on('finish', async () => {
           filePath.close();
           core.info('Uploader binary written.');
 
           // TODO - validate step
 
           fs.chmodSync(filename, '777');
-          exec.exec(filename, execArgs, options)
-              .catch((err) => {
-                setFailure(
-                    `Codecov: Failed to properly upload: ${err.message}`,
-                    failCi,
-                );
-              }).then(() => {
-                unlink();
-              });
 
           const unlink = () => {
             fs.unlink(filename, (err) => {
@@ -68,6 +59,15 @@ try {
               }
             });
           };
+          await exec.exec(filename, execArgs, options)
+              .catch((err) => {
+                setFailure(
+                    `Codecov: Failed to properly upload: ${err.message}`,
+                    failCi,
+                );
+              }).then(() => {
+                unlink();
+              });
         });
   });
 } catch (err) {
