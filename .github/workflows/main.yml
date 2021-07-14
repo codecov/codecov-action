@@ -5,14 +5,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest]
         include:
-          - os: macos-latest
-            platform: macos
           - os: windows-latest
             platform: windows
-          - os: ubuntu-latest
-            platform: linux
     steps:
       - name: Checkout
         uses: actions/checkout@v2

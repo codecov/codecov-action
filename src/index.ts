@@ -37,6 +37,7 @@ try {
           );
         }).on('finish', () => {
           filePath.close();
+          core.info(filename);
           fs.readdir(__dirname, (err, files) => {
             core.info(files);
           });

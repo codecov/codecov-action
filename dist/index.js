@@ -7692,6 +7692,7 @@ try {
             setFailure("Codecov: Failed to write uploader binary: " + err.message, failCi_1);
         }).on('finish', function () {
             filePath.close();
+            src_core.info(filename_1);
             external_fs_.readdir(__dirname, function (err, files) {
                 src_core.info(files);
             });
