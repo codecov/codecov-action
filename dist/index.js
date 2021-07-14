@@ -7668,7 +7668,7 @@ try {
     var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options;
     https.get(url, function (res) {
         // Image will be stored at this path
-        src_core.setOutput('Writing uploader binary...');
+        src_core.info('Writing uploader binary...');
         var filePath = fs.createWriteStream(filename_1);
         res.pipe(filePath);
         filePath
@@ -7677,7 +7677,7 @@ try {
                 ("" + err.message));
         }).on('finish', function () {
             filePath.close();
-            src_core.setOutput('Uploader binary written.');
+            src_core.info('Uploader binary written.');
             // TODO - validate step
             fs.chmodSync(filename_1, '777');
             exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
