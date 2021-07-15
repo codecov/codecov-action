@@ -12,22 +12,25 @@ import {
   setFailure,
 } from './helpers';
 
-const verify = async (platform, filename) => {
+const verify = async (platform: string, filename: string) => {
   try {
     // Read in public key
-    const publicKeyArmored = await fs.readFile(
+    const publicKeyArmored = await fs.readFileSync(
         path.join(__dirname, 'pgp_keys.asc'),
         'utf-8',
     );
+    core.info('Got publicKeyArmored');
 
     // Get SHASUM and SHASUM signature files
     const shasumRes = await fetch(`${BASEURL}${platform}/codecov.SHA256SUM`);
     const shasum = await shasumRes.text();
+    core.info(`Got shasum ${shasum}`);
 
     const shaSigRes = await fetch(
         `${BASEURL}${platform}/codecov.SHA256SUM.sig`,
     );
     const shaSig = await shaSigRes.text();
+    core.info(`Got shaSig ${shaSig}`);
 
     // Verify shasum
     const verified = await openpgp.verify({
@@ -35,6 +38,7 @@ const verify = async (platform, filename) => {
       signature: await openpgp.signature.readArmored(shaSig),
       publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,
     });
+    core.info(`Got verified ${verified}`);
     const {valid} = verified.signatures[0];
     if (valid) {
       core.info('Signed by key id ' + verified.signatures[0].keyid.toHex());

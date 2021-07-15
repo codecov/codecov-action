@@ -3,14 +3,14 @@ import * as core from '@actions/core';
 const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
 const BASEURL = 'https://uploader.codecov.io/latest/';
 
-const setFailure = (message, failCi) => {
+const setFailure = (message: string, failCi: boolean): void => {
     failCi ? core.setFailed(message) : core.warning(message);
     if (failCi) {
       process.exit();
     }
 };
 
-const getUploaderName = (platform) => {
+const getUploaderName = (platform: string): string => {
   if (isWindows(platform)) {
     return 'codecov.exe';
   } else {
@@ -18,11 +18,11 @@ const getUploaderName = (platform) => {
   }
 };
 
-const isValidPlatform = (platform) => {
+const isValidPlatform = (platform: string): boolean => {
   return PLATFORMS.includes(platform);
 };
 
-const isWindows = (platform) => {
+const isWindows = (platform: string): boolean => {
   return platform === 'windows';
 };
 
