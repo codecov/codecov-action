@@ -1,15 +1,15 @@
 {
   "name": "codecov-action",
-  "version": "1.5.2",
+  "version": "2.0.0",
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint src/*.*",
+    "build": "ncc build src/index.ts",
+    "lint": "eslint src/**/*.ts",
     "test": "npm run test-script && npm run test-calculator && npm run test-coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
     "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
-    "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script",
-    "build": "ncc build src/index.ts"
+    "test-script": "jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,9 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0"
+    "@actions/github": "^5.0.0",
+    "node-fetch": "^2.6.1",
+    "openpgp": "^4.10.10"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

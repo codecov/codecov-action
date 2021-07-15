@@ -5,7 +5,9 @@
         "es2021": true
     },
     "extends": [
-        "google"
+        "google",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -15,5 +17,6 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "linebreak-style": 0
     }
 }
