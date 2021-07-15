@@ -40,8 +40,7 @@ const buildExec = () => {
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const overrideTag = core.getInput('override_tag');
-  // const platform = core.getInput('platform');
-  const platform = 'macos';
+  const platform = core.getInput('platform');
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const token = core.getInput('token');
