@@ -52168,21 +52168,18 @@ var verify = function (platform, filename) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8')];
             case 1:
                 publicKeyArmored = _d.sent();
-                core.info('Got publicKeyArmored');
                 return [4 /*yield*/, lib("" + BASEURL + platform + "/" + uploaderName_1 + ".SHA256SUM")];
             case 2:
                 shasumRes = _d.sent();
                 return [4 /*yield*/, shasumRes.text()];
             case 3:
                 shasum_1 = _d.sent();
-                core.info("Got shasum " + shasum_1);
                 return [4 /*yield*/, lib("" + BASEURL + platform + "/" + uploaderName_1 + ".SHA256SUM.sig")];
             case 4:
                 shaSigRes = _d.sent();
                 return [4 /*yield*/, shaSigRes.text()];
             case 5:
                 shaSig = _d.sent();
-                core.info("Got shaSig " + shaSig);
                 _b = (_a = openpgp).verify;
                 _c = {};
                 return [4 /*yield*/, openpgp.cleartext.fromText(shasum_1)];
@@ -52196,10 +52193,10 @@ var verify = function (platform, filename) { return __awaiter(void 0, void 0, vo
                         _c)])];
             case 9:
                 verified = _d.sent();
-                core.info("Got verified " + verified);
                 valid = verified.signatures[0].valid;
                 if (valid) {
-                    core.info('Signed by key id ' + verified.signatures[0].keyid.toHex());
+                    core.info('==> SHASUM file signed by key id ' +
+                        verified.signatures[0].keyid.toHex());
                 }
                 else {
                     setFailure('Codecov: Error validating SHASUM signature', true);
@@ -52215,6 +52212,7 @@ var verify = function (platform, filename) { return __awaiter(void 0, void 0, vo
                         setFailure('Codecov: Uploader shasum does not match ' +
                             ("uploader hash: " + hash + ", public hash: " + shasum_1), true);
                     }
+                    core.info('==> Uploader SHASUM verified');
                 });
                 return [3 /*break*/, 11];
             case 10:

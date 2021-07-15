@@ -23,7 +23,6 @@ jobs:
       - name: Run tests and collect coverage
         run: npm run test
       - name: Upload coverage to Codecov (script)
-        if: ${{ matrix.platform != 'windows' }}
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
@@ -31,18 +30,10 @@ jobs:
           name: codecov-script
           platform: ${{ matrix.platform }}
       - name: Upload coverage to Codecov (demo)
-        if: ${{ matrix.platform != 'windows' }}
         uses: ./
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: script,${{ matrix.platform }}
           name: codecov-demo
-          platform: ${{ matrix.platform }}
-      - name: Upload coverage to Codecov
-        if: ${{ matrix.platform == 'windows' }}
-        uses: ./
-        with:
-          flags: ${{ matrix.platform }}
-          name: codecov-all
           platform: ${{ matrix.platform }}
