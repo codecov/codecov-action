@@ -1,4 +1,4 @@
-import github from '@actions/github';
+import * as github from '@actions/github';
 
 import buildExec from './buildExec';
 

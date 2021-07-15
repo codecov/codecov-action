@@ -51871,35 +51871,6 @@ module.exports = require("zlib");;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -51931,15 +51902,13 @@ var external_path_ = __nccwpck_require__(5622);
 var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
-var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
-var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
 // const {version} = require('../package.json');
-var context = (github_default()).context;
+var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
     return (lowercase === '1' ||
@@ -51949,39 +51918,39 @@ var isTrue = function (variable) {
         lowercase === 'yes');
 };
 var buildExec = function () {
-    var clean = core_default().getInput('move_coverage_to_trash');
-    var commitParent = core_default().getInput('commit_parent');
-    var curlAwsArgs = core_default().getInput('aws_curl_args');
-    var curlCodecovArgs = core_default().getInput('codecov_curl_args');
-    var envVars = core_default().getInput('env_vars');
-    var failCi = isTrue(core_default().getInput('fail_ci_if_error'));
-    var file = core_default().getInput('file');
-    var files = core_default().getInput('files');
-    var flags = core_default().getInput('flags');
-    var functionalities = core_default().getInput('functionalities');
-    var gcovArgs = core_default().getInput('gcov_args');
-    var gcovDir = core_default().getInput('gcov_root_dir');
-    var gcovExclude = core_default().getInput('gcov_path_exclude');
-    var gcovExec = core_default().getInput('gcov_executable');
-    var gcovInclude = core_default().getInput('gcov_path_include');
-    var gcovPrefix = core_default().getInput('gcov_prefix');
-    var name = core_default().getInput('name');
-    var networkFilter = core_default().getInput('network_filter');
-    var overrideBranch = core_default().getInput('override_branch');
-    var overrideBuild = core_default().getInput('override_build');
-    var overrideCommit = core_default().getInput('override_commit');
-    var overridePr = core_default().getInput('override_pr');
-    var overrideTag = core_default().getInput('override_tag');
+    var clean = core.getInput('move_coverage_to_trash');
+    var commitParent = core.getInput('commit_parent');
+    var curlAwsArgs = core.getInput('aws_curl_args');
+    var curlCodecovArgs = core.getInput('codecov_curl_args');
+    var envVars = core.getInput('env_vars');
+    var failCi = isTrue(core.getInput('fail_ci_if_error'));
+    var file = core.getInput('file');
+    var files = core.getInput('files');
+    var flags = core.getInput('flags');
+    var functionalities = core.getInput('functionalities');
+    var gcovArgs = core.getInput('gcov_args');
+    var gcovDir = core.getInput('gcov_root_dir');
+    var gcovExclude = core.getInput('gcov_path_exclude');
+    var gcovExec = core.getInput('gcov_executable');
+    var gcovInclude = core.getInput('gcov_path_include');
+    var gcovPrefix = core.getInput('gcov_prefix');
+    var name = core.getInput('name');
+    var networkFilter = core.getInput('network_filter');
+    var overrideBranch = core.getInput('override_branch');
+    var overrideBuild = core.getInput('override_build');
+    var overrideCommit = core.getInput('override_commit');
+    var overridePr = core.getInput('override_pr');
+    var overrideTag = core.getInput('override_tag');
     // const platform = core.getInput('platform');
     var platform = 'macos';
-    var rootDir = core_default().getInput('root_dir');
-    var searchDir = core_default().getInput('directory');
-    var token = core_default().getInput('token');
-    var verbose = isTrue(core_default().getInput('verbose'));
-    var workingDir = core_default().getInput('working-directory');
-    var writePath = core_default().getInput('path_to_write_report');
-    var xcodeDerivedData = core_default().getInput('xcode_derived_data');
-    var xcodePackage = core_default().getInput('xcode_package');
+    var rootDir = core.getInput('root_dir');
+    var searchDir = core.getInput('directory');
+    var token = core.getInput('token');
+    var verbose = isTrue(core.getInput('verbose'));
+    var workingDir = core.getInput('working-directory');
+    var writePath = core.getInput('path_to_write_report');
+    var xcodeDerivedData = core.getInput('xcode_derived_data');
+    var xcodePackage = core.getInput('xcode_package');
     var execArgs = [];
     execArgs.push('-n', "" + name, '-F', "" + flags);
     var options = {};
