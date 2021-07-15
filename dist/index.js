@@ -51929,22 +51929,14 @@ var isTrue = function (variable) {
 var buildExec = function () {
     var clean = core.getInput('move_coverage_to_trash');
     var commitParent = core.getInput('commit_parent');
-    var curlAwsArgs = core.getInput('aws_curl_args');
-    var curlCodecovArgs = core.getInput('codecov_curl_args');
     var envVars = core.getInput('env_vars');
+    var dryRun = isTrue(core.getInput('dry_run'));
     var failCi = isTrue(core.getInput('fail_ci_if_error'));
     var file = core.getInput('file');
     var files = core.getInput('files');
     var flags = core.getInput('flags');
     var functionalities = core.getInput('functionalities');
-    var gcovArgs = core.getInput('gcov_args');
-    var gcovDir = core.getInput('gcov_root_dir');
-    var gcovExclude = core.getInput('gcov_path_exclude');
-    var gcovExec = core.getInput('gcov_executable');
-    var gcovInclude = core.getInput('gcov_path_include');
-    var gcovPrefix = core.getInput('gcov_prefix');
     var name = core.getInput('name');
-    var networkFilter = core.getInput('network_filter');
     var overrideBranch = core.getInput('override_branch');
     var overrideBuild = core.getInput('override_build');
     var overrideCommit = core.getInput('override_commit');
@@ -51953,12 +51945,11 @@ var buildExec = function () {
     var platform = core.getInput('platform');
     var rootDir = core.getInput('root_dir');
     var searchDir = core.getInput('directory');
+    var slug = core.getInput('slug');
     var token = core.getInput('token');
     var verbose = isTrue(core.getInput('verbose'));
+    var url = core.getInput('url');
     var workingDir = core.getInput('working-directory');
-    var writePath = core.getInput('path_to_write_report');
-    var xcodeDerivedData = core.getInput('xcode_derived_data');
-    var xcodePackage = core.getInput('xcode_package');
     var execArgs = [];
     execArgs.push('-n', "" + name, '-Q', "github-action-" + version);
     var options = {};
@@ -51988,14 +51979,16 @@ var buildExec = function () {
     if (commitParent) {
         execArgs.push('-N', "" + commitParent);
     }
-    if (curlAwsArgs) {
-        execArgs.push('-A', "" + curlAwsArgs);
-    }
-    if (curlCodecovArgs) {
-        execArgs.push('-U', "" + curlCodecovArgs);
+    if (dryRun) {
+        execArgs.push('-d');
     }
     if (envVarsArg.length) {
         execArgs.push('-e', envVarsArg.join(','));
+    }
+    if (functionalities) {
+        functionalities.split(',').forEach(function (f) {
+            execArgs.push('-X', "" + f);
+        });
     }
     if (failCi) {
         execArgs.push('-Z');
@@ -52012,32 +52005,6 @@ var buildExec = function () {
         flags.split(',').forEach(function (f) {
             execArgs.push('-F', "" + f);
         });
-    }
-    if (functionalities) {
-        functionalities.split(',').forEach(function (f) {
-            execArgs.push('-X', "" + f);
-        });
-    }
-    if (gcovArgs) {
-        execArgs.push('-a', "" + gcovArgs);
-    }
-    if (gcovDir) {
-        execArgs.push('-p', "" + gcovDir);
-    }
-    if (gcovExclude) {
-        execArgs.push('-g', "" + gcovExclude);
-    }
-    if (gcovExec) {
-        execArgs.push('-x', "" + gcovExec);
-    }
-    if (gcovInclude) {
-        execArgs.push('-G', "" + gcovInclude);
-    }
-    if (gcovPrefix) {
-        execArgs.push('-k', "" + gcovPrefix);
-    }
-    if (networkFilter) {
-        execArgs.push('-i', "" + networkFilter);
     }
     if (overrideBranch) {
         execArgs.push('-B', "" + overrideBranch);
@@ -52067,20 +52034,17 @@ var buildExec = function () {
     if (searchDir) {
         execArgs.push('-s', "" + searchDir);
     }
+    if (slug) {
+        execArgs.push('-r', "" + slug);
+    }
+    if (url) {
+        execArgs.push('-u', "" + url);
+    }
     if (verbose) {
         execArgs.push('-v');
     }
     if (workingDir) {
         options.cwd = workingDir;
-    }
-    if (writePath) {
-        execArgs.push('-q', "" + writePath);
-    }
-    if (xcodeDerivedData) {
-        execArgs.push('-D', "" + xcodeDerivedData);
-    }
-    if (xcodePackage) {
-        execArgs.push('-J', "" + xcodePackage);
     }
     return { execArgs: execArgs, options: options, failCi: failCi, platform: platform };
 };
