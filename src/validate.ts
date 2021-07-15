@@ -15,7 +15,7 @@ import {
 const verify = async (platform, filename) => {
   try {
     // Read in public key
-    const publicKeyArmored = await fs.readFileSync(
+    const publicKeyArmored = await fs.readFile(
         path.join(__dirname, 'pgp_keys.asc'),
         'utf-8',
     );
