@@ -11,7 +11,7 @@ const setFailure = (message, failCi) => {
 };
 
 const getUploaderName = (platform) => {
-  if (platform === 'windows') {
+  if (isWindows(platform)) {
     return 'codecov.exe';
   } else {
     return 'codecov';
