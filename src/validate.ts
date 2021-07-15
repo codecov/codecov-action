@@ -14,6 +14,8 @@ import {
 
 const verify = async (platform: string, filename: string) => {
   try {
+    const uploaderName = getUploaderName(platform);
+
     // Read in public key
     const publicKeyArmored = await fs.readFileSync(
         path.join(__dirname, 'pgp_keys.asc'),
@@ -22,12 +24,14 @@ const verify = async (platform: string, filename: string) => {
     core.info('Got publicKeyArmored');
 
     // Get SHASUM and SHASUM signature files
-    const shasumRes = await fetch(`${BASEURL}${platform}/codecov.SHA256SUM`);
+    const shasumRes = await fetch(
+        `${BASEURL}${platform}/${uploaderName}.SHA256SUM`,
+    );
     const shasum = await shasumRes.text();
     core.info(`Got shasum ${shasum}`);
 
     const shaSigRes = await fetch(
-        `${BASEURL}${platform}/codecov.SHA256SUM.sig`,
+        `${BASEURL}${platform}/${uploaderName}.SHA256SUM.sig`,
     );
     const shaSig = await shaSigRes.text();
     core.info(`Got shaSig ${shaSig}`);
@@ -53,9 +57,7 @@ const verify = async (platform: string, filename: string) => {
         .on('data', (data) => {
           uploaderSha.update(data);
         }).on('end', () => {
-          const hash = `${uploaderSha.digest('hex')}  ` +
-             getUploaderName(platform);
-
+          const hash = `${uploaderSha.digest('hex')}  ${uploaderName}`;
           if (hash !== shasum) {
             setFailure(
                 'Codecov: Uploader shasum does not match ' +

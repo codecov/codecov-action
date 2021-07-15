@@ -52158,24 +52158,25 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 var verify = function (platform, filename) { return __awaiter(void 0, void 0, void 0, function () {
-    var publicKeyArmored, shasumRes, shasum_1, shaSigRes, shaSig, verified, _a, _b, valid, uploaderSha_1, stream, err_1;
+    var uploaderName_1, publicKeyArmored, shasumRes, shasum_1, shaSigRes, shaSig, verified, _a, _b, valid, uploaderSha_1, stream, err_1;
     var _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
                 _d.trys.push([0, 10, , 11]);
+                uploaderName_1 = getUploaderName(platform);
                 return [4 /*yield*/, external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8')];
             case 1:
                 publicKeyArmored = _d.sent();
                 core.info('Got publicKeyArmored');
-                return [4 /*yield*/, lib("" + BASEURL + platform + "/codecov.SHA256SUM")];
+                return [4 /*yield*/, lib("" + BASEURL + platform + "/" + uploaderName_1 + ".SHA256SUM")];
             case 2:
                 shasumRes = _d.sent();
                 return [4 /*yield*/, shasumRes.text()];
             case 3:
                 shasum_1 = _d.sent();
                 core.info("Got shasum " + shasum_1);
-                return [4 /*yield*/, lib("" + BASEURL + platform + "/codecov.SHA256SUM.sig")];
+                return [4 /*yield*/, lib("" + BASEURL + platform + "/" + uploaderName_1 + ".SHA256SUM.sig")];
             case 4:
                 shaSigRes = _d.sent();
                 return [4 /*yield*/, shaSigRes.text()];
@@ -52209,8 +52210,7 @@ var verify = function (platform, filename) { return __awaiter(void 0, void 0, vo
                     .on('data', function (data) {
                     uploaderSha_1.update(data);
                 }).on('end', function () {
-                    var hash = uploaderSha_1.digest('hex') + "  " +
-                        getUploaderName(platform);
+                    var hash = uploaderSha_1.digest('hex') + "  " + uploaderName_1;
                     if (hash !== shasum_1) {
                         setFailure('Codecov: Uploader shasum does not match ' +
                             ("uploader hash: " + hash + ", public hash: " + shasum_1), true);
