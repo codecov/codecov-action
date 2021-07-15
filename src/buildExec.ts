@@ -1,5 +1,5 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import core from '@actions/core';
+import github from '@actions/github';
 
 // const {version} = require('../package.json');
 
@@ -40,7 +40,8 @@ const buildExec = () => {
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const overrideTag = core.getInput('override_tag');
-  const platform = core.getInput('platform');
+  // const platform = core.getInput('platform');
+  const platform = 'macos';
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const token = core.getInput('token');

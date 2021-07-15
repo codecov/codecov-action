@@ -2,34 +2,31 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as path from 'path';
 
-const core = require('@actions/core');
-const exec = require('@actions/exec');
+import * as exec from '@actions/exec';
 
 import buildExec from './buildExec';
+import {
+  BASEURL,
+  getUploaderName,
+  isValidPlatform,
+  setFailure,
+} from './helpers';
+
+import verify from './validate';
 
 let failCi;
-const setFailure = (message, failCi) => {
-   failCi ? core.setFailed(message) : core.warning(message);
-};
-const isWindows = (platform) => {
-  return platform === 'windows';
-};
-const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
 
 try {
   const {execArgs, options, failCi, platform} = buildExec();
-  if (!PLATFORMS.includes(platform)) {
+  if (!isValidPlatform(platform)) {
     setFailure(
         `Codecov: Encountered an unexpected platform: ${platform}`,
         failCi,
     );
-    process.exit();
   }
-  const url = `https://uploader.codecov.io/latest/codecov-${platform}${isWindows(platform) ? '.exe' : ''}`;
-  const filename = path.join(
-      __dirname,
-      `uploader${isWindows(platform) ? '.exe' : ''}`,
-  );
+  const uploaderName = getUploaderName(platform);
+  const url = `${BASEURL}${platform}/${uploaderName}`;
+  const filename = path.join( __dirname, uploaderName);
 
   https.get(url, (res) => {
     // Image will be stored at this path
@@ -43,11 +40,9 @@ try {
           );
         }).on('finish', async () => {
           filePath.close();
-          core.info('Uploader binary written.');
-
-          // TODO - validate step
 
           fs.chmodSync(filename, '777');
+          verify(platform, filename);
 
           const unlink = () => {
             fs.unlink(filename, (err) => {

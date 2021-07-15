@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "ncc build src/index.ts",
-    "lint": "eslint src/*.*",
+    "lint": "eslint src/**/*.ts",
     "test": "npm run test-script && npm run test-calculator && npm run test-coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
     "test-coverage": "jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test",
@@ -25,7 +25,9 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.1.0",
-    "@actions/github": "^5.0.0"
+    "@actions/github": "^5.0.0",
+    "node-fetch": "^2.6.1",
+    "openpgp": "^4.10.10"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
