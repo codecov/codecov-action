@@ -13,10 +13,10 @@ test('no arguments', () => {
   const args = [
     '-n',
     '',
-    '-F',
-    '',
     '-Q',
     `github-action-${version}`,
+    '-F',
+    '',
   ];
   if (context.eventName == 'pull_request') {
     args.push('-C', `${context.payload.pull_request.head.sha}`);
@@ -35,7 +35,7 @@ test('all arguments', () => {
     'fail_ci_if_error': 'true',
     'file': 'coverage.xml',
     'files': 'dir1/coverage.xml,dir2/coverage.xml',
-    'flags': 'test',
+    'flags': 'test,test2',
     'functionalities':
       'gcov,coveragepy,fix,search,code,network,gcovout,html,recursesubs',
     'gcov_args': '--timeout 3',
@@ -69,8 +69,6 @@ test('all arguments', () => {
   expect(execArgs).toEqual([
     '-n',
     'codecov',
-    '-F',
-    'test',
     '-Q',
     `github-action-${version}`,
     '-c',
@@ -89,6 +87,10 @@ test('all arguments', () => {
     'dir1/coverage.xml',
     '-f',
     'dir2/coverage.xml',
+    '-F',
+    'test',
+    '-F',
+    'test1',
     '-X',
     'gcov',
     '-X',

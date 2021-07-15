@@ -55,8 +55,6 @@ const buildExec = () => {
   execArgs.push(
       '-n',
       `${name}`,
-      '-F',
-      `${flags}`,
       '-Q',
       `github-action-${version}`,
   );
@@ -107,6 +105,11 @@ const buildExec = () => {
   if (files) {
     files.split(',').forEach((f) => {
       execArgs.push('-f', `${f}`);
+    });
+  }
+  if (flags) {
+    flags.split(',').forEach((f) => {
+      execArgs.push('-F', `${f}`);
     });
   }
   if (functionalities) {

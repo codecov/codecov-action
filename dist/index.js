@@ -51960,7 +51960,7 @@ var buildExec = function () {
     var xcodeDerivedData = core.getInput('xcode_derived_data');
     var xcodePackage = core.getInput('xcode_package');
     var execArgs = [];
-    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version);
+    execArgs.push('-n', "" + name, '-Q', "github-action-" + version);
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
@@ -52006,6 +52006,11 @@ var buildExec = function () {
     if (files) {
         files.split(',').forEach(function (f) {
             execArgs.push('-f', "" + f);
+        });
+    }
+    if (flags) {
+        flags.split(',').forEach(function (f) {
+            execArgs.push('-F', "" + f);
         });
     }
     if (functionalities) {
