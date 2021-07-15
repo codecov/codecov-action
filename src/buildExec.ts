@@ -1,7 +1,8 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
-// const {version} = require('../package.json');
+/* eslint-disable  @typescript-eslint/no-var-requires */
+const {version} = require('../package.json');
 
 const context = github.context;
 
@@ -56,8 +57,8 @@ const buildExec = () => {
       `${name}`,
       '-F',
       `${flags}`,
-      // '-Q',
-      // `github-action-${version}`,
+      '-Q',
+      `github-action-${version}`,
   );
 
   const options:any = {};

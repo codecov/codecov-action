@@ -51710,6 +51710,14 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 
+/***/ 306:
+/***/ ((module) => {
+
+"use strict";
+module.exports = {"i8":"2.0.0"};
+
+/***/ }),
+
 /***/ 2357:
 /***/ ((module) => {
 
@@ -51907,7 +51915,8 @@ var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
-// const {version} = require('../package.json');
+/* eslint-disable  @typescript-eslint/no-var-requires */
+var version = __nccwpck_require__(306)/* .version */ .i8;
 var context = github.context;
 var isTrue = function (variable) {
     var lowercase = variable.toLowerCase();
@@ -51951,7 +51960,7 @@ var buildExec = function () {
     var xcodeDerivedData = core.getInput('xcode_derived_data');
     var xcodePackage = core.getInput('xcode_package');
     var execArgs = [];
-    execArgs.push('-n', "" + name, '-F', "" + flags);
+    execArgs.push('-n', "" + name, '-F', "" + flags, '-Q', "github-action-" + version);
     var options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,

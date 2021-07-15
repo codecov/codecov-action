@@ -2,7 +2,8 @@ import * as github from '@actions/github';
 
 import buildExec from './buildExec';
 
-// const {version} = require('../package.json');
+/* eslint-disable  @typescript-eslint/no-var-requires */
+const {version} = require('../package.json');
 
 const context = github.context;
 
@@ -14,8 +15,8 @@ test('no arguments', () => {
     '',
     '-F',
     '',
-    // '-Q',
-    // `github-action-${version}`,
+    '-Q',
+    `github-action-${version}`,
   ];
   if (context.eventName == 'pull_request') {
     args.push('-C', `${context.payload.pull_request.head.sha}`);
@@ -38,7 +39,7 @@ test('all arguments', () => {
     'functionalities':
       'gcov,coveragepy,fix,search,code,network,gcovout,html,recursesubs',
     'gcov_args': '--timeout 3',
-    'gcov_root_dr': 'gcov_dir/',
+    'gcov_root_dir': 'gcov_dir/',
     'gcov_path_exclude': '**/exclude-dir/*.*',
     'gcov_executable': 'gcov',
     'gcov_path_include': '**/include-dir/*.*',
@@ -70,8 +71,8 @@ test('all arguments', () => {
     'codecov',
     '-F',
     'test',
-    // '-Q',
-    // `github-action-${version}`,
+    '-Q',
+    `github-action-${version}`,
     '-c',
     '-N',
     '83231650328f11695dfb754ca0f540516f188d27',
@@ -108,6 +109,8 @@ test('all arguments', () => {
     'recursesubs',
     '-a',
     '--timeout 3',
+    '-p',
+    'gcov_dir/',
     '-g',
     '**/exclude-dir/*.*',
     '-x',
