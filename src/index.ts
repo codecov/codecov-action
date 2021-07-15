@@ -41,8 +41,8 @@ try {
         }).on('finish', async () => {
           filePath.close();
 
+          await verify(platform, filename);
           fs.chmodSync(filename, '777');
-          verify(platform, filename);
 
           const unlink = () => {
             fs.unlink(filename, (err) => {

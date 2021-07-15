@@ -52291,8 +52291,10 @@ try {
                 switch (_a.label) {
                     case 0:
                         filePath.close();
+                        return [4 /*yield*/, validate(platform_1, filename_1)];
+                    case 1:
+                        _a.sent();
                         external_fs_.chmodSync(filename_1, '777');
-                        validate(platform_1, filename_1);
                         unlink = function () {
                             external_fs_.unlink(filename_1, function (err) {
                                 if (err) {
@@ -52305,7 +52307,7 @@ try {
                             }).then(function () {
                                 unlink();
                             })];
-                    case 1:
+                    case 2:
                         _a.sent();
                         return [2 /*return*/];
                 }
