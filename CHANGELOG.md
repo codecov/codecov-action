@@ -1,3 +1,7 @@
+## 2.0.1
+### Fixes
+- fix: Issue in building all deep dependencies
+
 ## 2.0.0
 On February 1, 2022, the `v1` uploader will be full sunset and no longer function. This is due
 to the deprecation of the underlying bash uploader. This version uses the new [uploader](https://github.com/codecov/uploader).
