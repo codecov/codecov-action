@@ -27,8 +27,7 @@
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "node-fetch": "^2.6.1",
-    "openpgp": "^4.10.10",
-    "asn1.js": "^5.0.0"
+    "openpgp": "^4.10.10"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
