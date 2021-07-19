@@ -1,3 +1,19 @@
+## 2.0.0
+On February 1, 2022, the `v1` uploader will be full sunset and no longer function. This is due
+to the deprecation of the underlying bash uploader. This version uses the new [uploader](https://github.com/codecov/uploader).
+
+The `v2` Action downloads, verifies, and runs the Codecov binary.
+
+### Breaking Changes
+- Multiple fields have not been transferred from the bash uploader or have been deprecated. Notably
+many of the `functionalities` and `gcov_` arguments have been removed. Please check the documentation
+for the full list.
+
+### Features
+- `dry-run` argument allows Codecov flow without uploading reports to Codecov
+- (Enterprise only) `slug` allows specifying the repository slug manually
+- (Enterprise only) `url` allows changing the upload host
+
 ## 1.5.2
 ### Fixes
 - # fix: Import version properly as string not object
