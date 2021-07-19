@@ -4,7 +4,7 @@
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build src/index.ts",
+    "build": "ncc build src/index.ts --source-map",
     "lint": "eslint src/**/*.ts",
     "test": "npm run test-script && npm run test-calculator && npm run test-coverage",
     "test-calculator": "jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator",
