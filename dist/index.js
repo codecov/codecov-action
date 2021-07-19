@@ -1,4 +1,4 @@
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 5241:
@@ -51714,7 +51714,7 @@ module.exports = eval("require")("encoding");
 /***/ ((module) => {
 
 "use strict";
-module.exports = {"i8":"2.0.0"};
+module.exports = JSON.parse('{"name":"codecov-action","version":"2.0.1","description":"Upload coverage reports to Codecov from GitHub Actions","main":"index.js","scripts":{"build":"ncc build src/index.ts --source-map","lint":"eslint src/**/*.ts","test":"npm run test-script && npm run test-calculator && npm run test-coverage","test-calculator":"jest --testPathPattern=demo/calculator/ --coverage --coverageDirectory=coverage/calculator","test-coverage":"jest --testPathPattern=demo/coverage-test/ --coverage --coverageDirectory=coverage/coverage-test","test-script":"jest --testPathPattern=src/ --coverage --coverageDirectory=coverage/script"},"repository":{"type":"git","url":"git+https://github.com/codecov/codecov-action.git"},"keywords":[],"author":"Ibrahim Ali","license":"MIT","bugs":{"url":"https://github.com/codecov/codecov-action/issues"},"homepage":"https://github.com/codecov/codecov-action#readme","dependencies":{"@actions/core":"^1.4.0","@actions/exec":"^1.1.0","@actions/github":"^5.0.0","node-fetch":"^2.6.1","openpgp":"^4.10.10"},"devDependencies":{"@types/jest":"^26.0.24","@types/node":"^16.0.1","@typescript-eslint/eslint-plugin":"^4.28.3","@typescript-eslint/parser":"^4.28.3","@vercel/ncc":"^0.28.6","eslint":"^7.30.0","eslint-config-google":"^0.14.0","jest":"^26.6.3","jest-junit":"^12.2.0","ts-jest":"^26.5.6","typescript":"^4.3.5"}}');
 
 /***/ }),
 
@@ -51916,42 +51916,42 @@ var github = __nccwpck_require__(5438);
 
 
 /* eslint-disable  @typescript-eslint/no-var-requires */
-var version = __nccwpck_require__(306)/* .version */ .i8;
-var context = github.context;
-var isTrue = function (variable) {
-    var lowercase = variable.toLowerCase();
+const { version } = __nccwpck_require__(306);
+const context = github.context;
+const isTrue = (variable) => {
+    const lowercase = variable.toLowerCase();
     return (lowercase === '1' ||
         lowercase === 't' ||
         lowercase === 'true' ||
         lowercase === 'y' ||
         lowercase === 'yes');
 };
-var buildExec = function () {
-    var clean = core.getInput('move_coverage_to_trash');
-    var commitParent = core.getInput('commit_parent');
-    var envVars = core.getInput('env_vars');
-    var dryRun = isTrue(core.getInput('dry_run'));
-    var failCi = isTrue(core.getInput('fail_ci_if_error'));
-    var file = core.getInput('file');
-    var files = core.getInput('files');
-    var flags = core.getInput('flags');
-    var functionalities = core.getInput('functionalities');
-    var name = core.getInput('name');
-    var overrideBranch = core.getInput('override_branch');
-    var overrideBuild = core.getInput('override_build');
-    var overrideCommit = core.getInput('override_commit');
-    var overridePr = core.getInput('override_pr');
-    var overrideTag = core.getInput('override_tag');
-    var rootDir = core.getInput('root_dir');
-    var searchDir = core.getInput('directory');
-    var slug = core.getInput('slug');
-    var token = core.getInput('token');
-    var verbose = isTrue(core.getInput('verbose'));
-    var url = core.getInput('url');
-    var workingDir = core.getInput('working-directory');
-    var execArgs = [];
-    execArgs.push('-n', "" + name, '-Q', "github-action-" + version);
-    var options = {};
+const buildExec = () => {
+    const clean = core.getInput('move_coverage_to_trash');
+    const commitParent = core.getInput('commit_parent');
+    const envVars = core.getInput('env_vars');
+    const dryRun = isTrue(core.getInput('dry_run'));
+    const failCi = isTrue(core.getInput('fail_ci_if_error'));
+    const file = core.getInput('file');
+    const files = core.getInput('files');
+    const flags = core.getInput('flags');
+    const functionalities = core.getInput('functionalities');
+    const name = core.getInput('name');
+    const overrideBranch = core.getInput('override_branch');
+    const overrideBuild = core.getInput('override_build');
+    const overrideCommit = core.getInput('override_commit');
+    const overridePr = core.getInput('override_pr');
+    const overrideTag = core.getInput('override_tag');
+    const rootDir = core.getInput('root_dir');
+    const searchDir = core.getInput('directory');
+    const slug = core.getInput('slug');
+    const token = core.getInput('token');
+    const verbose = isTrue(core.getInput('verbose'));
+    const url = core.getInput('url');
+    const workingDir = core.getInput('working-directory');
+    const execArgs = [];
+    execArgs.push('-n', `${name}`, '-Q', `github-action-${version}`);
+    const options = {};
     options.env = Object.assign(process.env, {
         GITHUB_ACTION: process.env.GITHUB_ACTION,
         GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -51960,10 +51960,9 @@ var buildExec = function () {
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
     });
-    var envVarsArg = [];
-    for (var _i = 0, _a = envVars.split(','); _i < _a.length; _i++) {
-        var envVar = _a[_i];
-        var envVarClean = envVar.trim();
+    const envVarsArg = [];
+    for (const envVar of envVars.split(',')) {
+        const envVarClean = envVar.trim();
         if (envVarClean) {
             options.env[envVarClean] = process.env[envVarClean];
             envVarsArg.push(envVarClean);
@@ -51976,7 +51975,7 @@ var buildExec = function () {
         execArgs.push('-c');
     }
     if (commitParent) {
-        execArgs.push('-N', "" + commitParent);
+        execArgs.push('-N', `${commitParent}`);
     }
     if (dryRun) {
         execArgs.push('-d');
@@ -51985,59 +51984,59 @@ var buildExec = function () {
         execArgs.push('-e', envVarsArg.join(','));
     }
     if (functionalities) {
-        functionalities.split(',').forEach(function (f) {
-            execArgs.push('-X', "" + f);
+        functionalities.split(',').forEach((f) => {
+            execArgs.push('-X', `${f}`);
         });
     }
     if (failCi) {
         execArgs.push('-Z');
     }
     if (file) {
-        execArgs.push('-f', "" + file);
+        execArgs.push('-f', `${file}`);
     }
     if (files) {
-        files.split(',').forEach(function (f) {
-            execArgs.push('-f', "" + f);
+        files.split(',').forEach((f) => {
+            execArgs.push('-f', `${f}`);
         });
     }
     if (flags) {
-        flags.split(',').forEach(function (f) {
-            execArgs.push('-F', "" + f);
+        flags.split(',').forEach((f) => {
+            execArgs.push('-F', `${f}`);
         });
     }
     if (overrideBranch) {
-        execArgs.push('-B', "" + overrideBranch);
+        execArgs.push('-B', `${overrideBranch}`);
     }
     if (overrideBuild) {
-        execArgs.push('-b', "" + overrideBuild);
+        execArgs.push('-b', `${overrideBuild}`);
     }
     if (overrideCommit) {
-        execArgs.push('-C', "" + overrideCommit);
+        execArgs.push('-C', `${overrideCommit}`);
     }
-    else if ("" + context.eventName == 'pull_request' ||
-        "" + context.eventName == 'pull_request_target') {
-        execArgs.push('-C', "" + context.payload.pull_request.head.sha);
+    else if (`${context.eventName}` == 'pull_request' ||
+        `${context.eventName}` == 'pull_request_target') {
+        execArgs.push('-C', `${context.payload.pull_request.head.sha}`);
     }
     if (overridePr) {
-        execArgs.push('-P', "" + overridePr);
+        execArgs.push('-P', `${overridePr}`);
     }
-    else if ("" + context.eventName == 'pull_request_target') {
-        execArgs.push('-P', "" + context.payload.number);
+    else if (`${context.eventName}` == 'pull_request_target') {
+        execArgs.push('-P', `${context.payload.number}`);
     }
     if (overrideTag) {
-        execArgs.push('-T', "" + overrideTag);
+        execArgs.push('-T', `${overrideTag}`);
     }
     if (rootDir) {
-        execArgs.push('-R', "" + rootDir);
+        execArgs.push('-R', `${rootDir}`);
     }
     if (searchDir) {
-        execArgs.push('-s', "" + searchDir);
+        execArgs.push('-s', `${searchDir}`);
     }
     if (slug) {
-        execArgs.push('-r', "" + slug);
+        execArgs.push('-r', `${slug}`);
     }
     if (url) {
-        execArgs.push('-u', "" + url);
+        execArgs.push('-u', `${url}`);
     }
     if (verbose) {
         execArgs.push('-v');
@@ -52045,20 +52044,20 @@ var buildExec = function () {
     if (workingDir) {
         options.cwd = workingDir;
     }
-    return { execArgs: execArgs, options: options, failCi: failCi };
+    return { execArgs, options, failCi };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
 ;// CONCATENATED MODULE: ./src/helpers.ts
 
-var PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
-var setFailure = function (message, failCi) {
+const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
+const setFailure = (message, failCi) => {
     failCi ? core.setFailed(message) : core.warning(message);
     if (failCi) {
         process.exit();
     }
 };
-var getUploaderName = function () {
+const getUploaderName = () => {
     if (isWindows()) {
         return 'codecov.exe';
     }
@@ -52066,16 +52065,16 @@ var getUploaderName = function () {
         return 'codecov';
     }
 };
-var isValidPlatform = function () {
+const isValidPlatform = () => {
     return PLATFORMS.includes(getPlatform());
 };
-var isWindows = function () {
+const isWindows = () => {
     return getPlatform() === 'windows';
 };
-var getPlatform = function () {
+const getPlatform = () => {
     return process.env.RUNNER_OS.toLowerCase();
 };
-var BASEURL = "https://uploader.codecov.io/latest/" + getPlatform() + "/" + getUploaderName();
+const BASEURL = `https://uploader.codecov.io/latest/${getPlatform()}/${getUploaderName()}`;
 
 
 ;// CONCATENATED MODULE: external "crypto"
@@ -52094,33 +52093,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 
 
 
@@ -52128,80 +52100,51 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
-var verify = function (filename) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploaderName_1, publicKeyArmored, shasumRes, shasum_1, shaSigRes, shaSig, verified, _a, _b, valid, uploaderSha_1, stream, err_1;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _d.trys.push([0, 11, , 12]);
-                uploaderName_1 = getUploaderName();
-                return [4 /*yield*/, external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8')];
-            case 1:
-                publicKeyArmored = _d.sent();
-                return [4 /*yield*/, lib(BASEURL + ".SHA256SUM")];
-            case 2:
-                shasumRes = _d.sent();
-                return [4 /*yield*/, shasumRes.text()];
-            case 3:
-                shasum_1 = _d.sent();
-                return [4 /*yield*/, lib(BASEURL + ".SHA256SUM.sig")];
-            case 4:
-                shaSigRes = _d.sent();
-                return [4 /*yield*/, shaSigRes.text()];
-            case 5:
-                shaSig = _d.sent();
-                _b = (_a = openpgp).verify;
-                _c = {};
-                return [4 /*yield*/, openpgp.cleartext.fromText(shasum_1)];
-            case 6:
-                _c.message = _d.sent();
-                return [4 /*yield*/, openpgp.signature.readArmored(shaSig)];
-            case 7:
-                _c.signature = _d.sent();
-                return [4 /*yield*/, openpgp.key.readArmored(publicKeyArmored)];
-            case 8: return [4 /*yield*/, _b.apply(_a, [(_c.publicKeys = (_d.sent()).keys,
-                        _c)])];
-            case 9:
-                verified = _d.sent();
-                valid = verified.signatures[0].valid;
-                if (valid) {
-                    core.info('==> SHASUM file signed by key id ' +
-                        verified.signatures[0].keyid.toHex());
-                }
-                else {
-                    setFailure('Codecov: Error validating SHASUM signature', true);
-                }
-                uploaderSha_1 = external_crypto_namespaceObject.createHash("sha256");
-                stream = external_fs_.createReadStream(filename);
-                return [4 /*yield*/, stream
-                        .on('data', function (data) {
-                        uploaderSha_1.update(data);
-                    }).on('end', function () { return __awaiter(void 0, void 0, void 0, function () {
-                        var hash;
-                        return __generator(this, function (_a) {
-                            hash = uploaderSha_1.digest('hex') + "  " + uploaderName_1;
-                            if (hash !== shasum_1) {
-                                setFailure('Codecov: Uploader shasum does not match ' +
-                                    ("uploader hash: " + hash + ", public hash: " + shasum_1), true);
-                            }
-                            else {
-                                core.info('==> Uploader SHASUM verified');
-                            }
-                            return [2 /*return*/];
-                        });
-                    }); })];
-            case 10:
-                _d.sent();
-                return [3 /*break*/, 12];
-            case 11:
-                err_1 = _d.sent();
-                setFailure("Codecov: Error validating uploader: " + err_1.message, true);
-                return [3 /*break*/, 12];
-            case 12: return [2 /*return*/];
+const verify = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const uploaderName = getUploaderName();
+        // Read in public key
+        const publicKeyArmored = yield external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8');
+        // Get SHASUM and SHASUM signature files
+        const shasumRes = yield lib(`${BASEURL}.SHA256SUM`);
+        const shasum = yield shasumRes.text();
+        const shaSigRes = yield lib(`${BASEURL}.SHA256SUM.sig`);
+        const shaSig = yield shaSigRes.text();
+        // Verify shasum
+        const verified = yield openpgp.verify({
+            message: yield openpgp.cleartext.fromText(shasum),
+            signature: yield openpgp.signature.readArmored(shaSig),
+            publicKeys: (yield openpgp.key.readArmored(publicKeyArmored)).keys,
+        });
+        const { valid } = verified.signatures[0];
+        if (valid) {
+            core.info('==> SHASUM file signed by key id ' +
+                verified.signatures[0].keyid.toHex());
         }
-    });
-}); };
+        else {
+            setFailure('Codecov: Error validating SHASUM signature', true);
+        }
+        // Verify uploader
+        const uploaderSha = external_crypto_namespaceObject.createHash(`sha256`);
+        const stream = external_fs_.createReadStream(filename);
+        yield stream
+            .on('data', (data) => {
+            uploaderSha.update(data);
+        }).on('end', () => __awaiter(void 0, void 0, void 0, function* () {
+            const hash = `${uploaderSha.digest('hex')}  ${uploaderName}`;
+            if (hash !== shasum) {
+                setFailure('Codecov: Uploader shasum does not match ' +
+                    `uploader hash: ${hash}, public hash: ${shasum}`, true);
+            }
+            else {
+                core.info('==> Uploader SHASUM verified');
+            }
+        }));
+    }
+    catch (err) {
+        setFailure(`Codecov: Error validating uploader: ${err.message}`, true);
+    }
+});
 /* harmony default export */ const validate = (verify);
 
 ;// CONCATENATED MODULE: ./src/index.ts
@@ -52214,33 +52157,6 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var src_generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 
 
 
@@ -52248,55 +52164,43 @@ var src_generator = (undefined && undefined.__generator) || function (thisArg, b
 
 
 
-var failCi;
+let failCi;
 try {
-    var _a = src_buildExec(), execArgs_1 = _a.execArgs, options_1 = _a.options, failCi_1 = _a.failCi;
-    var platform = getPlatform();
+    const { execArgs, options, failCi } = src_buildExec();
+    const platform = getPlatform();
     if (!isValidPlatform()) {
-        setFailure("Codecov: Encountered an unexpected platform: " + platform, failCi_1);
+        setFailure(`Codecov: Encountered an unexpected platform: ${platform}`, failCi);
     }
-    var filename_1 = external_path_.join(__dirname, getUploaderName());
-    external_https_.get(BASEURL, function (res) {
+    const filename = external_path_.join(__dirname, getUploaderName());
+    external_https_.get(BASEURL, (res) => {
         // Image will be stored at this path
-        var filePath = external_fs_.createWriteStream(filename_1);
+        const filePath = external_fs_.createWriteStream(filename);
         res.pipe(filePath);
         filePath
-            .on('error', function (err) {
-            setFailure("Codecov: Failed to write uploader binary: " + err.message, true);
-        }).on('finish', function () { return src_awaiter(void 0, void 0, void 0, function () {
-            var unlink;
-            return src_generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        filePath.close();
-                        return [4 /*yield*/, validate(filename_1)];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, external_fs_.chmodSync(filename_1, '777')];
-                    case 2:
-                        _a.sent();
-                        unlink = function () {
-                            external_fs_.unlink(filename_1, function (err) {
-                                if (err) {
-                                    setFailure("Codecov: Could not unlink uploader: " + err.message, failCi_1);
-                                }
-                            });
-                        };
-                        return [4 /*yield*/, exec.exec(filename_1, execArgs_1, options_1)["catch"](function (err) {
-                                setFailure("Codecov: Failed to properly upload: " + err.message, failCi_1);
-                            }).then(function () {
-                                unlink();
-                            })];
-                    case 3:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+            .on('error', (err) => {
+            setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
+        }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
+            filePath.close();
+            yield validate(filename);
+            yield external_fs_.chmodSync(filename, '777');
+            const unlink = () => {
+                external_fs_.unlink(filename, (err) => {
+                    if (err) {
+                        setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
+                    }
+                });
+            };
+            yield exec.exec(filename, execArgs, options)
+                .catch((err) => {
+                setFailure(`Codecov: Failed to properly upload: ${err.message}`, failCi);
+            }).then(() => {
+                unlink();
             });
-        }); });
+        }));
     });
 }
 catch (err) {
-    setFailure("Codecov: Encountered an unexpected error " + err.message, failCi);
+    setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
 }
 
 })();
@@ -52304,3 +52208,4 @@ catch (err) {
 module.exports = __webpack_exports__;
 /******/ })()
 ;
+//# sourceMappingURL=index.js.map
