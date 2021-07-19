@@ -1,6 +1,6 @@
 ## 2.0.1
 ### Fixes
-- fix: Issue in building all deep dependencies
+- #424 fix: Issue in building all deep dependencies
 
 ## 2.0.0
 On February 1, 2022, the `v1` uploader will be full sunset and no longer function. This is due
