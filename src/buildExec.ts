@@ -1,8 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
-/* eslint-disable  @typescript-eslint/no-var-requires */
-const {version} = require('../package.json');
+import { version } from '../package.json';
 
 const context = github.context;
 
