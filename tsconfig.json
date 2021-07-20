@@ -3,6 +3,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "outDir": "./dist",
+    "resolveJsonModule": true,
     "rootDir": "./src",
     "sourceMap": true,
     "target": "es2015"
