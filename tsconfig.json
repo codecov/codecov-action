@@ -2,9 +2,9 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "outDir": "./dist",
+    "outDir": "dist/",
     "resolveJsonModule": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "sourceMap": true,
     "target": "es2015"
   },
