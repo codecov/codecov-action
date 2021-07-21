@@ -31,9 +31,9 @@ const verify = async (filename: string) => {
 
     // Verify shasum
     const verified = await openpgp.verify({
-      message: await openpgp.createMessage({ text: shasum }),
-      signature: await openpgp.readSignature({ armoredSignature: shaSig }),
-      verificationKeys: await openpgp.readKeys({ armoredKeys: publicKeyArmored }),
+      message: await openpgp.createMessage({text: shasum}),
+      signature: await openpgp.readSignature({armoredSignature: shaSig}),
+      verificationKeys: await openpgp.readKeys({armoredKeys: publicKeyArmored}),
     });
     const valid = await verified.signatures[0].verified;
     if (valid) {
