@@ -31,14 +31,14 @@ const verify = async (filename: string) => {
 
     // Verify shasum
     const verified = await openpgp.verify({
-      message: await openpgp.cleartext.fromText(shasum),
-      signature: await openpgp.signature.readArmored(shaSig),
-      publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,
+      message: await openpgp.createMessage({text: shasum}),
+      signature: await openpgp.readSignature({armoredSignature: shaSig}),
+      verificationKeys: await openpgp.readKeys({armoredKeys: publicKeyArmored}),
     });
-    const {valid} = verified.signatures[0];
+    const valid = await verified.signatures[0].verified;
     if (valid) {
       core.info('==> SHASUM file signed by key id ' +
-          verified.signatures[0].keyid.toHex(),
+          verified.signatures[0].keyID.toHex(),
       );
     } else {
       setFailure('Codecov: Error validating SHASUM signature', true);
