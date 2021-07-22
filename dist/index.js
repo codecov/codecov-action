@@ -13064,7 +13064,7 @@ const verify = (filename) => __awaiter(void 0, void 0, void 0, function* () {
         // Verify uploader
         const uploaderSha = external_crypto_.createHash(`sha256`);
         const stream = external_fs_.createReadStream(filename);
-        yield stream
+        return yield stream
             .on('data', (data) => {
             uploaderSha.update(data);
         }).on('end', () => __awaiter(void 0, void 0, void 0, function* () {

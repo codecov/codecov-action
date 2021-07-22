@@ -47,7 +47,7 @@ const verify = async (filename: string) => {
     // Verify uploader
     const uploaderSha = crypto.createHash(`sha256`);
     const stream = fs.createReadStream(filename);
-    await stream
+    return await stream
         .on('data', (data) => {
           uploaderSha.update(data);
         }).on('end', async () => {
