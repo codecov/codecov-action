@@ -13061,22 +13061,23 @@ const verify = (filename) => __awaiter(void 0, void 0, void 0, function* () {
         else {
             setFailure('Codecov: Error validating SHASUM signature', true);
         }
-        // Verify uploader
-        const uploaderSha = external_crypto_.createHash(`sha256`);
-        const stream = external_fs_.createReadStream(filename);
-        return yield stream
-            .on('data', (data) => {
-            uploaderSha.update(data);
-        }).on('end', () => __awaiter(void 0, void 0, void 0, function* () {
-            const hash = `${uploaderSha.digest('hex')}  ${uploaderName}`;
-            if (hash !== shasum) {
-                setFailure('Codecov: Uploader shasum does not match\n' +
-                    `uploader hash: ${hash}\npublic hash: ${shasum}`, true);
-            }
-            else {
-                core.info('==> Uploader SHASUM verified');
-            }
-        }));
+        const calculateHash = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+            const stream = external_fs_.createReadStream(filename);
+            const uploaderSha = external_crypto_.createHash(`sha256`);
+            stream.pipe(uploaderSha);
+            return new Promise((resolve, reject) => {
+                stream.on('end', () => resolve(`${uploaderSha.digest('hex')}  ${uploaderName}`));
+                stream.on('error', reject);
+            });
+        });
+        const hash = yield calculateHash(filename);
+        if (hash === shasum) {
+            core.info(`==> Uploader SHASUM verified (${hash})`);
+        }
+        else {
+            setFailure('Codecov: Uploader shasum does not match -- ' +
+                `uploader hash: ${hash}, public hash: ${shasum}`, true);
+        }
     }
     catch (err) {
         setFailure(`Codecov: Error validating uploader: ${err.message}`, true);
