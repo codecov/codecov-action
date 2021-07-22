@@ -54,8 +54,8 @@ const verify = async (filename: string) => {
           const hash = `${uploaderSha.digest('hex')}  ${uploaderName}`;
           if (hash !== shasum) {
             setFailure(
-                'Codecov: Uploader shasum does not match ' +
-                  `uploader hash: ${hash}, public hash: ${shasum}`,
+                'Codecov: Uploader shasum does not match\n' +
+                  `uploader hash: ${hash}\npublic hash: ${shasum}`,
                 true,
             );
           } else {

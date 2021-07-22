@@ -12849,7 +12849,7 @@ var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"2.0.1"};
+const package_namespaceObject = {"i8":"2.0.2"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
@@ -13070,8 +13070,8 @@ const verify = (filename) => __awaiter(void 0, void 0, void 0, function* () {
         }).on('end', () => __awaiter(void 0, void 0, void 0, function* () {
             const hash = `${uploaderSha.digest('hex')}  ${uploaderName}`;
             if (hash !== shasum) {
-                setFailure('Codecov: Uploader shasum does not match ' +
-                    `uploader hash: ${hash}, public hash: ${shasum}`, true);
+                setFailure('Codecov: Uploader shasum does not match\n' +
+                    `uploader hash: ${hash}\npublic hash: ${shasum}`, true);
             }
             else {
                 core.info('==> Uploader SHASUM verified');
