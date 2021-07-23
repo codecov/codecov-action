@@ -1,3 +1,9 @@
+## 2.0.2
+### Fixes
+- Underlying uploader fixes issues with tokens not being sent properly for users seeing
+  `Error!: Error: Error uploading to https://codecov.io: Error: Error uploading to Codecov: Error: Not Found`
+- #440 fix: Validation ordering
+
 ## 2.0.1
 ### Fixes
 - #424 fix: Issue in building all deep dependencies
