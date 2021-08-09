@@ -10,7 +10,7 @@
 ## ⚠️  Deprecration of v1
 **On February 1, 2022, this version will be fully sunset and no longer function**
 
-Due to the [deprecation](https://about.codecov.io/blog/introducting-codecovs-new-uploader/) of the underlying bash uploader,
+Due to the [deprecation](https://about.codecov.io/blog/introducing-codecovs-new-uploader/) of the underlying bash uploader,
 the Codecov GitHub Action has released `v2` which will use the new [uploader](https://github.com/codecov/uploader). You can learn
 more about our deprecation plan and the new uploader on our [blog](https://about.codecov.io/blog/introducing-codecovs-new-uploader/).
 
