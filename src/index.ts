@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as path from 'path';
 
+import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
 import buildExec from './buildExec';
@@ -20,6 +21,8 @@ let failCi;
 try {
   const {execArgs, options, failCi} = buildExec();
   const platform = getPlatform();
+  core.info(`==> ${platform} OS detected`);
+
   if (!isValidPlatform()) {
     setFailure(
         `Codecov: Encountered an unexpected platform: ${platform}`,
