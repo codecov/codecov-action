@@ -1,3 +1,23 @@
+## 2.0.3
+### Fixes
+- #464 Fix wrong link in the readme
+- #485 fix: Add override OS and linux default to platform
+
+### Dependencies
+- #447 build(deps): bump openpgp from 5.0.0-4 to 5.0.0-5
+- #458 build(deps-dev): bump eslint from 7.31.0 to 7.32.0
+- #465 build(deps-dev): bump @typescript-eslint/eslint-plugin from 4.28.4 to 4.29.1
+- #466 build(deps-dev): bump @typescript-eslint/parser from 4.28.4 to 4.29.1
+- #468 build(deps-dev): bump @types/jest from 26.0.24 to 27.0.0
+- #470 build(deps-dev): bump @types/node from 16.4.0 to 16.6.0
+- #472 build(deps): bump path-parse from 1.0.6 to 1.0.7
+- #473 build(deps-dev): bump @types/jest from 27.0.0 to 27.0.1
+- #478 build(deps-dev): bump @typescript-eslint/parser from 4.29.1 to 4.29.2
+- #479 build(deps-dev): bump @typescript-eslint/eslint-plugin from 4.29.1 to 4.29.2
+- #481 build(deps-dev): bump @types/node from 16.6.0 to 16.6.2
+- #483 build(deps-dev): bump @vercel/ncc from 0.29.0 to 0.29.2
+- #484 build(deps): bump @actions/core from 1.4.0 to 1.5.0
+
 ## 2.0.2
 ### Fixes
 - Underlying uploader fixes issues with tokens not being sent properly for users seeing

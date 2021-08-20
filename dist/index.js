@@ -12849,7 +12849,7 @@ var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"2.0.2"};
+const package_namespaceObject = {"i8":"2.0.3"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
