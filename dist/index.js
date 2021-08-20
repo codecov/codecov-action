@@ -1,7 +1,7 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 7351:
+/***/ 5241:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -135,7 +135,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
-const command_1 = __nccwpck_require__(7351);
+const command_1 = __nccwpck_require__(5241);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
 const os = __importStar(__nccwpck_require__(2087));
@@ -626,7 +626,7 @@ const os = __importStar(__nccwpck_require__(2087));
 const events = __importStar(__nccwpck_require__(8614));
 const child = __importStar(__nccwpck_require__(3129));
 const path = __importStar(__nccwpck_require__(5622));
-const io = __importStar(__nccwpck_require__(7436));
+const io = __importStar(__nccwpck_require__(7351));
 const ioUtil = __importStar(__nccwpck_require__(1962));
 const timers_1 = __nccwpck_require__(8213);
 /* eslint-disable @typescript-eslint/unbound-method */
@@ -2221,7 +2221,7 @@ exports.getCmdPath = getCmdPath;
 
 /***/ }),
 
-/***/ 7436:
+/***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -12842,10 +12842,10 @@ var external_fs_ = __nccwpck_require__(5747);
 var external_https_ = __nccwpck_require__(7211);
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(5622);
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
 var exec = __nccwpck_require__(1514);
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
@@ -12874,6 +12874,7 @@ const buildExec = () => {
     const flags = core.getInput('flags');
     const functionalities = core.getInput('functionalities');
     const name = core.getInput('name');
+    const os = core.getInput('os');
     const overrideBranch = core.getInput('override_branch');
     const overrideBuild = core.getInput('override_build');
     const overrideCommit = core.getInput('override_commit');
@@ -12981,7 +12982,7 @@ const buildExec = () => {
     if (workingDir) {
         options.cwd = workingDir;
     }
-    return { execArgs, options, failCi };
+    return { execArgs, options, failCi, os };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
@@ -12994,24 +12995,37 @@ const setFailure = (message, failCi) => {
         process.exit();
     }
 };
-const getUploaderName = () => {
-    if (isWindows()) {
+const getUploaderName = (platform) => {
+    if (isWindows(platform)) {
         return 'codecov.exe';
     }
     else {
         return 'codecov';
     }
 };
-const isValidPlatform = () => {
-    return PLATFORMS.includes(getPlatform());
+const isValidPlatform = (platform) => {
+    return PLATFORMS.includes(platform);
 };
-const isWindows = () => {
-    return getPlatform() === 'windows';
+const isWindows = (platform) => {
+    return platform === 'windows';
 };
-const getPlatform = () => {
-    return process.env.RUNNER_OS.toLowerCase();
+const getPlatform = (os) => {
+    var _a;
+    if (isValidPlatform(os)) {
+        core.info(`==> ${os} OS provided`);
+        return os;
+    }
+    const platform = (_a = process.env.RUNNER_OS) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+    if (isValidPlatform(platform)) {
+        core.info(`==> ${platform} OS detected`);
+        return platform;
+    }
+    core.info('==> Could not detect OS or provided OS is invalid. Defaulting to linux');
+    return 'linux';
 };
-const BASEURL = `https://uploader.codecov.io/latest/${getPlatform()}/${getUploaderName()}`;
+const getBaseUrl = (platform) => {
+    return `https://uploader.codecov.io/latest/${platform}/${getUploaderName(platform)}`;
+};
 
 
 // EXTERNAL MODULE: external "crypto"
@@ -13037,15 +13051,15 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const verify = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+const verify = (filename, platform) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const uploaderName = getUploaderName();
+        const uploaderName = getUploaderName(platform);
         // Read in public key
         const publicKeyArmored = yield external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8');
         // Get SHASUM and SHASUM signature files
-        const shasumRes = yield lib(`${BASEURL}.SHA256SUM`);
+        const shasumRes = yield lib(`${getBaseUrl(platform)}.SHA256SUM`);
         const shasum = yield shasumRes.text();
-        const shaSigRes = yield lib(`${BASEURL}.SHA256SUM.sig`);
+        const shaSigRes = yield lib(`${getBaseUrl(platform)}.SHA256SUM.sig`);
         const shaSig = yield shaSigRes.text();
         // Verify shasum
         const verified = yield openpgp_min/* verify */.T({
@@ -13102,17 +13116,12 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 
-
 let failCi;
 try {
-    const { execArgs, options, failCi } = src_buildExec();
-    const platform = getPlatform();
-    core.info(`==> ${platform} OS detected`);
-    if (!isValidPlatform()) {
-        setFailure(`Codecov: Encountered an unexpected platform: ${platform}`, failCi);
-    }
-    const filename = external_path_.join(__dirname, getUploaderName());
-    external_https_.get(BASEURL, (res) => {
+    const { execArgs, options, failCi, os } = src_buildExec();
+    const platform = getPlatform(os);
+    const filename = external_path_.join(__dirname, getUploaderName(platform));
+    external_https_.get(getBaseUrl(platform), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
         res.pipe(filePath);
@@ -13121,7 +13130,7 @@ try {
             setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
-            yield validate(filename);
+            yield validate(filename, platform);
             yield external_fs_.chmodSync(filename, '777');
             const unlink = () => {
                 external_fs_.unlink(filename, (err) => {

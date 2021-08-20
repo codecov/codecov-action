@@ -7,14 +7,14 @@ import * as openpgp from 'openpgp';
 import * as fetch from 'node-fetch';
 
 import {
-  BASEURL,
+  getBaseUrl,
   getUploaderName,
   setFailure,
 } from './helpers';
 
-const verify = async (filename: string) => {
+const verify = async (filename: string, platform: string) => {
   try {
-    const uploaderName = getUploaderName();
+    const uploaderName = getUploaderName(platform);
 
     // Read in public key
     const publicKeyArmored = await fs.readFileSync(
@@ -23,10 +23,10 @@ const verify = async (filename: string) => {
     );
 
     // Get SHASUM and SHASUM signature files
-    const shasumRes = await fetch( `${BASEURL}.SHA256SUM`);
+    const shasumRes = await fetch( `${getBaseUrl(platform)}.SHA256SUM`);
     const shasum = await shasumRes.text();
 
-    const shaSigRes = await fetch( `${BASEURL}.SHA256SUM.sig`);
+    const shaSigRes = await fetch( `${getBaseUrl(platform)}.SHA256SUM.sig`);
     const shaSig = await shaSigRes.text();
 
     // Verify shasum

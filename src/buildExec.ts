@@ -27,6 +27,7 @@ const buildExec = () => {
   const flags = core.getInput('flags');
   const functionalities = core.getInput('functionalities');
   const name = core.getInput('name');
+  const os = core.getInput('os');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
   const overrideCommit = core.getInput('override_commit');
@@ -146,7 +147,7 @@ const buildExec = () => {
     options.cwd = workingDir;
   }
 
-  return {execArgs, options, failCi};
+  return {execArgs, options, failCi, os};
 };
 
 export default buildExec;
