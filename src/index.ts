@@ -6,10 +6,9 @@ import * as exec from '@actions/exec';
 
 import buildExec from './buildExec';
 import {
-  BASEURL,
+  getBaseUrl,
   getPlatform,
   getUploaderName,
-  isValidPlatform,
   setFailure,
 } from './helpers';
 
@@ -18,16 +17,11 @@ import verify from './validate';
 let failCi;
 
 try {
-  const {execArgs, options, failCi} = buildExec();
-  const platform = getPlatform();
-  if (!isValidPlatform()) {
-    setFailure(
-        `Codecov: Encountered an unexpected platform: ${platform}`,
-        failCi,
-    );
-  }
-  const filename = path.join( __dirname, getUploaderName());
-  https.get(BASEURL, (res) => {
+  const {execArgs, options, failCi, os} = buildExec();
+  const platform = getPlatform(os);
+
+  const filename = path.join( __dirname, getUploaderName(platform));
+  https.get(getBaseUrl(platform), (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
@@ -40,7 +34,7 @@ try {
         }).on('finish', async () => {
           filePath.close();
 
-          await verify(filename);
+          await verify(filename, platform);
           await fs.chmodSync(filename, '777');
 
           const unlink = () => {

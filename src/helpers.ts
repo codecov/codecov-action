@@ -9,30 +9,47 @@ const setFailure = (message: string, failCi: boolean): void => {
     }
 };
 
-const getUploaderName = (): string => {
-  if (isWindows()) {
+const getUploaderName = (platform: string): string => {
+  if (isWindows(platform)) {
     return 'codecov.exe';
   } else {
     return 'codecov';
   }
 };
 
-const isValidPlatform = (): boolean => {
-  return PLATFORMS.includes(getPlatform());
+const isValidPlatform = (platform: string): boolean => {
+  return PLATFORMS.includes(platform);
 };
 
-const isWindows = (): boolean => {
-  return getPlatform() === 'windows';
+const isWindows = (platform: string): boolean => {
+  return platform === 'windows';
 };
 
-const getPlatform = (): string => {
-  return process.env.RUNNER_OS.toLowerCase();
+const getPlatform = (os?: string): string => {
+  if (isValidPlatform(os)) {
+    core.info(`==> ${os} OS provided`);
+    return os;
+  }
+
+  const platform = process.env.RUNNER_OS?.toLowerCase();
+  if (isValidPlatform(platform)) {
+    core.info(`==> ${platform} OS detected`);
+    return platform;
+  }
+
+  core.info(
+      '==> Could not detect OS or provided OS is invalid. Defaulting to linux',
+  );
+  return 'linux';
 };
 
-const BASEURL = `https://uploader.codecov.io/latest/${getPlatform()}/${getUploaderName()}`;
+const getBaseUrl = (platform: string): string => {
+  return `https://uploader.codecov.io/latest/${platform}/${getUploaderName(platform)}`;
+};
 
 export {
-  BASEURL,
+  PLATFORMS,
+  getBaseUrl,
   getPlatform,
   getUploaderName,
   isValidPlatform,
