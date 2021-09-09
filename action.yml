@@ -68,6 +68,9 @@ inputs:
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
     required: false
+  version:
+    description: 'Specify which version of the Codecov Uploader should be used. Defaults to `latest`'
+    required: false
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false

@@ -22,6 +22,14 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: version,${{ matrix.os }}
+          name: codecov-version
+          version: v0.1.0_8880
   run:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -49,3 +57,11 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: version,${{ matrix.os }}
+          name: codecov-version
+          version: v0.1.0_8880
