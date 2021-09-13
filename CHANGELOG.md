@@ -1,3 +1,12 @@
+## 2.1.0
+### Features
+- #515 Allow specifying version of Codecov uploader
+
+### Dependencies
+- #499 build(deps-dev): bump @vercel/ncc from 0.29.0 to 0.30.0
+- #508 build(deps): bump openpgp from 5.0.0-5 to 5.0.0
+- #514 build(deps-dev): bump @types/node from 16.6.0 to 16.9.0
+
 ## 2.0.3
 ### Fixes
 - #464 Fix wrong link in the readme

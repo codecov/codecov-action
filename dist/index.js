@@ -134,7 +134,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(5241);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
@@ -312,19 +312,30 @@ exports.debug = debug;
 /**
  * Adds an error issue
  * @param message error issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function error(message) {
-    command_1.issue('error', message instanceof Error ? message.toString() : message);
+function error(message, properties = {}) {
+    command_1.issueCommand('error', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.error = error;
 /**
- * Adds an warning issue
+ * Adds a warning issue
  * @param message warning issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function warning(message) {
-    command_1.issue('warning', message instanceof Error ? message.toString() : message);
+function warning(message, properties = {}) {
+    command_1.issueCommand('warning', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.warning = warning;
+/**
+ * Adds a notice issue
+ * @param message notice issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function notice(message, properties = {}) {
+    command_1.issueCommand('notice', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.notice = notice;
 /**
  * Writes info to log with console.log.
  * @param message info message
@@ -458,7 +469,7 @@ exports.issueCommand = issueCommand;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toCommandValue = void 0;
+exports.toCommandProperties = exports.toCommandValue = void 0;
 /**
  * Sanitizes an input into a string so it can be passed into issueCommand safely
  * @param input input to sanitize into a string
@@ -473,6 +484,25 @@ function toCommandValue(input) {
     return JSON.stringify(input);
 }
 exports.toCommandValue = toCommandValue;
+/**
+ *
+ * @param annotationProperties
+ * @returns The command properties to send with the actual annotation command
+ * See IssueCommandProperties: https://github.com/actions/runner/blob/main/src/Runner.Worker/ActionCommandManager.cs#L646
+ */
+function toCommandProperties(annotationProperties) {
+    if (!Object.keys(annotationProperties).length) {
+        return {};
+    }
+    return {
+        title: annotationProperties.title,
+        line: annotationProperties.startLine,
+        endLine: annotationProperties.endLine,
+        col: annotationProperties.startColumn,
+        endColumn: annotationProperties.endColumn
+    };
+}
+exports.toCommandProperties = toCommandProperties;
 //# sourceMappingURL=utils.js.map
 
 /***/ }),
@@ -12829,7 +12859,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 3997:
+/***/ 5765:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 "use strict";
@@ -12849,7 +12879,7 @@ var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"2.0.3"};
+const package_namespaceObject = {"i8":"2.1.0"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
@@ -12884,8 +12914,9 @@ const buildExec = () => {
     const searchDir = core.getInput('directory');
     const slug = core.getInput('slug');
     const token = core.getInput('token');
-    const verbose = isTrue(core.getInput('verbose'));
+    let uploaderVersion = core.getInput('version');
     const url = core.getInput('url');
+    const verbose = isTrue(core.getInput('verbose'));
     const workingDir = core.getInput('working-directory');
     const execArgs = [];
     execArgs.push('-n', `${name}`, '-Q', `github-action-${package_namespaceObject.i8}`);
@@ -12982,7 +13013,10 @@ const buildExec = () => {
     if (workingDir) {
         options.cwd = workingDir;
     }
-    return { execArgs, options, failCi, os };
+    if (uploaderVersion == '') {
+        uploaderVersion = 'latest';
+    }
+    return { execArgs, options, failCi, os, uploaderVersion };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
@@ -13023,8 +13057,8 @@ const getPlatform = (os) => {
     core.info('==> Could not detect OS or provided OS is invalid. Defaulting to linux');
     return 'linux';
 };
-const getBaseUrl = (platform) => {
-    return `https://uploader.codecov.io/latest/${platform}/${getUploaderName(platform)}`;
+const getBaseUrl = (platform, version) => {
+    return `https://uploader.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
 };
 
 
@@ -13051,15 +13085,16 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const verify = (filename, platform) => __awaiter(void 0, void 0, void 0, function* () {
+const verify = (filename, platform, version) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const uploaderName = getUploaderName(platform);
         // Read in public key
         const publicKeyArmored = yield external_fs_.readFileSync(__nccwpck_require__.ab + "pgp_keys.asc", 'utf-8');
         // Get SHASUM and SHASUM signature files
-        const shasumRes = yield lib(`${getBaseUrl(platform)}.SHA256SUM`);
+        console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
+        const shasumRes = yield lib(`${getBaseUrl(platform, version)}.SHA256SUM`);
         const shasum = yield shasumRes.text();
-        const shaSigRes = yield lib(`${getBaseUrl(platform)}.SHA256SUM.sig`);
+        const shaSigRes = yield lib(`${getBaseUrl(platform, version)}.SHA256SUM.sig`);
         const shaSig = yield shaSigRes.text();
         // Verify shasum
         const verified = yield openpgp_min/* verify */.T({
@@ -13099,6 +13134,35 @@ const verify = (filename, platform) => __awaiter(void 0, void 0, void 0, functio
 });
 /* harmony default export */ const validate = (verify);
 
+;// CONCATENATED MODULE: ./src/version.ts
+var version_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+const versionInfo = (platform, version) => version_awaiter(void 0, void 0, void 0, function* () {
+    if (version) {
+        core.info(`==> Running version ${version}`);
+    }
+    try {
+        const metadataRes = yield lib(`https://uploader.codecov.io/${platform}/latest`, {
+            headers: { 'Accept': 'application/json' },
+        });
+        const metadata = yield metadataRes.json();
+        core.info(`==> Running version ${metadata['version']}`);
+    }
+    catch (err) {
+        core.info(`Could not pull latest version information: ${err}`);
+    }
+});
+/* harmony default export */ const version = (versionInfo);
+
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -13116,12 +13180,13 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 
+
 let failCi;
 try {
-    const { execArgs, options, failCi, os } = src_buildExec();
+    const { execArgs, options, failCi, os, uploaderVersion } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
-    external_https_.get(getBaseUrl(platform), (res) => {
+    external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
         res.pipe(filePath);
@@ -13130,7 +13195,8 @@ try {
             setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
-            yield validate(filename, platform);
+            yield validate(filename, platform, uploaderVersion);
+            yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
             const unlink = () => {
                 external_fs_.unlink(filename, (err) => {
@@ -13372,7 +13438,7 @@ module.exports = require("zlib");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(3997);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(5765);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

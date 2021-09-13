@@ -37,8 +37,9 @@ const buildExec = () => {
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
   const token = core.getInput('token');
-  const verbose = isTrue(core.getInput('verbose'));
+  let uploaderVersion = core.getInput('version');
   const url = core.getInput('url');
+  const verbose = isTrue(core.getInput('verbose'));
   const workingDir = core.getInput('working-directory');
 
   const execArgs = [];
@@ -147,7 +148,11 @@ const buildExec = () => {
     options.cwd = workingDir;
   }
 
-  return {execArgs, options, failCi, os};
+  if (uploaderVersion == '') {
+    uploaderVersion = 'latest';
+  }
+
+  return {execArgs, options, failCi, os, uploaderVersion};
 };
 
 export default buildExec;

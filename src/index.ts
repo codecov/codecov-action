@@ -13,15 +13,16 @@ import {
 } from './helpers';
 
 import verify from './validate';
+import versionInfo from './version';
 
 let failCi;
 
 try {
-  const {execArgs, options, failCi, os} = buildExec();
+  const {execArgs, options, failCi, os, uploaderVersion} = buildExec();
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
-  https.get(getBaseUrl(platform), (res) => {
+  https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
@@ -34,7 +35,8 @@ try {
         }).on('finish', async () => {
           filePath.close();
 
-          await verify(filename, platform);
+          await verify(filename, platform, uploaderVersion);
+          await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
 
           const unlink = () => {

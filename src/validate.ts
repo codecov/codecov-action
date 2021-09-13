@@ -12,7 +12,7 @@ import {
   setFailure,
 } from './helpers';
 
-const verify = async (filename: string, platform: string) => {
+const verify = async (filename: string, platform: string, version: string) => {
   try {
     const uploaderName = getUploaderName(platform);
 
@@ -23,10 +23,15 @@ const verify = async (filename: string, platform: string) => {
     );
 
     // Get SHASUM and SHASUM signature files
-    const shasumRes = await fetch( `${getBaseUrl(platform)}.SHA256SUM`);
+    console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
+    const shasumRes = await fetch(
+        `${getBaseUrl(platform, version)}.SHA256SUM`,
+    );
     const shasum = await shasumRes.text();
 
-    const shaSigRes = await fetch( `${getBaseUrl(platform)}.SHA256SUM.sig`);
+    const shaSigRes = await fetch(
+        `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
+    );
     const shaSig = await shaSigRes.text();
 
     // Verify shasum

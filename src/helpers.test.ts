@@ -37,12 +37,21 @@ test('getPlatform', () => {
 
 test('getBaseUrl', () => {
   expect(PLATFORMS.map((platform) => {
-    return getBaseUrl(platform);
+    return getBaseUrl(platform, 'latest');
   })).toEqual([
     'https://uploader.codecov.io/latest/alpine/codecov',
     'https://uploader.codecov.io/latest/linux/codecov',
     'https://uploader.codecov.io/latest/macos/codecov',
     'https://uploader.codecov.io/latest/windows/codecov.exe',
+  ]);
+
+  expect(PLATFORMS.map((platform) => {
+    return getBaseUrl(platform, 'v0.1.0_8880');
+  })).toEqual([
+    'https://uploader.codecov.io/v0.1.0_8880/alpine/codecov',
+    'https://uploader.codecov.io/v0.1.0_8880/linux/codecov',
+    'https://uploader.codecov.io/v0.1.0_8880/macos/codecov',
+    'https://uploader.codecov.io/v0.1.0_8880/windows/codecov.exe',
   ]);
 });
 

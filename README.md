@@ -73,6 +73,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `slug` | Specify the slug manually (Enterprise use) | Optional
 | `url` | Change the upload host (Enterprise use) | Optional
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
+| `version` | Specify which version of the Codecov Uploader should be used. Defaults to `latest` | Optional
 | `working-directory` | Directory in which to execute `codecov.sh` | Optional
 
 ### Example `workflow.yml` with Codecov Action
