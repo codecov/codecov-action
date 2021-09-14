@@ -1,6 +1,6 @@
-name: 'Codecov'
+name: 'Codecov.io'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
-author: 'Ibrahim Ali <@ibrahim0814> & Thomas Hu <@thomasrockhu> | Codecov'
+author: 'Kayda Roark<@kayda1218>| Codecov.io'
 inputs:
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
