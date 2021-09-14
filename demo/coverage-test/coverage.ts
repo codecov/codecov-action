@@ -1,4 +1,4 @@
-export default class Index {
+export default class Coverage {
 
   //This function is tested and part of it is uncovered
   uncovered_if = (a = true) => {
