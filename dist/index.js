@@ -3426,7 +3426,7 @@ const VERSION = "2.13.3";
  *
  * Octokit normalizes these responses so that paginated results are always returned following
  * the same structure. One challenge is that if the list response has only one page, no Link
- * header is provided, so this header alone is not sufficient to check wether a response is
+ * header is provided, so this header alone is not sufficient to check whether a response is
  * paginated or not.
  *
  * We check if a "total_count" key is present in the response data, but also make sure that
