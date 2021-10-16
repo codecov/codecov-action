@@ -14,14 +14,11 @@ inputs:
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
-  aws_curl_args:
-    description: 'Extra curl arguments to communicate with AWS.'
-    required: false
-  codecov_curl_args:
-    description: 'Extra curl arguments to communicate with Codecov. e.g., -U "--proxy http://http-proxy"'
-    required: false
   commit_parent:
     description: 'The commit SHA of the parent for which you are uploading coverage. If not present, the parent will be determined using the API of your repository provider.  When using the repository providers API, the parent is determined via finding the closest ancestor to the commit.'
+    required: false
+  dry_run:
+    description: "Don't upload files to Codecov"
     required: false
   env_vars:
     description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
@@ -34,24 +31,6 @@ inputs:
     required: false
   functionalities:
     description: 'Comma-separated list, see the README for options and their usage'
-    required: false
-  gcov_args:
-    description: 'extra arguments to pass to gcov'
-    required: false
-  gcov_executable:
-    description: 'gcov executable to run. Defaults to gcov'
-    required: false
-  gcov_path_exclude:
-    description: 'Paths to ignore during gcov gathering (as a glob)'
-    required: false
-  gcov_path_include:
-    description: 'Paths to include during gcov gathering (as a glob)'
-    required: false
-  gcov_prefix:
-    description: 'Prefix filepaths to help resolve path fixing'
-    required: false
-  gcov_root_dir:
-    description: 'Project root directory, also used when preparing gcov'
     required: false
   move_coverage_to_trash:
     description: 'Move discovered coverage reports to the trash'
@@ -74,23 +53,26 @@ inputs:
   override_tag:
     description: 'Specify the git tag'
     required: false
-  path_to_write_report:
-    description: 'Write upload file to path before uploading'
+  os:
+    description: 'Override the assumed OS. Options are alpine | linux | macos | windows.'
     required: false
   root_dir:
     description: 'Used when not in git/hg project to identify project root directory'
     required: false
+  slug:
+    description: 'Specify the slug manually (Enterprise use)'
+    required: false
+  url:
+    description: 'Change the upload host (Enterprise use)'
+    required: false
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
     required: false
+  version:
+    description: 'Specify which version of the Codecov Uploader should be used. Defaults to `latest`'
+    required: false
   working-directory:
     description: 'Directory in which to execute codecov.sh'
-    required: false
-  xcode_derived_data:
-    description: 'Custom Derived Data Path for Coverage.profdata and gcov processing'
-    required: false
-  xcode_package:
-    description: 'Specify packages to build coverage. Uploader will only build these packages'
     required: false
 branding:
   color: 'red'

@@ -1,68 +1,65 @@
-const core = require('@actions/core');
-const exec = require('@actions/exec');
-const fs = require('fs');
-const request = require('requestretry');
+import * as fs from 'fs';
+import * as https from 'https';
+import * as path from 'path';
+
+import * as exec from '@actions/exec';
 
 import buildExec from './buildExec';
+import {
+  getBaseUrl,
+  getPlatform,
+  getUploaderName,
+  setFailure,
+} from './helpers';
+
+import verify from './validate';
+import versionInfo from './version';
 
 let failCi;
+
 try {
-  request({
-    json: false,
-    maxAttempts: 10,
-    timeout: 3000,
-    url: 'https://codecov.io/bash',
-  }, (error, response, body) => {
-    const {execArgs, options, filepath, failCi} = buildExec();
+  const {execArgs, options, failCi, os, uploaderVersion} = buildExec();
+  const platform = getPlatform(os);
 
-    try {
-      if (error && failCi) {
-        throw error;
-      } else if (error) {
-        core.warning(`Codecov warning: ${error.message}`);
-      }
+  const filename = path.join( __dirname, getUploaderName(platform));
+  https.get(getBaseUrl(platform, uploaderVersion), (res) => {
+    // Image will be stored at this path
+    const filePath = fs.createWriteStream(filename);
+    res.pipe(filePath);
+    filePath
+        .on('error', (err) => {
+          setFailure(
+              `Codecov: Failed to write uploader binary: ${err.message}`,
+              true,
+          );
+        }).on('finish', async () => {
+          filePath.close();
 
-      fs.writeFile(filepath, body, (err) => {
-        if (err && failCi) {
-          throw err;
-        } else if (err) {
-          core.warning(`Codecov warning: ${err.message}`);
-        }
+          await verify(filename, platform, uploaderVersion);
+          await versionInfo(platform, uploaderVersion);
+          await fs.chmodSync(filename, '777');
 
-        exec.exec('bash', execArgs, options)
-            .catch((err) => {
-              if (failCi) {
-                core.setFailed(
-                    `Codecov failed with the following error: ${err.message}`,
+          const unlink = () => {
+            fs.unlink(filename, (err) => {
+              if (err) {
+                setFailure(
+                    `Codecov: Could not unlink uploader: ${err.message}`,
+                    failCi,
                 );
-              } else {
-                core.warning(`Codecov warning: ${err.message}`);
               }
-            })
-            .then(() => {
-              unlinkFile();
             });
-
-        const unlinkFile = () => {
-          fs.unlink(filepath, (err) => {
-            if (err && failCi) {
-              throw err;
-            } else if (err) {
-              core.warning(`Codecov warning: ${err.message}`);
-            }
-          });
-        };
-      });
-    } catch (error) {
-      core.setFailed(
-          `Codecov failed with the following error: ${error.message}`,
-      );
-    }
+          };
+          await exec.exec(filename, execArgs, options)
+              .catch((err) => {
+                setFailure(
+                    `Codecov: Failed to properly upload: ${err.message}`,
+                    failCi,
+                );
+              }).then(() => {
+                unlink();
+              });
+        });
   });
-} catch (error) {
-  if (failCi) {
-    core.setFailed(`Codecov failed with the following error: ${error.message}`);
-  } else {
-    core.warning(`Codecov warning: ${error.message}`);
-  }
+} catch (err) {
+  setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
 }

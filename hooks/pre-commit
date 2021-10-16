@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-npm i --package-lock-only
-npm run lint --fix
+set -e
+
+npm install
+npm run lint
 npm run build
-git add src/
-git add dist/index.js
+git add dist/
 git add package-lock.json
