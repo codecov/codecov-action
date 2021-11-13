@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/codecov/codecov-action#readme",
   "dependencies": {
-    "@actions/core": "^1.5.0",
+    "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "node-fetch": "^2.6.1",
