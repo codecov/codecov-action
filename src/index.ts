@@ -17,16 +17,36 @@ import versionInfo from './version';
 
 let failCi;
 
-try {
-  const {execArgs, options, failCi, os, uploaderVersion} = buildExec();
+async function main(): Promise<void> {
+  const { execArgs, options, failCi, os, uploaderVersion } = buildExec();
   const platform = getPlatform(os);
-
-  const filename = path.join( __dirname, getUploaderName(platform));
-  https.get(getBaseUrl(platform, uploaderVersion), (res) => {
-    // Image will be stored at this path
-    const filePath = fs.createWriteStream(filename);
-    res.pipe(filePath);
-    filePath
+  const uploaderName = getUploaderName(platform);
+  let foundVersion: string | undefined;
+  try {
+    await exec.exec(
+      uploaderName,
+      ['--version'],
+      { listeners: { stdout: (data) => (foundVersion = data.toString().trim()) },
+    });
+  } catch (ignored) {}
+  if (
+    foundVersion &&
+    (uploaderVersion == 'latest' || foundVersion === uploaderVersion)
+  ) {
+    // We don't need to download the uploader, we can just execute it ...
+    try {
+      await exec.exec(uploaderName, execArgs, options);
+    } catch (err) {
+      setFailure(`Codecov: Failed to properly upload: ${err.message}`, failCi);
+    }
+  } else {
+    // We need to download the uploader ...
+    const filename = path.join(__dirname, uploaderName);
+    https.get(getBaseUrl(platform, uploaderVersion), (res) => {
+      // Uploader will be stored at this path
+      const filePath = fs.createWriteStream(filename);
+      res.pipe(filePath);
+      filePath
         .on('error', (err) => {
           setFailure(
               `Codecov: Failed to write uploader binary: ${err.message}`,
@@ -59,7 +79,10 @@ try {
                 unlink();
               });
         });
-  });
-} catch (err) {
-  setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
+    });
+  }
 }
+
+main().catch((err) =>
+  setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi)
+);
