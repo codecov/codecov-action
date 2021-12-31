@@ -30,7 +30,7 @@
     "openpgp": "^5.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.4.0",
     "@types/node": "^16.9.0",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
