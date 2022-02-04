@@ -59,8 +59,8 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `commit_parent` | The commit SHA of the parent for which you are uploading coverage. If not present, the parent will be determined using the API of your repository provider.  When using the repository provider's API, the parent is determined via finding the closest ancestor to the commit. | Optional
 | `env_vars`  | Environment variables to tag the upload with. Multiple env variables can be separated with commas (e.g. `OS,PYTHON`) | Optional
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
--| `functionalities` | Toggle functionalities | Optional
--| | `network` Disable uploading the file network |
+| `functionalities` | Toggle functionalities | Optional
+| | `network` Disable uploading the file network |
 | `move_coverage_to_trash` | Move discovered coverage reports to the trash | Optional
 | `name`  | Custom defined name for the upload | Optional
 | `override_branch` | Specify the branch name | Optional
