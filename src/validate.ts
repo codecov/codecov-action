@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import * as core from '@actions/core';
 import * as openpgp from 'openpgp';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 
 import {
   getBaseUrl,
