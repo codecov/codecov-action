@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 
 import {version} from '../package.json';
+import { getFilesByGlobs } from './buildExec-get-files';
 
 const context = github.context;
 
@@ -16,7 +17,8 @@ const isTrue = (variable) => {
   );
 };
 
-const buildExec = () => {
+
+const buildExec = async () => {
   const clean = core.getInput('move_coverage_to_trash');
   const commitParent = core.getInput('commit_parent');
   const envVars = core.getInput('env_vars');
@@ -96,8 +98,8 @@ const buildExec = () => {
     execArgs.push('-f', `${file}`);
   }
   if (files) {
-    files.split(',').forEach((f) => {
-      execArgs.push('-f', `${f}`);
+    (await getFilesByGlobs(files)).forEach((f) => {
+      execArgs.push("-f", `${f}`);
     });
   }
   if (flags) {

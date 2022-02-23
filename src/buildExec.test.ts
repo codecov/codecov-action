@@ -7,8 +7,17 @@ const {version} = require('../package.json');
 
 const context = github.context;
 
-test('no arguments', () => {
-  const {execArgs, failCi} = buildExec();
+jest.mock("./buildExec-get-files.ts", () => {
+  return {
+    __esModule: true,
+    getFilesByGlobs: async (files: string) => {
+      return files.split(",");
+    }
+  };
+});
+
+test('no arguments', async () => {
+  const {execArgs, failCi} = await buildExec();
 
   const args = [
     '-n',
@@ -23,7 +32,7 @@ test('no arguments', () => {
   expect(failCi).toBeFalsy();
 });
 
-test('all arguments', () => {
+test('all arguments', async () => {
   const envs = {
     'commit_parent': '83231650328f11695dfb754ca0f540516f188d27',
     'directory': 'coverage/',
@@ -55,7 +64,7 @@ test('all arguments', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {execArgs, failCi} = buildExec();
+  const {execArgs, failCi} = await buildExec();
   expect(execArgs).toEqual([
     '-n',
     'codecov',

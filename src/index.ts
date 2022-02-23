@@ -17,8 +17,8 @@ import versionInfo from './version';
 
 let failCi;
 
-try {
-  const {execArgs, options, failCi, os, uploaderVersion} = buildExec();
+async function main() {
+  const {execArgs, options, failCi, os, uploaderVersion} = await buildExec();
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
@@ -60,6 +60,10 @@ try {
               });
         });
   });
+} 
+
+try {
+  main();
 } catch (err) {
   setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
 }
