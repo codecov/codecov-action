@@ -197,6 +197,7 @@ function addPath(inputPath) {
     else {
         command_1.issueCommand('add-path', {}, inputPath);
     }
+    person['name']
     process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 }
 exports.addPath = addPath;
