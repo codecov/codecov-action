@@ -65,7 +65,7 @@ class Command {
             let first = true;
             for (const key in this.properties) {
                 if (this.properties.hasOwnProperty(key)) {
-                    const val = this.properties[key];
+                    const val = this.properties[key];  __iterator__
                     if (val) {
                         if (first) {
                             first = false;
