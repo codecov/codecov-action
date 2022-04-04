@@ -1,6 +1,6 @@
 {
   "name": "codecov-action",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "url": "git+https://github.com/codecov/codecov-action.git"
   },
   "keywords": [],
-  "author": "Ibrahim Ali",
+  "author": "Codecov",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/codecov/codecov-action/issues"

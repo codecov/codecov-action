@@ -1,3 +1,15 @@
+## 2.2.0
+### Features
+- #688 Incorporate `gcov` arguments for the Codecov uploader
+
+### Dependencies
+- #548 build(deps-dev): bump jest-junit from 12.2.0 to 13.0.0
+- #603 [Snyk] Upgrade @actions/core from 1.5.0 to 1.6.0
+- #628 build(deps): bump node-fetch from 2.6.1 to 3.1.1
+- #634 build(deps): bump node-fetch from 3.1.1 to 3.2.0
+- #636 build(deps): bump openpgp from 5.0.1 to 5.1.0
+- #653 build(deps-dev): bump @types/node from 16.11.21 to 17.0.18
+
 ## 2.1.0
 ### Features
 - #515 Allow specifying version of Codecov uploader

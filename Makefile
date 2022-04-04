@@ -3,5 +3,5 @@ deploy:
 	git tag -d v2
 	git push origin :v2
 	git tag v2
-	git tag v$(VERSION) -m ""
+	git tag v$(VERSION) -s -m ""
 	git push origin --tags

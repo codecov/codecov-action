@@ -61,6 +61,10 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `functionalities` | Toggle functionalities | Optional
 | | `network` Disable uploading the file network |
+| `gcov` | Run with gcov support |
+| `gcov_args` | Extra arguments to pass to gcov |
+| `gcov_ignore` | Paths to ignore during gcov gathering |
+| `gcov_include` | Paths to include during gcov gathering |
 | `move_coverage_to_trash` | Move discovered coverage reports to the trash | Optional
 | `name`  | Custom defined name for the upload | Optional
 | `override_branch` | Specify the branch name | Optional

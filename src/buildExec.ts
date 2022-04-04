@@ -25,6 +25,10 @@ const buildExec = () => {
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
+  const gcov = core.getInput('gcov');
+  const gcovArgs = core.getInput('gcov_args');
+  const gcovIgnore = core.getInput('gcov_ignore');
+  const gcovInclude = core.getInput('gcov_include');
   const functionalities = core.getInput('functionalities');
   const name = core.getInput('name');
   const os = core.getInput('os');
@@ -105,6 +109,20 @@ const buildExec = () => {
       execArgs.push('-F', `${f}`);
     });
   }
+
+  if (gcov) {
+    execArgs.push('-g');
+  }
+  if (gcovArgs) {
+    execArgs.push('--ga', `${gcovArgs}`);
+  }
+  if (gcovIgnore) {
+    execArgs.push('--gi', `${gcovIgnore}`);
+  }
+  if (gcovInclude) {
+    execArgs.push('--gI', `${gcovInclude}`);
+  }
+
   if (overrideBranch) {
     execArgs.push('-B', `${overrideBranch}`);
   }

@@ -12879,7 +12879,7 @@ var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"2.1.0"};
+const package_namespaceObject = {"i8":"2.2.0"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
@@ -12902,6 +12902,10 @@ const buildExec = () => {
     const file = core.getInput('file');
     const files = core.getInput('files');
     const flags = core.getInput('flags');
+    const gcov = core.getInput('gcov');
+    const gcovArgs = core.getInput('gcov_args');
+    const gcovIgnore = core.getInput('gcov_ignore');
+    const gcovInclude = core.getInput('gcov_include');
     const functionalities = core.getInput('functionalities');
     const name = core.getInput('name');
     const os = core.getInput('os');
@@ -12972,6 +12976,18 @@ const buildExec = () => {
         flags.split(',').forEach((f) => {
             execArgs.push('-F', `${f}`);
         });
+    }
+    if (gcov) {
+        execArgs.push('-g');
+    }
+    if (gcovArgs) {
+        execArgs.push('--ga', `${gcovArgs}`);
+    }
+    if (gcovIgnore) {
+        execArgs.push('--gi', `${gcovIgnore}`);
+    }
+    if (gcovInclude) {
+        execArgs.push('--gI', `${gcovInclude}`);
     }
     if (overrideBranch) {
         execArgs.push('-B', `${overrideBranch}`);
