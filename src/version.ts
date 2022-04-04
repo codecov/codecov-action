@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import fetch from 'node-fetch';
+import * as fetch from 'node-fetch';
 
 const versionInfo = async (platform: string, version?: string) => {
   if (version) {
@@ -7,7 +7,7 @@ const versionInfo = async (platform: string, version?: string) => {
   }
 
   try {
-    const metadataRes = await fetch( `https://uploader.codecov.io/${platform}/latest`, {
+    const metadataRes = await fetch.default( `https://uploader.codecov.io/${platform}/latest`, {
       headers: {'Accept': 'application/json'},
     });
     const metadata = await metadataRes.json();

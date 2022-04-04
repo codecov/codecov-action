@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import * as core from '@actions/core';
 import * as openpgp from 'openpgp';
-import fetch from 'node-fetch';
+import * as fetch from 'node-fetch';
 
 import {
   getBaseUrl,
@@ -24,12 +24,12 @@ const verify = async (filename: string, platform: string, version: string) => {
 
     // Get SHASUM and SHASUM signature files
     console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
-    const shasumRes = await fetch(
+    const shasumRes = await fetch.default(
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
     const shasum = await shasumRes.text();
 
-    const shaSigRes = await fetch(
+    const shaSigRes = await fetch.default(
         `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
     );
     const shaSig = await shaSigRes.text();
