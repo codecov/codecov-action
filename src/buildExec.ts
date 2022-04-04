@@ -114,13 +114,13 @@ const buildExec = () => {
     execArgs.push('-g');
   }
   if (gcovArgs) {
-    execArgs.push('--ga', `${gcovArgs}`);
+    execArgs.push('--gcovArgs', `${gcovArgs}`);
   }
   if (gcovIgnore) {
-    execArgs.push('--gi', `${gcovIgnore}`);
+    execArgs.push('--gcovIgnore', `${gcovIgnore}`);
   }
   if (gcovInclude) {
-    execArgs.push('--gI', `${gcovInclude}`);
+    execArgs.push('--gcovInclude', `${gcovInclude}`);
   }
 
   if (overrideBranch) {

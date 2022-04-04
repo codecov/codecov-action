@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as fetch from 'node-fetch';
+import fetch from 'node-fetch';
 
 const versionInfo = async (platform: string, version?: string) => {
   if (version) {

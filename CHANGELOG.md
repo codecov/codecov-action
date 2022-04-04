@@ -1,6 +1,7 @@
 ## 2.2.0
 ### Features
 - #688 Incorporate `gcov` arguments for the Codecov uploader
+- #689 fix: bash
 
 ### Dependencies
 - #548 build(deps-dev): bump jest-junit from 12.2.0 to 13.0.0
