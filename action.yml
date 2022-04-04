@@ -32,6 +32,18 @@ inputs:
   functionalities:
     description: 'Comma-separated list, see the README for options and their usage'
     required: false
+  gcov:
+    description: 'Run with gcov support'
+    required: false
+  gcov_args:
+    description: 'Extra arguments to pass to gcov'
+    required: false
+  gcov_ignore:
+    description: 'Paths to ignore during gcov gathering'
+    required: false
+  gcov_include:
+    description: 'Paths to include during gcov gathering'
+    required: false
   move_coverage_to_trash:
     description: 'Move discovered coverage reports to the trash'
     required: false

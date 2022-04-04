@@ -1,3 +1,9 @@
+## 2.2.0
+### Features
+- # Incorporate `gcov` arguments for the Codecov uploader
+
+### Dependencies
+
 ## 2.1.0
 ### Features
 - #515 Allow specifying version of Codecov uploader
