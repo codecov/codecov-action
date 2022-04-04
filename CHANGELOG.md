@@ -1,7 +1,9 @@
-## 2.2.0
+## 3.0.0
+### Breaking Changes
+- #689 Bump to node16 and small fixes
+
 ### Features
 - #688 Incorporate `gcov` arguments for the Codecov uploader
-- #689 fix: bash
 
 ### Dependencies
 - #548 build(deps-dev): bump jest-junit from 12.2.0 to 13.0.0
@@ -9,7 +11,17 @@
 - #628 build(deps): bump node-fetch from 2.6.1 to 3.1.1
 - #634 build(deps): bump node-fetch from 3.1.1 to 3.2.0
 - #636 build(deps): bump openpgp from 5.0.1 to 5.1.0
+- #652 build(deps-dev): bump @vercel/ncc from 0.30.0 to 0.33.3
 - #653 build(deps-dev): bump @types/node from 16.11.21 to 17.0.18
+- #659 build(deps-dev): bump @types/jest from 27.4.0 to 27.4.1
+- #667 build(deps): bump actions/checkout from 2 to 3
+- #673 build(deps): bump node-fetch from 3.2.0 to 3.2.3
+- #683 build(deps): bump minimist from 1.2.5 to 1.2.6
+- #685 build(deps): bump @actions/github from 5.0.0 to 5.0.1
+- #681 build(deps-dev): bump @types/node from 17.0.18 to 17.0.23
+- #682 build(deps-dev): bump typescript from 4.5.5 to 4.6.3
+- #676 build(deps): bump @actions/exec from 1.1.0 to 1.1.1
+- #675 build(deps): bump openpgp from 5.1.0 to 5.2.1
 
 ## 2.1.0
 ### Features
