@@ -7,7 +7,7 @@ const versionInfo = async (platform: string, version?: string) => {
   }
 
   try {
-    const metadataRes = await fetch( `https://uploader.codecov.io/${platform}/latest`, {
+    const metadataRes = await fetch.default( `https://uploader.codecov.io/${platform}/latest`, {
       headers: {'Accept': 'application/json'},
     });
     const metadata = await metadataRes.json();
