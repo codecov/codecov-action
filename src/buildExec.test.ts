@@ -53,6 +53,8 @@ test('all arguments', () => {
     'url': 'https://codecov.enterprise.com',
     'verbose': 't',
     'working-directory': 'src',
+    'xcode': 'true',
+    'xcode_archive_path': '/test.xcresult',
   };
 
   for (const env of Object.keys(envs)) {
@@ -110,6 +112,9 @@ test('all arguments', () => {
     '-u',
     'https://codecov.enterprise.com',
     '-v',
+    '--xc',
+    '--xp',
+    '/test.xcresult',
   ]);
   expect(failCi).toBeTruthy();
 

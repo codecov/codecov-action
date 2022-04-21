@@ -45,6 +45,8 @@ const buildExec = () => {
   const url = core.getInput('url');
   const verbose = isTrue(core.getInput('verbose'));
   const workingDir = core.getInput('working-directory');
+  const xcode = core.getInput('xcode');
+  const xcodeArchivePath = core.getInput('xcode_archive_path');
 
   const execArgs = [];
   execArgs.push(
@@ -164,6 +166,10 @@ const buildExec = () => {
   }
   if (workingDir) {
     options.cwd = workingDir;
+  }
+  if (xcode && xcodeArchivePath) {
+    execArgs.push('--xc');
+    execArgs.push('--xp', `${xcodeArchivePath}`);
   }
 
   if (uploaderVersion == '') {

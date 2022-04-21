@@ -86,6 +86,12 @@ inputs:
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false
+  xcode:
+    description: 'Run with xcode support'
+    required: false
+  xcode_archive_path:
+    description: 'Specify the xcode archive path. Likely specified as the -resultBundlePath and should end in .xcresult'
+    required: false
 branding:
   color: 'red'
   icon: 'umbrella'

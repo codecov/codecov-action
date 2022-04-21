@@ -61,10 +61,10 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `functionalities` | Toggle functionalities | Optional
 | | `network` Disable uploading the file network |
-| `gcov` | Run with gcov support |
-| `gcov_args` | Extra arguments to pass to gcov |
-| `gcov_ignore` | Paths to ignore during gcov gathering |
-| `gcov_include` | Paths to include during gcov gathering |
+| `gcov` | Run with gcov support | Optional
+| `gcov_args` | Extra arguments to pass to gcov | Optional
+| `gcov_ignore` | Paths to ignore during gcov gathering | Optional
+| `gcov_include` | Paths to include during gcov gathering | Optional
 | `move_coverage_to_trash` | Move discovered coverage reports to the trash | Optional
 | `name`  | Custom defined name for the upload | Optional
 | `override_branch` | Specify the branch name | Optional
@@ -79,6 +79,9 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
 | `version` | Specify which version of the Codecov Uploader should be used. Defaults to `latest` | Optional
 | `working-directory` | Directory in which to execute `codecov.sh` | Optional
+| `xcode` | Run with xcode support | Optional
+| `xcode_archive_path` | Specify the xcode archive path. Likely specified as the -resultBundlePath and should end in .xcresult | Optional
+
 
 ### Example `workflow.yml` with Codecov Action
 
