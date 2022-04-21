@@ -12,7 +12,11 @@ import {
   setFailure,
 } from './helpers';
 
-const verify = async (filename: string, platform: string, version: string) => {
+const verify = async (
+    filename: string,
+    platform: string,
+    version: string,
+): Promise<void> => {
   try {
     const uploaderName = getUploaderName(platform);
 

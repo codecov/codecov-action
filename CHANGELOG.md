@@ -1,3 +1,12 @@
+## 3.1.0
+### Features
+- #699 Incorporate `xcode` arguments for the Codecov uploader
+
+### Dependencies
+- #694 build(deps-dev): bump @vercel/ncc from 0.33.3 to 0.33.4
+- #696 build(deps-dev): bump @types/node from 17.0.23 to 17.0.25
+- #698 build(deps-dev): bump jest-junit from 13.0.0 to 13.2.0
+
 ## 3.0.0
 ### Breaking Changes
 - #689 Bump to node16 and small fixes

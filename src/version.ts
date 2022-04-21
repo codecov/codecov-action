@@ -1,7 +1,10 @@
 import * as core from '@actions/core';
 import * as fetch from 'node-fetch';
 
-const versionInfo = async (platform: string, version?: string) => {
+const versionInfo = async (
+    platform: string,
+    version?: string,
+): Promise<void> => {
   if (version) {
     core.info(`==> Running version ${version}`);
   }

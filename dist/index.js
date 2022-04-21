@@ -19346,7 +19346,7 @@ var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"3.0.0"};
+const package_namespaceObject = {"i8":"3.1.0"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
@@ -19389,6 +19389,8 @@ const buildExec = () => {
     const url = core.getInput('url');
     const verbose = isTrue(core.getInput('verbose'));
     const workingDir = core.getInput('working-directory');
+    const xcode = core.getInput('xcode');
+    const xcodeArchivePath = core.getInput('xcode_archive_path');
     const execArgs = [];
     execArgs.push('-n', `${name}`, '-Q', `github-action-${package_namespaceObject.i8}`);
     const options = {};
@@ -19495,6 +19497,10 @@ const buildExec = () => {
     }
     if (workingDir) {
         options.cwd = workingDir;
+    }
+    if (xcode && xcodeArchivePath) {
+        execArgs.push('--xc');
+        execArgs.push('--xp', `${xcodeArchivePath}`);
     }
     if (uploaderVersion == '') {
         uploaderVersion = 'latest';
