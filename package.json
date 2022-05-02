@@ -26,7 +26,7 @@
     "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.0.1",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "^3.2.4",
     "openpgp": "^5.2.1"
   },
   "devDependencies": {
