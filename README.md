@@ -7,7 +7,7 @@
 
 >The latest release of this Action adds support for tokenless uploads from GitHub Actions!
 
-## ⚠️  Deprecration of v1
+## ⚠️  Deprecation of v1
 **As of February 1, 2022, v1 has been fully sunset and no longer functions**
 
 Due to the [deprecation](https://about.codecov.io/blog/introducing-codecovs-new-uploader/) of the underlying bash uploader,
