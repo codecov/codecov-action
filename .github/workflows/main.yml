@@ -1,5 +1,6 @@
 name: Workflow for Codecov Action
 on: [push, pull_request]
+permissions: {}
 jobs:
   no-deps:
     runs-on: ${{ matrix.os }}
