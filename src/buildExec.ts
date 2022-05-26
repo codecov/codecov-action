@@ -176,7 +176,7 @@ const buildExec = () => {
     uploaderVersion = 'latest';
   }
 
-  return {execArgs, options, failCi, os, uploaderVersion};
+  return {execArgs, options, failCi, os, uploaderVersion, verbose};
 };
 
 export default buildExec;

@@ -22,6 +22,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+          verbose: true
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -57,6 +58,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+          verbose: true
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
