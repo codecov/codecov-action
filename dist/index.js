@@ -21694,7 +21694,7 @@ const verify = (filename, platform, version, verbose) => __awaiter(void 0, void 
         const shaSigRes = yield fetch(`${getBaseUrl(platform, version)}.SHA256SUM.sig`);
         const shaSig = yield shaSigRes.text();
         if (verbose) {
-            console.log(`Received SHA256SUM signature ${shaSigRes}`);
+            console.log(`Received SHA256SUM signature ${shaSig}`);
         }
         // Verify shasum
         const verified = yield openpgp_min/* verify */.T({

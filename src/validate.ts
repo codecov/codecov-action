@@ -42,7 +42,7 @@ const verify = async (
     );
     const shaSig = await shaSigRes.text();
     if (verbose) {
-      console.log(`Received SHA256SUM signature ${shaSigRes}`);
+      console.log(`Received SHA256SUM signature ${shaSig}`);
     }
 
     // Verify shasum
