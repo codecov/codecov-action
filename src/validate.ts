@@ -16,6 +16,7 @@ const verify = async (
     filename: string,
     platform: string,
     version: string,
+    verbose: boolean,
 ): Promise<void> => {
   try {
     const uploaderName = getUploaderName(platform);
@@ -32,11 +33,17 @@ const verify = async (
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
     const shasum = await shasumRes.text();
+    if (verbose) {
+      console.log(`Received SHA256SUM ${shasum}`);
+    }
 
     const shaSigRes = await fetch.default(
         `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
     );
     const shaSig = await shaSigRes.text();
+    if (verbose) {
+      console.log(`Received SHA256SUM signature ${shaSig}`);
+    }
 
     // Verify shasum
     const verified = await openpgp.verify({

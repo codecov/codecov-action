@@ -19505,7 +19505,7 @@ const buildExec = () => {
     if (uploaderVersion == '') {
         uploaderVersion = 'latest';
     }
-    return { execArgs, options, failCi, os, uploaderVersion };
+    return { execArgs, options, failCi, os, uploaderVersion, verbose };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
 
@@ -21679,7 +21679,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const verify = (filename, platform, version) => __awaiter(void 0, void 0, void 0, function* () {
+const verify = (filename, platform, version, verbose) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const uploaderName = getUploaderName(platform);
         // Read in public key
@@ -21688,8 +21688,14 @@ const verify = (filename, platform, version) => __awaiter(void 0, void 0, void 0
         console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
         const shasumRes = yield fetch(`${getBaseUrl(platform, version)}.SHA256SUM`);
         const shasum = yield shasumRes.text();
+        if (verbose) {
+            console.log(`Received SHA256SUM ${shasum}`);
+        }
         const shaSigRes = yield fetch(`${getBaseUrl(platform, version)}.SHA256SUM.sig`);
         const shaSig = yield shaSigRes.text();
+        if (verbose) {
+            console.log(`Received SHA256SUM signature ${shaSig}`);
+        }
         // Verify shasum
         const verified = yield openpgp_min/* verify */.T({
             message: yield openpgp_min/* createMessage */.tn({ text: shasum }),
@@ -21777,7 +21783,7 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 let failCi;
 try {
-    const { execArgs, options, failCi, os, uploaderVersion } = src_buildExec();
+    const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
@@ -21789,7 +21795,7 @@ try {
             setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
-            yield validate(filename, platform, uploaderVersion);
+            yield validate(filename, platform, uploaderVersion, verbose);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
             const unlink = () => {

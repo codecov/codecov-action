@@ -18,7 +18,7 @@ import versionInfo from './version';
 let failCi;
 
 try {
-  const {execArgs, options, failCi, os, uploaderVersion} = buildExec();
+  const {execArgs, options, failCi, os, uploaderVersion, verbose} = buildExec();
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
@@ -35,7 +35,7 @@ try {
         }).on('finish', async () => {
           filePath.close();
 
-          await verify(filename, platform, uploaderVersion);
+          await verify(filename, platform, uploaderVersion, verbose);
           await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
 
