@@ -17,6 +17,7 @@ const verify = async (
     platform: string,
     version: string,
     verbose: boolean,
+    failCi: boolean,
 ): Promise<void> => {
   try {
     const uploaderName = getUploaderName(platform);
@@ -57,7 +58,7 @@ const verify = async (
           verified.signatures[0].keyID.toHex(),
       );
     } else {
-      setFailure('Codecov: Error validating SHASUM signature', true);
+      setFailure('Codecov: Error validating SHASUM signature', failCi);
     }
 
     const calculateHash = async (filename: string) => {
@@ -80,11 +81,11 @@ const verify = async (
       setFailure(
           'Codecov: Uploader shasum does not match -- ' +
             `uploader hash: ${hash}, public hash: ${shasum}`,
-          true,
+          failCi,
       );
     }
   } catch (err) {
-    setFailure(`Codecov: Error validating uploader: ${err.message}`, true);
+    setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
   }
 };
 export default verify;
