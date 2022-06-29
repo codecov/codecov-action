@@ -74,6 +74,9 @@ inputs:
   slug:
     description: 'Specify the slug manually (Enterprise use)'
     required: false
+  threshold:
+    description: 'Allow the coverage to drop by X%, and posting a success status.'
+    required: false
   url:
     description: 'Change the upload host (Enterprise use)'
     required: false
