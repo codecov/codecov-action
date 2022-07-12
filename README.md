@@ -59,7 +59,7 @@ Codecov's Action currently supports five inputs from the user: `token`, `file`, 
 | `env_vars`  | Environment variables to tag the upload with. Multiple env variables can be separated with commas (e.g. `OS,PYTHON`) | Optional
 | `fail_ci_if_error`  | Specify if CI pipeline should fail when Codecov runs into errors during upload. *Defaults to **false*** | Optional
 | `functionalities` | Toggle functionalities | Optional
-| | `network` Disable uploading the file network |
+| `network` | Disable uploading the file network | Optional
 | `gcov` | Run with gcov support | Optional
 | `gcov_args` | Extra arguments to pass to gcov | Optional
 | `gcov_ignore` | Paths to ignore during gcov gathering | Optional
