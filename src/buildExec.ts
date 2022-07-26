@@ -176,7 +176,9 @@ const buildExec = () => {
     uploaderVersion = 'latest';
   }
 
-  console.debug({execArgs});
+  if (verbose) {
+    console.debug({execArgs});
+  }
 
   return {execArgs, options, failCi, os, uploaderVersion, verbose};
 };
