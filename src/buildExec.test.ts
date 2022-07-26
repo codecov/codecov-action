@@ -132,7 +132,7 @@ describe('trim arguments after splitting them', () => {
   ];
 
   test('files', () => {
-    const envs = { 'files': './client-coverage.txt, ./lcov.info' };
+    const envs = {'files': './client-coverage.txt, ./lcov.info'};
 
     for (const [name, value] of Object.entries(envs)) {
       process.env['INPUT_' + name.toUpperCase()] = value;
@@ -154,7 +154,7 @@ describe('trim arguments after splitting them', () => {
   });
 
   test('flags', () => {
-    const envs = { 'flags': 'ios, mobile' };
+    const envs = {'flags': 'ios, mobile'};
 
     for (const [name, value] of Object.entries(envs)) {
       process.env['INPUT_' + name.toUpperCase()] = value;
@@ -176,7 +176,7 @@ describe('trim arguments after splitting them', () => {
   });
 
   test('functionalities', () => {
-    const envs = { 'functionalities': 'network, gcov' };
+    const envs = {'functionalities': 'network, gcov'};
 
     for (const [name, value] of Object.entries(envs)) {
       process.env['INPUT_' + name.toUpperCase()] = value;
