@@ -141,13 +141,13 @@ describe('trim arguments after splitting them', () => {
     const {execArgs} = buildExec();
 
     expect(execArgs).toEqual(
-      expect.arrayContaining([
-        ...baseExpectation,
-        '-f',
-        './client-coverage.txt',
-        '-f',
-        './lcov.info',
-      ]),
+        expect.arrayContaining([
+          ...baseExpectation,
+          '-f',
+          './client-coverage.txt',
+          '-f',
+          './lcov.info',
+        ]),
     );
 
     for (const env of Object.keys(envs)) {
@@ -165,13 +165,13 @@ describe('trim arguments after splitting them', () => {
     const {execArgs} = buildExec();
 
     expect(execArgs).toEqual(
-      expect.arrayContaining([
-        ...baseExpectation,
-        '-F',
-        'ios',
-        '-F',
-        'mobile',
-      ]),
+        expect.arrayContaining([
+          ...baseExpectation,
+          '-F',
+          'ios',
+          '-F',
+          'mobile',
+        ]),
     );
 
     for (const env of Object.keys(envs)) {
@@ -189,13 +189,13 @@ describe('trim arguments after splitting them', () => {
     const {execArgs} = buildExec();
 
     expect(execArgs).toEqual(
-      expect.arrayContaining([
-        ...baseExpectation,
-        '-X',
-        'network',
-        '-X',
-        'gcov',
-      ]),
+        expect.arrayContaining([
+          ...baseExpectation,
+          '-X',
+          'network',
+          '-X',
+          'gcov',
+        ]),
     );
 
     for (const env of Object.keys(envs)) {
