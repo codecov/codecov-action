@@ -140,13 +140,15 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toMatchObject([
-      ...baseExpectation,
-      '-f',
-      './client-coverage.txt',
-      '-f',
-      './lcov.info',
-    ]);
+    expect(execArgs).toEqual(
+      expect.arrayContaining([
+        ...baseExpectation,
+        '-f',
+        './client-coverage.txt',
+        '-f',
+        './lcov.info',
+      ]),
+    );
 
     for (const env of Object.keys(envs)) {
       delete process.env['INPUT_' + env.toUpperCase()];
@@ -162,13 +164,15 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toMatchObject([
-      ...baseExpectation,
-      '-F',
-      'ios',
-      '-F',
-      'mobile',
-    ]);
+    expect(execArgs).toEqual(
+      expect.arrayContaining([
+        ...baseExpectation,
+        '-F',
+        'ios',
+        '-F',
+        'mobile',
+      ]),
+    );
 
     for (const env of Object.keys(envs)) {
       delete process.env['INPUT_' + env.toUpperCase()];
@@ -184,13 +188,15 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toMatchObject([
-      ...baseExpectation,
-      '-X',
-      'network',
-      '-X',
-      'gcov',
-    ]);
+    expect(execArgs).toEqual(
+      expect.arrayContaining([
+        ...baseExpectation,
+        '-X',
+        'network',
+        '-X',
+        'gcov',
+      ]),
+    );
 
     for (const env of Object.keys(envs)) {
       delete process.env['INPUT_' + env.toUpperCase()];
