@@ -140,7 +140,7 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toEqual([
+    expect(execArgs).toMatchObject([
       ...baseExpectation,
       '-f',
       './client-coverage.txt',
@@ -162,7 +162,7 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toEqual([
+    expect(execArgs).toMatchObject([
       ...baseExpectation,
       '-F',
       'ios',
@@ -184,7 +184,7 @@ describe('trim arguments after splitting them', () => {
 
     const {execArgs} = buildExec();
 
-    expect(execArgs).toEqual([
+    expect(execArgs).toMatchObject([
       ...baseExpectation,
       '-X',
       'network',
