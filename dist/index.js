@@ -20577,7 +20577,9 @@ const buildExec = () => {
     if (uploaderVersion == '') {
         uploaderVersion = 'latest';
     }
-    console.debug({ execArgs });
+    if (verbose) {
+        console.debug({ execArgs });
+    }
     return { execArgs, options, failCi, os, uploaderVersion, verbose };
 };
 /* harmony default export */ const src_buildExec = (buildExec);
