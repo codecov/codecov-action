@@ -31,11 +31,12 @@ If you have a *private repository*, this Action also requires you to [provide an
 Inside your `.github/workflows/workflow.yml` file:
 
 ```yaml
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
 steps:
 - uses: actions/checkout@master
 - uses: codecov/codecov-action@v3
   with:
-    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
     files: ./coverage1.xml,./coverage2.xml # optional
     flags: unittests # optional
     name: codecov-umbrella # optional
@@ -96,6 +97,7 @@ jobs:
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.7'
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
     steps:
     - uses: actions/checkout@master
     - name: Setup Python
@@ -110,7 +112,6 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/reports/
         env_vars: OS,PYTHON
         fail_ci_if_error: true
