@@ -35,7 +35,7 @@ try {
         }).on('finish', async () => {
           filePath.close();
 
-          await verify(filename, platform, uploaderVersion, verbose);
+          await verify(filename, platform, uploaderVersion, verbose, failCi);
           await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
 
