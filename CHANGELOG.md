@@ -1,3 +1,41 @@
+## 3.1.1
+### Fixes
+- #661 Update deprecation warning
+- #593 Create codeql-analysis.yml
+- #712 README: fix typo
+- #725 fix: Remove a blank row
+- #726 Update README.md with correct badge version
+- #633 Create scorecards-analysis.yml
+- #747 fix: add more verbosity to validation
+- #750 Regenerate scorecards-analysis.yml
+- #774 Switch to v3
+- #783 Fix network entry in table
+- #791 Trim arguments after splitting them
+- #769 Plumb failCi into verification function.
+
+### Dependencies
+- #713 build(deps-dev): bump typescript from 4.6.3 to 4.6.4
+- #714 build(deps): bump node-fetch from 3.2.3 to 3.2.4
+- #724 build(deps): bump github/codeql-action from 1 to 2
+- #717 build(deps-dev): bump @types/jest from 27.4.1 to 27.5.0
+- #729 build(deps-dev): bump @types/node from 17.0.25 to 17.0.33
+- #734 build(deps-dev): downgrade @types/node to 16.11.35
+- #723 build(deps): bump actions/checkout from 2 to 3
+- #733 build(deps): bump @actions/github from 5.0.1 to 5.0.3
+- #732 build(deps): bump @actions/core from 1.6.0 to 1.8.2
+- #737 build(deps-dev): bump @types/node from 16.11.35 to 16.11.36
+- #749 build(deps): bump ossf/scorecard-action from 1.0.1 to 1.1.0
+- #755 build(deps-dev): bump typescript from 4.6.4 to 4.7.3
+- #759 build(deps-dev): bump @types/node from 16.11.36 to 16.11.39
+- #762 build(deps-dev): bump @types/node from 16.11.39 to 16.11.40
+- #746 build(deps-dev): bump @vercel/ncc from 0.33.4 to 0.34.0
+- #757 build(deps): bump ossf/scorecard-action from 1.1.0 to 1.1.1
+- #760 build(deps): bump openpgp from 5.2.1 to 5.3.0
+- #748 build(deps): bump actions/upload-artifact from 2.3.1 to 3.1.0
+- #766 build(deps-dev): bump typescript from 4.7.3 to 4.7.4
+- #799 build(deps): bump openpgp from 5.3.0 to 5.4.0
+- #798 build(deps): bump @actions/core from 1.8.2 to 1.9.1
+
 ## 3.1.0
 ### Features
 - #699 Incorporate `xcode` arguments for the Codecov uploader
