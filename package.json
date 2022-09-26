@@ -26,12 +26,12 @@
     "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.0.3",
-    "node-fetch": "^3.2.4",
+    "node-fetch": "^3.2.10",
     "openpgp": "5.4"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
-    "@types/node": "^16.11.40",
+    "@types/node": "^18.7.22",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "@vercel/ncc": "^0.34.0",
