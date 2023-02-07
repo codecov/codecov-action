@@ -44,6 +44,14 @@ steps:
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories.
 
+### Codecov YAML
+
+To ensure that your Codecov YAML configuration is selected by this GitHub Action, there are a few things you need to do:
+
+1. Name your config `codecov.yaml`. The name that starts with the dot (`.codecov.yml`) is not supported.
+2. Keep the config file at the root of your repo.
+3. (For GitHub organizations) Set up the [Codecov GitHub app](https://github.com/apps/codecov).
+
 ## Arguments
 
 Codecov's Action currently supports five inputs from the user: `token`, `file`, `flags`,`name`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below:
