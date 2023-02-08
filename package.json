@@ -23,23 +23,23 @@
   },
   "homepage": "https://github.com/codecov/codecov-action#readme",
   "dependencies": {
-    "@actions/core": "^1.9.1",
+    "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
-    "@actions/github": "^5.0.3",
+    "@actions/github": "^5.1.1",
     "node-fetch": "^3.3.0",
-    "openpgp": "5.4"
+    "openpgp": "5.5"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
-    "@types/node": "^16.11.40",
+    "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
-    "@vercel/ncc": "^0.34.0",
+    "@vercel/ncc": "^0.36.1",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "jest": "^26.6.3",
-    "jest-junit": "^13.2.0",
+    "jest-junit": "^15.0.0",
     "ts-jest": "^26.5.6",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.5"
   }
 }
