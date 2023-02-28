@@ -71,7 +71,6 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `override_commit` | Specify the commit SHA | Optional
 | `override_pr` | Specify the pull request number | Optional
 | `override_tag` | Specify the git tag | Optional
-| `path_to_write_report` | Write upload file to path before uploading | Optional
 | `root_dir` | Used when not in git/hg project to identify project root directory | Optional
 | `slug` | Specify the slug manually (Enterprise use) | Optional
 | `url` | Change the upload host (Enterprise use) | Optional
@@ -117,7 +116,6 @@ jobs:
         files: ./coverage1.xml,./coverage2.xml,!./cache
         flags: unittests
         name: codecov-umbrella
-        path_to_write_report: ./coverage/codecov_report.txt
         verbose: true
 ```
 ## Contributing
