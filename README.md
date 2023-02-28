@@ -46,12 +46,12 @@ steps:
 
 ## Arguments
 
-Codecov's Action currently supports five inputs from the user: `token`, `files`, `flags`,`name`, and `fail_ci_if_error`. These inputs, along with their descriptions and usage contexts, are listed in the table below:
+Codecov's Action supports inputs from the user. These inputs, along with their descriptions and usage contexts, are listed in the table below:
 
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
 | `token`  | Used to authorize coverage report uploads  | *Required for private repos* |
-| `files`  | Comma-separated paths to the coverage report(s) | Optional
+| `files`  | Comma-separated paths to the coverage report(s). Negated paths are supported by starting with `!` | Optional
 | `directory` | Directory to search for coverage reports. | Optional
 | `dry_run` | Don't upload files to Codecov | Optional
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
@@ -113,7 +113,7 @@ jobs:
         directory: ./coverage/reports/
         env_vars: OS,PYTHON
         fail_ci_if_error: true
-        files: ./coverage1.xml,./coverage2.xml
+        files: ./coverage1.xml,./coverage2.xml,!./cache
         flags: unittests
         name: codecov-umbrella
         verbose: true
