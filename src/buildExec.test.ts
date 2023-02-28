@@ -46,7 +46,6 @@ test('all arguments', () => {
     'override_commit': '9caabca5474b49de74ef5667deabaf74cdacc244',
     'override_pr': '2',
     'override_tag': 'v1.2',
-    'path_to_write_report': 'codecov/',
     'root_dir': 'root/',
     'slug': 'fakeOwner/fakeRepo',
     'token': 'd3859757-ab80-4664-924d-aef22fa7557b',
