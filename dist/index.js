@@ -18941,15 +18941,15 @@ try {
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
-        console.log("filePath", filePath);
+        console.log('filePath', filePath);
         res.pipe(filePath);
         filePath
             .on('error', (err) => {
-            console.log("Codecov: Failed to write uploader binary:");
+            console.log('Codecov: Failed to write uploader binary:');
             setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
-            console.log("finish");
+            console.log('finish');
             // await verify(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
