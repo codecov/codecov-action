@@ -16734,8 +16734,9 @@ const getPlatform = (os) => {
     return 'linux';
 };
 const getBaseUrl = (platform, version) => {
+    console.log(`------https://cli.codecov.io/${platform}/${getUploaderName(platform)}`);
     return `https://cli.codecov.io/${platform}/${getUploaderName(platform)}`;
-    // https://cli.codecov.io/v0.1.1_test/linux/codecov 
+    // https://cli.codecov.io/v0.1.1_test/linux/codecov
 };
 
 
@@ -18942,7 +18943,6 @@ try {
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
-        console.log('filePath', filePath);
         res.pipe(filePath);
         filePath
             .on('error', (err) => {
