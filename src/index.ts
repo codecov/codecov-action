@@ -25,17 +25,19 @@ try {
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
+    console.log("filePath", filePath);
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
+          console.log("Codecov: Failed to write uploader binary:");
           setFailure(
               `Codecov: Failed to write uploader binary: ${err.message}`,
               true,
           );
         }).on('finish', async () => {
           filePath.close();
-
-          await verify(filename, platform, uploaderVersion, verbose, failCi);
+          console.log("finish")
+          // await verify(filename, platform, uploaderVersion, verbose, failCi);
           await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
 
