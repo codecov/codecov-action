@@ -44,6 +44,7 @@ const getPlatform = (os?: string): string => {
 };
 
 const getBaseUrl = (platform: string, version: string): string => {
+  console.log(`------https://cli.codecov.io/${platform}/${getUploaderName(platform)}`);
   return `https://cli.codecov.io/${platform}/${getUploaderName(platform)}`;
   // https://cli.codecov.io/v0.1.1_test/linux/codecov
 };

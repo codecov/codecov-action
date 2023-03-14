@@ -25,7 +25,6 @@ try {
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
-    console.log('filePath', filePath);
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
