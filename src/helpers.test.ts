@@ -39,19 +39,19 @@ test('getBaseUrl', () => {
   expect(PLATFORMS.map((platform) => {
     return getBaseUrl(platform, 'latest');
   })).toEqual([
-    'https://cli.codecov.io/latest/alpine/codecov',
-    'https://cli.codecov.io/latest/linux/codecov',
-    'https://cli.codecov.io/latest/macos/codecov',
-    'https://cli.codecov.io/latest/windows/codecov.exe',
+    'https://cli.codecov.io/alpine/codecov',
+    'https://cli.codecov.io/linux/codecov',
+    'https://cli.codecov.io/macos/codecov',
+    'https://cli.codecov.io/windows/codecov.exe',
   ]);
 
   expect(PLATFORMS.map((platform) => {
     return getBaseUrl(platform, 'v0.1.0_8880');
   })).toEqual([
-    'https://cli.codecov.io/v0.1.0_8880/alpine/codecov',
-    'https://cli.codecov.io/v0.1.0_8880/linux/codecov',
-    'https://cli.codecov.io/v0.1.0_8880/macos/codecov',
-    'https://cli.codecov.io/v0.1.0_8880/windows/codecov.exe',
+    'https://cli.codecov.io/alpine/codecov',
+    'https://cli.codecov.io/linux/codecov',
+    'https://cli.codecov.io/macos/codecov',
+    'https://cli.codecov.io/windows/codecov.exe',
   ]);
 });
 
