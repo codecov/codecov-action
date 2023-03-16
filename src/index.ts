@@ -21,7 +21,12 @@ try {
   const {execArgs, options, failCi, os, uploaderVersion, verbose} = buildExec();
   const platform = getPlatform(os);
 
-  const filename = path.join( __dirname, getUploaderName(platform));
+  const filename = path.join( __dirname, 'hi');
+  const filename2 = path.join( __dirname, getUploaderName(platform));
+  const execArgs2 = [];
+  execArgs2.push(
+      '--help',
+  );
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
     const filePath = fs.createWriteStream(filename);
@@ -50,14 +55,14 @@ try {
               }
             });
           };
-          await exec.exec(filename, execArgs, options)
+          await exec.exec(filename2, execArgs2)
               .catch((err) => {
                 setFailure(
                     `Codecov: Failed to properly upload: ${err.message}`,
                     failCi,
                 );
               }).then(() => {
-                unlink();
+                //unlink();
               });
         });
   });
