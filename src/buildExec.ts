@@ -313,8 +313,8 @@ const buildUploadExec = () => {
   const plugin = core.getInput('plugin');
   const exclude = core.getInput('exclude');
 
-  const execUploadArgs = [];
-  execUploadArgs.push(
+  const uploadExecArgs = [];
+  uploadExecArgs.push(
       '-n',
       `${name}`,
   );
@@ -342,65 +342,65 @@ const buildUploadExec = () => {
     uploadOptions.env.CODECOV_TOKEN = token;
   }
   if (dryRun) {
-    execUploadArgs.push('-d');
+    uploadExecArgs.push('-d');
   }
   if (envVarsArg.length) {
-    execUploadArgs.push('-e', envVarsArg.join(','));
+    uploadExecArgs.push('-e', envVarsArg.join(','));
   }
   if (failCi) {
-    execUploadArgs.push('-Z');
+    uploadExecArgs.push('-Z');
   }
   if (file) {
-    execUploadArgs.push('-f', `${file}`);
+    uploadExecArgs.push('-f', `${file}`);
   }
   if (files) {
     files.split(',').map((f) => f.trim()).forEach((f) => {
-      execUploadArgs.push('-f', `${f}`);
+      uploadExecArgs.push('-f', `${f}`);
     });
   }
   if (flags) {
     flags.split(',').map((f) => f.trim()).forEach((f) => {
-      execUploadArgs.push('-F', `${f}`);
+      uploadExecArgs.push('-F', `${f}`);
     });
   }
   if (overrideBranch) {
-    execUploadArgs.push('-B', `${overrideBranch}`);
+    uploadExecArgs.push('-B', `${overrideBranch}`);
   }
   if (overrideBuild) {
-    execUploadArgs.push('-b', `${overrideBuild}`);
+    uploadExecArgs.push('-b', `${overrideBuild}`);
   }
   if (overrideCommit) {
-    execUploadArgs.push('-C', `${overrideCommit}`);
+    uploadExecArgs.push('-C', `${overrideCommit}`);
   } else if (
     `${context.eventName}` == 'pull_request' ||
     `${context.eventName}` == 'pull_request_target'
   ) {
-    execUploadArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    uploadExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
   if (overridePr) {
-    execUploadArgs.push('-P', `${overridePr}`);
+    uploadExecArgs.push('-P', `${overridePr}`);
   } else if (
     `${context.eventName}` == 'pull_request_target'
   ) {
-    execUploadArgs.push('-P', `${context.payload.number}`);
+    uploadExecArgs.push('-P', `${context.payload.number}`);
   }
   if (rootDir) {
-    execUploadArgs.push('--network-root-folder', `${rootDir}`);
+    uploadExecArgs.push('--network-root-folder', `${rootDir}`);
   }
   if (searchDir) {
-    execUploadArgs.push('-s', `${searchDir}`);
+    uploadExecArgs.push('-s', `${searchDir}`);
   }
   if (slug) {
-    execUploadArgs.push('-r', `${slug}`);
+    uploadExecArgs.push('-r', `${slug}`);
   }
   if (workingDir) {
     uploadOptions.cwd = workingDir;
   }
   if (plugin) {
-    execUploadArgs.push('--plugin', `${plugin}`);
+    uploadExecArgs.push('--plugin', `${plugin}`);
   }
   if (exclude) {
-    execUploadArgs.push('--exclude', `${exclude}`);
+    uploadExecArgs.push('--exclude', `${exclude}`);
   }
 
   if (uploaderVersion == '') {
@@ -408,7 +408,7 @@ const buildUploadExec = () => {
   }
 
   return {
-    execUploadArgs,
+    uploadExecArgs,
     uploadOptions,
     failCi,
     os,
@@ -418,4 +418,10 @@ const buildUploadExec = () => {
 };
 
 
-export default buildExec;
+export {
+  buildExec,
+  buildCommitExec,
+  buildGeneralExec,
+  buildReportExec,
+  buildUploadExec,
+};

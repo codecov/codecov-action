@@ -22344,8 +22344,8 @@ const buildUploadExec = () => {
     const workingDir = core.getInput('working-directory');
     const plugin = core.getInput('plugin');
     const exclude = core.getInput('exclude');
-    const execUploadArgs = [];
-    execUploadArgs.push('-n', `${name}`);
+    const uploadExecArgs = [];
+    uploadExecArgs.push('-n', `${name}`);
     const uploadCommand = 'do-upload';
     const uploadOptions = {};
     uploadOptions.env = Object.assign(process.env, {
@@ -22368,69 +22368,69 @@ const buildUploadExec = () => {
         uploadOptions.env.CODECOV_TOKEN = token;
     }
     if (dryRun) {
-        execUploadArgs.push('-d');
+        uploadExecArgs.push('-d');
     }
     if (envVarsArg.length) {
-        execUploadArgs.push('-e', envVarsArg.join(','));
+        uploadExecArgs.push('-e', envVarsArg.join(','));
     }
     if (failCi) {
-        execUploadArgs.push('-Z');
+        uploadExecArgs.push('-Z');
     }
     if (file) {
-        execUploadArgs.push('-f', `${file}`);
+        uploadExecArgs.push('-f', `${file}`);
     }
     if (files) {
         files.split(',').map((f) => f.trim()).forEach((f) => {
-            execUploadArgs.push('-f', `${f}`);
+            uploadExecArgs.push('-f', `${f}`);
         });
     }
     if (flags) {
         flags.split(',').map((f) => f.trim()).forEach((f) => {
-            execUploadArgs.push('-F', `${f}`);
+            uploadExecArgs.push('-F', `${f}`);
         });
     }
     if (overrideBranch) {
-        execUploadArgs.push('-B', `${overrideBranch}`);
+        uploadExecArgs.push('-B', `${overrideBranch}`);
     }
     if (overrideBuild) {
-        execUploadArgs.push('-b', `${overrideBuild}`);
+        uploadExecArgs.push('-b', `${overrideBuild}`);
     }
     if (overrideCommit) {
-        execUploadArgs.push('-C', `${overrideCommit}`);
+        uploadExecArgs.push('-C', `${overrideCommit}`);
     }
     else if (`${context.eventName}` == 'pull_request' ||
         `${context.eventName}` == 'pull_request_target') {
-        execUploadArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+        uploadExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
     }
     if (overridePr) {
-        execUploadArgs.push('-P', `${overridePr}`);
+        uploadExecArgs.push('-P', `${overridePr}`);
     }
     else if (`${context.eventName}` == 'pull_request_target') {
-        execUploadArgs.push('-P', `${context.payload.number}`);
+        uploadExecArgs.push('-P', `${context.payload.number}`);
     }
     if (rootDir) {
-        execUploadArgs.push('--network-root-folder', `${rootDir}`);
+        uploadExecArgs.push('--network-root-folder', `${rootDir}`);
     }
     if (searchDir) {
-        execUploadArgs.push('-s', `${searchDir}`);
+        uploadExecArgs.push('-s', `${searchDir}`);
     }
     if (slug) {
-        execUploadArgs.push('-r', `${slug}`);
+        uploadExecArgs.push('-r', `${slug}`);
     }
     if (workingDir) {
         uploadOptions.cwd = workingDir;
     }
     if (plugin) {
-        execUploadArgs.push('--plugin', `${plugin}`);
+        uploadExecArgs.push('--plugin', `${plugin}`);
     }
     if (exclude) {
-        execUploadArgs.push('--exclude', `${exclude}`);
+        uploadExecArgs.push('--exclude', `${exclude}`);
     }
     if (uploaderVersion == '') {
         uploaderVersion = 'latest';
     }
     return {
-        execUploadArgs,
+        uploadExecArgs,
         uploadOptions,
         failCi,
         os,
@@ -22438,7 +22438,7 @@ const buildUploadExec = () => {
         uploadCommand,
     };
 };
-/* harmony default export */ const src_buildExec = (buildExec);
+
 
 ;// CONCATENATED MODULE: ./src/helpers.ts
 
@@ -24756,7 +24756,7 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 let failCi;
 try {
-    const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
+    const { execArgs, options, failCi, os, uploaderVersion, verbose } = buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {

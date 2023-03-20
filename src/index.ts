@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import * as exec from '@actions/exec';
 
-import buildExec from './buildExec';
+import {buildExec} from './buildExec';
 import {
   getBaseUrl,
   getPlatform,
