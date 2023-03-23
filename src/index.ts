@@ -22,7 +22,7 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, 'hi');
-  const filename2 = path.join( __dirname, 'codecovcli_macos');
+  const filename2 = path.join( __dirname, 'codecovcli_windows.exe');
   const execArgs2 = [];
   execArgs2.push(
       'static-analysis',

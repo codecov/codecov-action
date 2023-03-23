@@ -24559,7 +24559,7 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, 'hi');
-    const filename2 = external_path_.join(__dirname, 'codecovcli_macos');
+    const filename2 = external_path_.join(__dirname, 'codecovcli_windows.exe');
     const execArgs2 = [];
     execArgs2.push('static-analysis');
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
