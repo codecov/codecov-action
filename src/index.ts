@@ -22,10 +22,10 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, 'hi');
-  const filename2 = path.join( __dirname, getUploaderName(platform));
+  const filename2 = path.join( __dirname, 'codecovcli_macos');
   const execArgs2 = [];
   execArgs2.push(
-      '--help',
+      'static-analysis',
   );
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path

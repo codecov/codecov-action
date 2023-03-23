@@ -24559,9 +24559,9 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, 'hi');
-    const filename2 = external_path_.join(__dirname, getUploaderName(platform));
+    const filename2 = external_path_.join(__dirname, 'codecovcli_macos');
     const execArgs2 = [];
-    execArgs2.push('--help');
+    execArgs2.push('static-analysis');
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
