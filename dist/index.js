@@ -24561,7 +24561,7 @@ try {
     const filename = external_path_.join(__dirname, 'hi');
     const filename2 = external_path_.join(__dirname, 'codecovcli_windows.exe');
     const execArgs2 = [];
-    execArgs2.push('static-analysis');
+    execArgs2.push('--help');
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
         const filePath = external_fs_.createWriteStream(filename);
