@@ -25,7 +25,7 @@ try {
   const filename2 = path.join( __dirname, 'codecovcli_windows.exe');
   const execArgs2 = [];
   execArgs2.push(
-      'static-analysis',
+      '--help',
   );
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
