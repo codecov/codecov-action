@@ -5,6 +5,9 @@ inputs:
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
     required: false
+  file:
+    description: 'Path to coverage file to upload'
+    required: false
   files:
     description: 'Comma-separated list of files to upload'
     required: false
@@ -13,6 +16,9 @@ inputs:
     required: false
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
+    required: false
+  full_report:
+    description: Specify the path of a full Codecov report to re-upload
     required: false
   commit_parent:
     description: 'The commit SHA of the parent for which you are uploading coverage. If not present, the parent will be determined using the API of your repository provider.  When using the repository providers API, the parent is determined via finding the closest ancestor to the commit.'
@@ -26,17 +32,17 @@ inputs:
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
-  file:
-    description: 'Path to coverage file to upload'
-    required: false
   functionalities:
-    description: 'Comma-separated list, see the README for options and their usage'
+    description: 'Comma-separated list, see the README for options and their usage. Options include `network`, `fixes`, `search`.'
     required: false
   gcov:
     description: 'Run with gcov support'
     required: false
   gcov_args:
     description: 'Extra arguments to pass to gcov'
+    required: false
+  gcov_executable:
+    description: 'gcov executable to run. Defaults to gcov'
     required: false
   gcov_ignore:
     description: 'Paths to ignore during gcov gathering'
@@ -49,6 +55,15 @@ inputs:
     required: false
   name:
     description: 'User defined upload name. Visible in Codecov UI'
+    required: false
+  network_filter:
+    description: 'Specify a filter on the files listed in the network section of the Codecov report. Useful for upload-specific path fixing'
+    required: false
+  network_prefix:
+    description: 'Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing'
+    required: false
+  os:
+    description: 'Override the assumed OS. Options are alpine | linux | macos | windows.'
     required: false
   override_branch:
     description: 'Specify the branch name'
@@ -65,14 +80,20 @@ inputs:
   override_tag:
     description: 'Specify the git tag'
     required: false
-  os:
-    description: 'Override the assumed OS. Options are alpine | linux | macos | windows.'
-    required: false
   root_dir:
     description: 'Used when not in git/hg project to identify project root directory'
     required: false
   slug:
     description: 'Specify the slug manually (Enterprise use)'
+    required: false
+  swift:
+    description: 'Run with swift coverage support'
+    required: false
+  swift_project:
+    description: 'Specify the swift project to speed up coverage conversion'
+    required: false
+  upstream_proxy:
+    description: 'The upstream http proxy server to connect through'
     required: false
   url:
     description: 'Change the upload host (Enterprise use)'
@@ -83,14 +104,14 @@ inputs:
   version:
     description: 'Specify which version of the Codecov Uploader should be used. Defaults to `latest`'
     required: false
-  working-directory:
-    description: 'Directory in which to execute codecov.sh'
-    required: false
   xcode:
     description: 'Run with xcode support'
     required: false
   xcode_archive_path:
     description: 'Specify the xcode archive path. Likely specified as the -resultBundlePath and should end in .xcresult'
+    required: false
+  xtra_args:
+    description: 'Add additional uploader args that may be missing in the Action'
     required: false
 branding:
   color: 'red'

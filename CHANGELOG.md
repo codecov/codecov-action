@@ -1,3 +1,37 @@
+## 3.1.2
+### Fixes
+- #718 Update README.md
+- #851 Remove unsupported path_to_write_report argument
+- #898 codeql-analysis.yml
+- #901 Update README to contain correct information - inputs and negate feature
+- #955 fix: add in all the extra arguments for uploader
+
+### Dependencies
+- #819 build(deps): bump openpgp from 5.4.0 to 5.5.0
+- #835 build(deps): bump node-fetch from 3.2.4 to 3.2.10
+- #840 build(deps): bump ossf/scorecard-action from 1.1.1 to 2.0.4
+- #841 build(deps): bump @actions/core from 1.9.1 to 1.10.0
+- #843 build(deps): bump @actions/github from 5.0.3 to 5.1.1
+- #869 build(deps): bump node-fetch from 3.2.10 to 3.3.0
+- #872 build(deps-dev): bump jest-junit from 13.2.0 to 15.0.0
+- #879 build(deps): bump decode-uri-component from 0.2.0 to 0.2.2
+- #889 build(deps): bump ossf/scorecard-action from 1.1.1 to 2.1.2
+- #895 build(deps): bump json5 from 2.2.1 to 2.2.3
+- #896 build(deps): bump actions/upload-artifact from 3.1.0 to 3.1.2
+- #900 build(deps-dev): bump @vercel/ncc from 0.34.0 to 0.36.1
+- #905 build(deps-dev): bump typescript from 4.7.4 to 4.9.5
+- #911 build(deps-dev): bump @types/node from 16.11.40 to 18.13.0
+- #922 build(deps-dev): bump @types/node from 18.13.0 to 18.14.0
+- #924 build(deps): bump openpgp from 5.5.0 to 5.7.0
+- #927 build(deps-dev): bump @types/node from 18.14.0 to 18.14.2
+- #933 build(deps-dev): bump @types/node from 18.14.2 to 18.14.6
+- #937 build(deps-dev): bump @types/node from 18.14.6 to 18.15.0
+- #938 build(deps): bump node-fetch from 3.3.0 to 3.3.1
+- #945 build(deps-dev): bump @types/node from 18.15.0 to 18.15.5
+- #946 build(deps-dev): bump @types/node from 18.15.5 to 18.15.6
+- #947 build(deps-dev): bump @types/node from 18.15.6 to 18.15.10
+- #951 build(deps): bump ossf/scorecard-action from 2.1.2 to 2.1.3
+
 ## 3.1.1
 ### Fixes
 - #661 Update deprecation warning
