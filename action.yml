@@ -63,7 +63,7 @@ inputs:
     description: 'Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing'
     required: false
   os:
-    description: 'Override the assumed OS. Options are alpine | linux | macos | windows.'
+    description: 'Override the assumed OS. Options are aarch64 | alpine | linux | macos | windows.'
     required: false
   override_branch:
     description: 'Specify the branch name'

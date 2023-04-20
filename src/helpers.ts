@@ -1,6 +1,12 @@
 import * as core from '@actions/core';
 
-const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
+const PLATFORMS = [
+  'aarch64',
+  'alpine',
+  'linux',
+  'macos',
+  'windows',
+];
 
 const setFailure = (message: string, failCi: boolean): void => {
     failCi ? core.setFailed(message) : core.warning(message);
