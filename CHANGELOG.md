@@ -1,3 +1,12 @@
+## 3.1.3
+### Fixes
+- #960 fix: allow for aarch64 build
+
+### Dependencies
+- #957 build(deps-dev): bump jest-junit from 15.0.0 to 16.0.0
+- #958 build(deps): bump openpgp from 5.7.0 to 5.8.0
+- #959 build(deps-dev): bump @types/node from 18.15.10 to 18.15.12
+
 ## 3.1.2
 ### Fixes
 - #718 Update README.md
