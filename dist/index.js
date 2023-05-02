@@ -22120,6 +22120,7 @@ const buildExec = () => {
     const upstream = core.getInput('upstream_proxy');
     const url = core.getInput('url');
     const verbose = isTrue(core.getInput('verbose'));
+    const workingDir = core.getInput('working-directory');
     const xcode = core.getInput('xcode');
     const xcodeArchivePath = core.getInput('xcode_archive_path');
     const xtraArgs = core.getInput('xtra_args');
@@ -22258,6 +22259,9 @@ const buildExec = () => {
     }
     if (verbose) {
         console.debug({ execArgs });
+    }
+    if (workingDir) {
+        options.cwd = workingDir;
     }
     if (xtraArgs) {
         execArgs.push(`${xtraArgs}`);
