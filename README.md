@@ -69,7 +69,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `gcov_include` | Paths to include during gcov gathering | Optional
 | `gcov_executable` | gcov executable to run. Defaults to gcov. | Optional
 | `name`  | Custom defined name for the upload | Optional
-| `network_filer` | Specify a filter on the files listed in the network section of the Codecov report. Useful for upload-specific path fixing | Optional
+| `network_filter` | Specify a filter on the files listed in the network section of the Codecov report. Useful for upload-specific path fixing | Optional
 | `network_prefix` | Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing | Optional
 | `os` | Specify the OS (linux, macos, windows, alpine) | Optional
 | `override_branch` | Specify the branch name | Optional
