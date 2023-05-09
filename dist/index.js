@@ -22176,7 +22176,7 @@ const buildExec = () => {
         });
     }
     if (fullReport) {
-        execArgs.push('-full', `${fullReport}`);
+        execArgs.push('--full', `${fullReport}`);
     }
     if (flags) {
         flags.split(',').map((f) => f.trim()).forEach((f) => {
@@ -22187,22 +22187,22 @@ const buildExec = () => {
         execArgs.push('-g');
     }
     if (gcovArgs) {
-        execArgs.push('-gcovArgs', `${gcovArgs}`);
+        execArgs.push('--ga', `${gcovArgs}`);
     }
     if (gcovIgnore) {
-        execArgs.push('-gcovIgnore', `${gcovIgnore}`);
+        execArgs.push('--gi', `${gcovIgnore}`);
     }
     if (gcovInclude) {
-        execArgs.push('-gcovInclude', `${gcovInclude}`);
+        execArgs.push('--gI', `${gcovInclude}`);
     }
     if (gcovExecutable) {
-        execArgs.push('-gcovExecutable', `${gcovExecutable}`);
+        execArgs.push('--gx', `${gcovExecutable}`);
     }
     if (networkFilter) {
-        execArgs.push('-networkFilter', `${networkFilter}`);
+        execArgs.push('-i', `${networkFilter}`);
     }
     if (networkPrefix) {
-        execArgs.push('-networkPrefix', `${networkPrefix}`);
+        execArgs.push('-k', `${networkPrefix}`);
     }
     if (overrideBranch) {
         execArgs.push('-B', `${overrideBranch}`);
@@ -22236,10 +22236,10 @@ const buildExec = () => {
         execArgs.push('-r', `${slug}`);
     }
     if (swift) {
-        execArgs.push('-xs');
+        execArgs.push('--xs');
     }
     if (swift && swiftProject) {
-        execArgs.push('-xsp', `${swiftProject}`);
+        execArgs.push('--xsp', `${swiftProject}`);
     }
     if (upstream) {
         execArgs.push('-U', `${upstream}`);
@@ -22251,8 +22251,8 @@ const buildExec = () => {
         execArgs.push('-v');
     }
     if (xcode && xcodeArchivePath) {
-        execArgs.push('-xc');
-        execArgs.push('-xp', `${xcodeArchivePath}`);
+        execArgs.push('--xc');
+        execArgs.push('--xp', `${xcodeArchivePath}`);
     }
     if (uploaderVersion == '') {
         uploaderVersion = 'latest';
