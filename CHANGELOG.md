@@ -1,3 +1,14 @@
+## 3.1.4
+### Fixes
+- #967 Fix typo in README.md
+- #971 fix: add back in working dir
+- #969 fix: CLI option names for uploader
+
+### Dependencies
+- #970 build(deps-dev): bump @types/node from 18.15.12 to 18.16.3
+- #979 build(deps-dev): bump @types/node from 20.1.0 to 20.1.2
+- #981 build(deps-dev): bump @types/node from 20.1.2 to 20.1.4
+
 ## 3.1.3
 ### Fixes
 - #960 fix: allow for aarch64 build
