@@ -124,7 +124,7 @@ test('upload args', () => {
 });
 
 
-test('report args', () => {
+test('report args', async () => {
   const envs = {
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
     slug: 'fakeOwner/fakeRepo',
@@ -134,7 +134,7 @@ test('report args', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {reportExecArgs, reportCommand} = buildReportExec();
+  const {reportExecArgs, reportCommand} = await buildReportExec();
 
   expect(reportExecArgs).toEqual(
       expect.arrayContaining([
@@ -150,7 +150,7 @@ test('report args', () => {
 });
 
 
-test('report args using context', () => {
+test('report args using context', async () => {
   const envs = {
     token: 'd3859757-ab80-4664-924d-aef22fa7557b',
   };
@@ -162,7 +162,7 @@ test('report args using context', () => {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
 
-  const {reportExecArgs, reportCommand} = buildReportExec();
+  const {reportExecArgs, reportCommand} = await buildReportExec();
 
   expect(reportExecArgs).toEqual(expectedArgs);
   expect(reportCommand).toEqual('create-report');

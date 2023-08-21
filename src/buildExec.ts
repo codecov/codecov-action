@@ -18,14 +18,12 @@ const isTrue = (variable) => {
 };
 
 
-const buildCommitExec = () => {
+const buildCommitExec = async () => {
   const commitParent = core.getInput('commit_parent');
   const overrideBranch = core.getInput('override_branch');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
-
 
   const commitCommand = 'create-commit';
   const commitExecArgs = [];
@@ -40,7 +38,7 @@ const buildCommitExec = () => {
     GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
   });
 
-
+  const token = await fetchToken();
   if (token) {
     commitOptions.env.CODECOV_TOKEN = token;
   }
@@ -88,12 +86,9 @@ const buildGeneralExec = () => {
   return {args, verbose};
 };
 
-const buildReportExec = () => {
+const buildReportExec = async () => {
   const overrideCommit = core.getInput('override_commit');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
-
-
   const reportCommand = 'create-report';
   const reportExecArgs = [];
 
@@ -107,7 +102,7 @@ const buildReportExec = () => {
     GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
   });
 
-
+  const token = await fetchToken();
   if (token) {
     reportOptions.env.CODECOV_TOKEN = token;
   }
@@ -126,7 +121,24 @@ const buildReportExec = () => {
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
-const buildUploadExec = () => {
+const fetchToken = async (): Promise<string> => {
+  let token = core.getInput('token');
+  const useOIDC = isTrue(core.getInput('use_oidc'));
+  if (useOIDC) {
+    let codecovURL = core.getInput('url');
+    if (codecovURL === '') {
+      codecovURL = 'https://codecov.io';
+    }
+    try {
+      token = await core.getIDToken(codecovURL);
+    } catch (error) {
+      core.debug(`Got error while retrieving id token: ${error}`);
+    }
+  }
+  return token;
+};
+
+const buildUploadExec = async () => {
   const envVars = core.getInput('env_vars');
   const dryRun = isTrue(core.getInput('dry_run'));
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
@@ -143,7 +155,6 @@ const buildUploadExec = () => {
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
   let uploaderVersion = core.getInput('version');
   const workingDir = core.getInput('working-directory');
   const plugin = core.getInput('plugin');
@@ -175,6 +186,8 @@ const buildUploadExec = () => {
         `${name}`,
     );
   }
+
+  const token = await fetchToken();
   if (token) {
     uploadOptions.env.CODECOV_TOKEN = token;
   }

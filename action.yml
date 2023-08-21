@@ -5,6 +5,12 @@ inputs:
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
     required: false
+  use_oidc:
+    description: 'Uses Github OIDC to provision upload token.'
+    required: false
+  url:
+    description: 'URL to codecov installation. Defaults to https://codecov.io'
+    required: false
   file:
     description: 'Path to coverage file to upload'
     required: false
