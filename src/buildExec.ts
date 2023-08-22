@@ -19,18 +19,22 @@ const isTrue = (variable) => {
 const buildExec = () => {
   const clean = core.getInput('move_coverage_to_trash');
   const commitParent = core.getInput('commit_parent');
-  const envVars = core.getInput('env_vars');
   const dryRun = isTrue(core.getInput('dry_run'));
+  const envVars = core.getInput('env_vars');
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
+  const fullReport = core.getInput('full_report');
+  const functionalities = core.getInput('functionalities');
   const gcov = core.getInput('gcov');
   const gcovArgs = core.getInput('gcov_args');
+  const gcovExecutable = core.getInput('gcov_executable');
   const gcovIgnore = core.getInput('gcov_ignore');
   const gcovInclude = core.getInput('gcov_include');
-  const functionalities = core.getInput('functionalities');
   const name = core.getInput('name');
+  const networkFilter = core.getInput('network_filter');
+  const networkPrefix = core.getInput('network_prefix');
   const os = core.getInput('os');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
@@ -40,13 +44,17 @@ const buildExec = () => {
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
+  const swift = core.getInput('swift');
+  const swiftProject = core.getInput('swift_project');
   const token = core.getInput('token');
-  let uploaderVersion = core.getInput('version');
+  const upstream = core.getInput('upstream_proxy');
   const url = core.getInput('url');
   const verbose = isTrue(core.getInput('verbose'));
   const workingDir = core.getInput('working-directory');
   const xcode = core.getInput('xcode');
   const xcodeArchivePath = core.getInput('xcode_archive_path');
+  const xtraArgs = core.getInput('xtra_args');
+  let uploaderVersion = core.getInput('version');
 
   const execArgs = [];
   execArgs.push(
@@ -106,6 +114,9 @@ const buildExec = () => {
       execArgs.push('-f', `${f}`);
     });
   }
+  if (fullReport) {
+    execArgs.push('--full', `${fullReport}`);
+  }
   if (flags) {
     flags.split(',').map((f) => f.trim()).forEach((f) => {
       execArgs.push('-F', `${f}`);
@@ -116,13 +127,23 @@ const buildExec = () => {
     execArgs.push('-g');
   }
   if (gcovArgs) {
-    execArgs.push('--gcovArgs', `${gcovArgs}`);
+    execArgs.push('--ga', `${gcovArgs}`);
   }
   if (gcovIgnore) {
-    execArgs.push('--gcovIgnore', `${gcovIgnore}`);
+    execArgs.push('--gi', `${gcovIgnore}`);
   }
   if (gcovInclude) {
-    execArgs.push('--gcovInclude', `${gcovInclude}`);
+    execArgs.push('--gI', `${gcovInclude}`);
+  }
+  if (gcovExecutable) {
+    execArgs.push('--gx', `${gcovExecutable}`);
+  }
+
+  if (networkFilter) {
+    execArgs.push('-i', `${networkFilter}`);
+  }
+  if (networkPrefix) {
+    execArgs.push('-k', `${networkPrefix}`);
   }
 
   if (overrideBranch) {
@@ -158,14 +179,20 @@ const buildExec = () => {
   if (slug) {
     execArgs.push('-r', `${slug}`);
   }
+  if (swift) {
+    execArgs.push('--xs');
+  }
+  if (swift && swiftProject) {
+    execArgs.push('--xsp', `${swiftProject}`);
+  }
+  if (upstream) {
+    execArgs.push('-U', `${upstream}`);
+  }
   if (url) {
     execArgs.push('-u', `${url}`);
   }
   if (verbose) {
     execArgs.push('-v');
-  }
-  if (workingDir) {
-    options.cwd = workingDir;
   }
   if (xcode && xcodeArchivePath) {
     execArgs.push('--xc');
@@ -178,6 +205,14 @@ const buildExec = () => {
 
   if (verbose) {
     console.debug({execArgs});
+  }
+
+  if (workingDir) {
+    options.cwd = workingDir;
+  }
+
+  if (xtraArgs) {
+    execArgs.push(`${xtraArgs}`);
   }
 
   return {execArgs, options, failCi, os, uploaderVersion, verbose};

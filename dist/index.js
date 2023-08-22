@@ -22072,7 +22072,7 @@ var lib_core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = {"i8":"3.1.1"};
+const package_namespaceObject = {"i8":"3.1.4"};
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 
 
@@ -22089,18 +22089,22 @@ const isTrue = (variable) => {
 const buildExec = () => {
     const clean = lib_core.getInput('move_coverage_to_trash');
     const commitParent = lib_core.getInput('commit_parent');
-    const envVars = lib_core.getInput('env_vars');
     const dryRun = isTrue(lib_core.getInput('dry_run'));
+    const envVars = lib_core.getInput('env_vars');
     const failCi = isTrue(lib_core.getInput('fail_ci_if_error'));
     const file = lib_core.getInput('file');
     const files = lib_core.getInput('files');
     const flags = lib_core.getInput('flags');
+    const fullReport = lib_core.getInput('full_report');
+    const functionalities = lib_core.getInput('functionalities');
     const gcov = lib_core.getInput('gcov');
     const gcovArgs = lib_core.getInput('gcov_args');
+    const gcovExecutable = lib_core.getInput('gcov_executable');
     const gcovIgnore = lib_core.getInput('gcov_ignore');
     const gcovInclude = lib_core.getInput('gcov_include');
-    const functionalities = lib_core.getInput('functionalities');
     const name = lib_core.getInput('name');
+    const networkFilter = lib_core.getInput('network_filter');
+    const networkPrefix = lib_core.getInput('network_prefix');
     const os = lib_core.getInput('os');
     const overrideBranch = lib_core.getInput('override_branch');
     const overrideBuild = lib_core.getInput('override_build');
@@ -22110,13 +22114,17 @@ const buildExec = () => {
     const rootDir = lib_core.getInput('root_dir');
     const searchDir = lib_core.getInput('directory');
     const slug = lib_core.getInput('slug');
+    const swift = lib_core.getInput('swift');
+    const swiftProject = lib_core.getInput('swift_project');
     const token = lib_core.getInput('token');
-    let uploaderVersion = lib_core.getInput('version');
+    const upstream = lib_core.getInput('upstream_proxy');
     const url = lib_core.getInput('url');
     const verbose = isTrue(lib_core.getInput('verbose'));
     const workingDir = lib_core.getInput('working-directory');
     const xcode = lib_core.getInput('xcode');
     const xcodeArchivePath = lib_core.getInput('xcode_archive_path');
+    const xtraArgs = lib_core.getInput('xtra_args');
+    let uploaderVersion = lib_core.getInput('version');
     const execArgs = [];
     execArgs.push('-n', `${name}`, '-Q', `github-action-${package_namespaceObject.i8}`);
     const options = {};
@@ -22167,6 +22175,9 @@ const buildExec = () => {
             execArgs.push('-f', `${f}`);
         });
     }
+    if (fullReport) {
+        execArgs.push('--full', `${fullReport}`);
+    }
     if (flags) {
         flags.split(',').map((f) => f.trim()).forEach((f) => {
             execArgs.push('-F', `${f}`);
@@ -22176,13 +22187,22 @@ const buildExec = () => {
         execArgs.push('-g');
     }
     if (gcovArgs) {
-        execArgs.push('--gcovArgs', `${gcovArgs}`);
+        execArgs.push('--ga', `${gcovArgs}`);
     }
     if (gcovIgnore) {
-        execArgs.push('--gcovIgnore', `${gcovIgnore}`);
+        execArgs.push('--gi', `${gcovIgnore}`);
     }
     if (gcovInclude) {
-        execArgs.push('--gcovInclude', `${gcovInclude}`);
+        execArgs.push('--gI', `${gcovInclude}`);
+    }
+    if (gcovExecutable) {
+        execArgs.push('--gx', `${gcovExecutable}`);
+    }
+    if (networkFilter) {
+        execArgs.push('-i', `${networkFilter}`);
+    }
+    if (networkPrefix) {
+        execArgs.push('-k', `${networkPrefix}`);
     }
     if (overrideBranch) {
         execArgs.push('-B', `${overrideBranch}`);
@@ -22215,14 +22235,20 @@ const buildExec = () => {
     if (slug) {
         execArgs.push('-r', `${slug}`);
     }
+    if (swift) {
+        execArgs.push('--xs');
+    }
+    if (swift && swiftProject) {
+        execArgs.push('--xsp', `${swiftProject}`);
+    }
+    if (upstream) {
+        execArgs.push('-U', `${upstream}`);
+    }
     if (url) {
         execArgs.push('-u', `${url}`);
     }
     if (verbose) {
         execArgs.push('-v');
-    }
-    if (workingDir) {
-        options.cwd = workingDir;
     }
     if (xcode && xcodeArchivePath) {
         execArgs.push('--xc');
@@ -22233,6 +22259,12 @@ const buildExec = () => {
     }
     if (verbose) {
         console.debug({ execArgs });
+    }
+    if (workingDir) {
+        options.cwd = workingDir;
+    }
+    if (xtraArgs) {
+        execArgs.push(`${xtraArgs}`);
     }
     return { execArgs, options, failCi, os, uploaderVersion, verbose };
 };
@@ -22442,7 +22474,13 @@ const buildUploadExec = () => {
 
 ;// CONCATENATED MODULE: ./src/helpers.ts
 
-const PLATFORMS = ['alpine', 'linux', 'macos', 'windows'];
+const PLATFORMS = [
+    'aarch64',
+    'alpine',
+    'linux',
+    'macos',
+    'windows',
+];
 const setFailure = (message, failCi) => {
     failCi ? lib_core.setFailed(message) : lib_core.warning(message);
     if (failCi) {
