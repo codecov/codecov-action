@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
