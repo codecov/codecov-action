@@ -16,7 +16,7 @@ jobs:
           flags: script,${{ matrix.os }}
           name: codecov-script
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -25,7 +25,7 @@ jobs:
           flags: demo,${{ matrix.os }}
           name: codecov-demo
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -35,7 +35,7 @@ jobs:
           name: codecov-version
           version: v0.1.2
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
   run:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -57,7 +57,7 @@ jobs:
           flags: script,${{ matrix.os }}
           name: codecov-script
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -66,7 +66,7 @@ jobs:
           flags: demo,${{ matrix.os }}
           name: codecov-demo
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -76,4 +76,4 @@ jobs:
           name: codecov-version
           version: v0.1.2
           verbose: true
-          token: ${{ vars.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
