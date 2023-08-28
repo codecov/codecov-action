@@ -33,7 +33,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.1.2
+          version: v0.2.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
   run:
@@ -74,6 +74,6 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.1.2
+          version: v0.2.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
