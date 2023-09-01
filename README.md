@@ -80,7 +80,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `root_dir` | Used when not in git/hg project to identify project root directory | Optional
 | `directory` | Directory to search for coverage reports. | Optional
 | `slug` | Specify the slug manually (Enterprise use) | Optional
-| `swift` | Run with swift coverage support | Optional
+| `swift` | Run with swift coverage support | Optional 
 | -- `swift_project` | Specify the swift project to speed up coverage conversion | Optional
 | `upstream_proxy` | The upstream http proxy server to connect through | Optional
 | `url` | Change the upload host (Enterprise use) | Optional
