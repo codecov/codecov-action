@@ -22333,7 +22333,7 @@ const getBaseUrl = (platform, version) => {
     return `https://cli.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
 };
 const getCommand = (filename, generalArgs, command) => {
-    return filename + ' ' + generalArgs.join(' ') + ' ' + command;
+    return [filename, ...generalArgs, command];
 };
 
 
@@ -24637,14 +24637,14 @@ try {
                 });
             };
             const doUpload = () => src_awaiter(void 0, void 0, void 0, function* () {
-                yield exec.exec(getCommand(filename, args, uploadCommand), uploadExecArgs, uploadOptions)
+                yield exec.exec(getCommand(filename, args, uploadCommand).join(" "), uploadExecArgs, uploadOptions)
                     .catch((err) => {
                     setFailure(`Codecov: 
                       Failed to properly upload report: ${err.message}`, failCi);
                 });
             });
             const createReport = () => src_awaiter(void 0, void 0, void 0, function* () {
-                yield exec.exec(getCommand(filename, args, reportCommand), reportExecArgs, reportOptions)
+                yield exec.exec(getCommand(filename, args, reportCommand).join(" "), reportExecArgs, reportOptions)
                     .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
                     if (exitCode == 0) {
                         yield doUpload();
@@ -24654,7 +24654,7 @@ try {
                       Failed to properly create report: ${err.message}`, failCi);
                 });
             });
-            yield exec.exec(getCommand(filename, args, commitCommand), commitExecArgs, commitOptions)
+            yield exec.exec(getCommand(filename, args, commitCommand).join(" "), commitExecArgs, commitOptions)
                 .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
                 if (exitCode == 0) {
                     yield createReport();

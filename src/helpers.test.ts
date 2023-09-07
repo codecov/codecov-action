@@ -70,5 +70,5 @@ test('isValidPlatform', () => {
 
 test('getCommand', () => {
   expect(getCommand('path', ['-v', '-x'], 'do-upload'))
-      .toEqual('path -v -x do-upload');
+      .toEqual(['path', '-v', '-x', 'do-upload']);
 });

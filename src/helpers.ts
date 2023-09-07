@@ -55,8 +55,8 @@ const getCommand = (
     filename: string,
     generalArgs:string[],
     command: string,
-): string => {
-  return filename + ' ' + generalArgs.join(' ') + ' ' + command;
+): string[] => {
+  return [filename, ...generalArgs, command];
 };
 
 export {

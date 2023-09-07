@@ -67,7 +67,7 @@ try {
             });
           };
           const doUpload = async () => {
-            await exec.exec(getCommand(filename, args, uploadCommand),
+            await exec.exec(getCommand(filename, args, uploadCommand).join(' '),
                 uploadExecArgs,
                 uploadOptions)
                 .catch((err) => {
@@ -80,7 +80,7 @@ try {
           };
           const createReport = async () => {
             await exec.exec(
-                getCommand(filename, args, reportCommand),
+                getCommand(filename, args, reportCommand).join(' '),
                 reportExecArgs,
                 reportOptions)
                 .then(async (exitCode) => {
@@ -100,7 +100,8 @@ try {
                   filename,
                   args,
                   commitCommand,
-              ), commitExecArgs, commitOptions)
+              ).join(' '),
+              commitExecArgs, commitOptions)
               .then(async (exitCode) => {
                 if (exitCode == 0) {
                   await createReport();
