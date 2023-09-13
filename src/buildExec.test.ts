@@ -35,10 +35,7 @@ test('general args', () => {
 
 
 test('upload args using context', () => {
-  const expectedArgs = [
-    '-n',
-    '',
-  ];
+  const expectedArgs = [];
   const {uploadExecArgs, uploadCommand} = buildUploadExec();
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
