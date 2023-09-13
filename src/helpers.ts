@@ -1,8 +1,6 @@
 import * as core from '@actions/core';
 
 const PLATFORMS = [
-  'aarch64',
-  'alpine',
   'linux',
   'macos',
   'windows',
@@ -50,7 +48,17 @@ const getPlatform = (os?: string): string => {
 };
 
 const getBaseUrl = (platform: string, version: string): string => {
-  return `https://uploader.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
+  return `https://cli.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
+};
+
+const getCommand = (
+    filename: string,
+    generalArgs:string[],
+    command: string,
+): string[] => {
+  const fullCommand = [filename, ...generalArgs, command];
+  core.info(`==> Running command '${fullCommand.join(' ')}'`);
+  return fullCommand;
 };
 
 export {
@@ -61,4 +69,5 @@ export {
   isValidPlatform,
   isWindows,
   setFailure,
+  getCommand,
 };
