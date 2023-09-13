@@ -5,7 +5,10 @@
 [![Workflow for Codecov Action](https://github.com/codecov/codecov-action/actions/workflows/main.yml/badge.svg)](https://github.com/codecov/codecov-action/actions/workflows/main.yml)
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
->The latest release of this Action adds support for tokenless uploads from GitHub Actions!
+## v4 Beta Release
+`v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov. Currently, `v4` is in late stages of development, and beta releases are expected in 2023 Q4.
+
+`v3` versions and below will not have access to CLI features (e.g. global upload token).
 
 ## ⚠️  Deprecation of v1
 **As of February 1, 2022, v1 has been fully sunset and no longer functions**
@@ -15,12 +18,6 @@ the Codecov GitHub Action has released `v2`/`v3` which will use the new [uploade
 more about our deprecation plan and the new uploader on our [blog](https://about.codecov.io/blog/introducing-codecovs-new-uploader/).
 
 We will be restricting any updates to the `v1` Action to security updates and hotfixes.
-
-### Migration from `v1` to `v3`
-The `v3` uploader has a few breaking changes for users
-- Multiple fields have not been transferred from the bash uploader or have been deprecated. Notably
-many of the `functionalities` and `gcov_` arguments have been removed. Please check the documentation
-below for the full list.
 
 ## Usage
 
