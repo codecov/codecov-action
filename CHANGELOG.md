@@ -1,3 +1,7 @@
+## 4.0.0-beta.2
+### Fixes
+- #1085 not adding -n if empty to do-upload command
+
 ## 4.0.0-beta.1
 
 `v4` represents a move from the [universal uploader](https://github.com/codecov/uploader) to the [Codecov CLI](https://github.com/codecov/codecov-cli). Although this will unlock new features for our users, the CLI is not yet at feature parity with the universal uploader.
