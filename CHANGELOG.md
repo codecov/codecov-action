@@ -1,3 +1,12 @@
+## 4.0.0-beta.1
+
+`v4` represents a move from the [universal uploader](https://github.com/codecov/uploader) to the [Codecov CLI](https://github.com/codecov/codecov-cli). Although this will unlock new features for our users, the CLI is not yet at feature parity with the universal uploader.
+
+### Breaking Changes
+- No current support for `aarch64` and `alpine` architectures.
+- Tokenless uploading is unsuported
+- Various arguments to the Action have been removed
+
 ## 3.1.4
 ### Fixes
 - #967 Fix typo in README.md

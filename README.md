@@ -6,7 +6,12 @@
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
 ## v4 Beta Release
-`v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov. Currently, `v4` is in late stages of development, and beta releases are expected in 2023 Q4.
+`v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov. Currently, `v4` is in beta.
+
+Breaking Changes
+- No current support for `aarch64` and `alpine` architectures.
+- Tokenless uploading is unsuported
+- Various arguments to the Action have been removed
 
 `v3` versions and below will not have access to CLI features (e.g. global upload token).
 
