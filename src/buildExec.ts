@@ -149,10 +149,6 @@ const buildUploadExec = () => {
   const exclude = core.getInput('exclude');
 
   const uploadExecArgs = [];
-  uploadExecArgs.push(
-      '-n',
-      `${name}`,
-  );
   const uploadCommand = 'do-upload';
   const uploadOptions:any = {};
   uploadOptions.env = Object.assign(process.env, {
@@ -172,7 +168,12 @@ const buildUploadExec = () => {
       envVarsArg.push(envVarClean);
     }
   }
-
+  if (name) {
+    uploadExecArgs.push(
+        '-n',
+        `${name}`,
+    );
+  }
   if (token) {
     uploadOptions.env.CODECOV_TOKEN = token;
   }
