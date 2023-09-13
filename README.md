@@ -10,7 +10,7 @@
 
 Breaking Changes
 - No current support for `aarch64` and `alpine` architectures.
-- Tokenless uploading is unsuported
+- Tokenless uploading is unsupported
 - Various arguments to the Action have been removed
 
 `v3` versions and below will not have access to CLI features (e.g. global upload token).
