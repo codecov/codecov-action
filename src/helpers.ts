@@ -56,7 +56,9 @@ const getCommand = (
     generalArgs:string[],
     command: string,
 ): string[] => {
-  return [filename, ...generalArgs, command];
+  const fullCommand = [filename, ...generalArgs, command];
+  core.info(`==> Running command '${fullCommand.join(' ')}'`);
+  return fullCommand;
 };
 
 export {
