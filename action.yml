@@ -47,6 +47,9 @@ inputs:
   override_pr:
     description: 'Specify the pull request number'
     required: false
+  plugins:
+    description: 'Comma-separated list of plugins for use during upload.'
+    required: false
   root_dir:
     description: 'Used when not in git/hg project to identify project root directory'
     required: false
