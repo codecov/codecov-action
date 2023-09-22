@@ -139,6 +139,7 @@ const buildUploadExec = () => {
   const overrideBuild = core.getInput('override_build');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
+  const plugins = core.getInput('plugins');
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
@@ -219,6 +220,11 @@ const buildUploadExec = () => {
     `${context.eventName}` == 'pull_request_target'
   ) {
     uploadExecArgs.push('-P', `${context.payload.number}`);
+  }
+  if (plugins) {
+    plugins.split(',').map((p) => p.trim()).forEach((p) => {
+      uploadExecArgs.push('--plugin', `${p}`);
+    });
   }
   if (rootDir) {
     uploadExecArgs.push('--network-root-folder', `${rootDir}`);
