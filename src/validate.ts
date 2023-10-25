@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import * as core from '@actions/core';
 import * as openpgp from 'openpgp';
-import { request } from 'undici';
+import {request} from 'undici';
 
 import {
   getBaseUrl,

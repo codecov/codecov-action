@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { request } from 'undici';
+import {request} from 'undici';
 
 const versionInfo = async (
     platform: string,
