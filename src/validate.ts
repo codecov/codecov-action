@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import * as core from '@actions/core';
 import * as openpgp from 'openpgp';
-import * as fetch from 'node-fetch';
+import {request} from 'undici';
 
 import {
   getBaseUrl,
@@ -30,18 +30,18 @@ const verify = async (
 
     // Get SHASUM and SHASUM signature files
     console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
-    const shasumRes = await fetch.default(
+    const shasumRes = await request(
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
-    const shasum = await shasumRes.text();
+    const shasum = await shasumRes.body.text();
     if (verbose) {
       console.log(`Received SHA256SUM ${shasum}`);
     }
 
-    const shaSigRes = await fetch.default(
+    const shaSigRes = await request(
         `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
     );
-    const shaSig = await shaSigRes.text();
+    const shaSig = await shaSigRes.body.text();
     if (verbose) {
       console.log(`Received SHA256SUM signature ${shaSig}`);
     }
