@@ -33,7 +33,7 @@ const verify = async (
     const shasumRes = await request(
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
-    const shasum = await shasumRes.body.text();
+    const shasum = await shasumRes.text();
     if (verbose) {
       console.log(`Received SHA256SUM ${shasum}`);
     }
