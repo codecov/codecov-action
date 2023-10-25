@@ -33,16 +33,15 @@ const verify = async (
     const shasumRes = await request(
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
-    const shasum = await shasumRes.text();
+    const shasum = await shasumRes.body.text();
     if (verbose) {
       console.log(`Received SHA256SUM ${shasum}`);
     }
-    setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
 
     const shaSigRes = await request(
         `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
     );
-    const shaSig = await shaSigRes.text();
+    const shaSig = await shaSigRes.body.text();
     if (verbose) {
       console.log(`Received SHA256SUM signature ${shaSig}`);
     }
