@@ -23,6 +23,7 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
+  core.info(`filename: ${filename}`);
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     const filePath = fs.createWriteStream(filename);
