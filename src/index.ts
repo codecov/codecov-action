@@ -29,6 +29,7 @@ try {
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
+          core.info(`${console.trace()}`);
           core.info(`Stack: ${err.stack}`);
           setFailure(
               `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
