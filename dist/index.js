@@ -24605,9 +24605,11 @@ try {
             core.info('IT DOESNT EXIST');
         }
         const filePath = external_fs_.createWriteStream(filename);
-        res.pipe(filePath);
         filePath
-            .on('error', (err) => {
+            .on('open', () => {
+            res.pipe(filePath);
+        }).on('error', (err) => {
+            core.info(`${external_fs_.existsSync(filename)}`);
             core.info(`${console.trace()}`);
             core.info(`Stack: ${err.stack}`);
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);

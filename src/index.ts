@@ -31,10 +31,13 @@ try {
     } else {
       core.info('IT DOESNT EXIST');
     }
+
     const filePath = fs.createWriteStream(filename);
-    res.pipe(filePath);
     filePath
-        .on('error', (err) => {
+        .on('open', () => {
+          res.pipe(filePath);
+        }).on('error', (err) => {
+          core.info(`${fs.existsSync(filename)}`);
           core.info(`${console.trace()}`);
           core.info(`Stack: ${err.stack}`);
           setFailure(
