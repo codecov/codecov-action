@@ -24596,14 +24596,19 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
-    const filePath = external_fs_.createWriteStream(filename);
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+        const filePath = external_fs_.createWriteStream(filename);
         res.pipe(filePath);
         filePath
             .on('error', (err) => {
-            core.info(`${console.trace()}`);
-            core.info(`Stack: ${err.stack}`);
+            if (external_fs_.existsSync(filename)) {
+                core.info('IT EXISTS');
+            }
+            else {
+                core.info('IT DOESNT EXIST');
+            }
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
+            core.info(`${console.trace()}`);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
             yield validate(filename, platform, uploaderVersion, verbose, failCi);

@@ -23,18 +23,22 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
-  const filePath = fs.createWriteStream(filename);
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
+    const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
-          core.info(`${console.trace()}`);
-          core.info(`Stack: ${err.stack}`);
+          if (fs.existsSync(filename)) {
+            core.info('IT EXISTS');
+          } else {
+            core.info('IT DOESNT EXIST');
+          }
           setFailure(
               `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
               true,
           );
+          core.info(`${console.trace()}`);
         }).on('finish', async () => {
           filePath.close();
 
