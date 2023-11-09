@@ -24603,26 +24603,26 @@ try {
             res.pipe(filePath);
         }).on('error', (err) => {
             if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS');
+                core.info('IT EXISTS on');
             }
             else {
-                core.info('IT DOESNT EXIST');
+                core.info('IT DOESNT EXIST on');
             }
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
             core.info(`${console.trace()}`);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS');
+                core.info('IT EXISTS finish');
             }
             else {
-                core.info('IT DOESNT EXIST');
+                core.info('IT DOESNT EXIST finish');
             }
             filePath.close();
             if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS');
+                core.info('IT EXISTS close');
             }
             else {
-                core.info('IT DOESNT EXIST');
+                core.info('IT DOESNT EXIST close');
             }
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);

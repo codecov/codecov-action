@@ -31,9 +31,9 @@ try {
           res.pipe(filePath);
         }).on('error', (err) => {
           if (fs.existsSync(filename)) {
-            core.info('IT EXISTS');
+            core.info('IT EXISTS on');
           } else {
-            core.info('IT DOESNT EXIST');
+            core.info('IT DOESNT EXIST on');
           }
           setFailure(
               `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
@@ -42,15 +42,15 @@ try {
           core.info(`${console.trace()}`);
         }).on('finish', async () => {
           if (fs.existsSync(filename)) {
-            core.info('IT EXISTS');
+            core.info('IT EXISTS finish');
           } else {
-            core.info('IT DOESNT EXIST');
+            core.info('IT DOESNT EXIST finish');
           }
           filePath.close();
           if (fs.existsSync(filename)) {
-            core.info('IT EXISTS');
+            core.info('IT EXISTS close');
           } else {
-            core.info('IT DOESNT EXIST');
+            core.info('IT DOESNT EXIST close');
           }
 
           await verify(filename, platform, uploaderVersion, verbose, failCi);
