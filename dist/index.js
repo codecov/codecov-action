@@ -24610,7 +24610,19 @@ try {
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
             core.info(`${console.trace()}`);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
+            if (external_fs_.existsSync(filename)) {
+                core.info('IT EXISTS');
+            }
+            else {
+                core.info('IT DOESNT EXIST');
+            }
             filePath.close();
+            if (external_fs_.existsSync(filename)) {
+                core.info('IT EXISTS');
+            }
+            else {
+                core.info('IT DOESNT EXIST');
+            }
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');

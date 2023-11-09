@@ -40,7 +40,17 @@ try {
           );
           core.info(`${console.trace()}`);
         }).on('finish', async () => {
+          if (fs.existsSync(filename)) {
+            core.info('IT EXISTS');
+          } else {
+            core.info('IT DOESNT EXIST');
+          }
           filePath.close();
+          if (fs.existsSync(filename)) {
+            core.info('IT EXISTS');
+          } else {
+            core.info('IT DOESNT EXIST');
+          }
 
           await verify(filename, platform, uploaderVersion, verbose, failCi);
           await versionInfo(platform, uploaderVersion);
