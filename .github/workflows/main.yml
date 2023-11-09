@@ -2,7 +2,7 @@ name: Workflow for Codecov Action
 on: [push, pull_request]
 jobs:
   no-deps:
-    runs-on: macos-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         runNum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
