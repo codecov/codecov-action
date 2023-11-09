@@ -26,7 +26,7 @@ try {
   core.info(`filename: ${filename}`);
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
-    const filePath = fs.createWriteStream(filename);
+    const filePath = fs.createWriteStream(filename, {flags: 'w'});
     filePath
         .on('open', () => {
           if (fs.existsSync(filename)) {
@@ -34,7 +34,7 @@ try {
           } else {
             core.info('IT DOESNT EXIST open');
           }
-
+          res.pipe(filePath);
           if (fs.existsSync(filename)) {
             core.info('IT EXISTS pipe');
           } else {

@@ -24598,7 +24598,7 @@ try {
     const filename = external_path_.join(__dirname, getUploaderName(platform));
     core.info(`filename: ${filename}`);
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        const filePath = external_fs_.createWriteStream(filename);
+        const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
         filePath
             .on('open', () => {
             if (external_fs_.existsSync(filename)) {
@@ -24607,6 +24607,7 @@ try {
             else {
                 core.info('IT DOESNT EXIST open');
             }
+            res.pipe(filePath);
             if (external_fs_.existsSync(filename)) {
                 core.info('IT EXISTS pipe');
             }
