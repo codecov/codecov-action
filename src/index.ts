@@ -29,7 +29,7 @@ try {
     filePath
         .on('error', (err) => {
           setFailure(
-              `Codecov: Failed to write uploader binary: ${err.message}`,
+              `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
               true,
           );
         }).on('finish', async () => {

@@ -24601,7 +24601,7 @@ try {
         res.pipe(filePath);
         filePath
             .on('error', (err) => {
-            setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
+            setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
