@@ -25,6 +25,12 @@ try {
   const filename = path.join( __dirname, getUploaderName(platform));
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     // Image will be stored at this path
+
+    if (fs.existsSync(filename)) {
+      core.info('IT EXISTS');
+    } else {
+      core.info('IT DOESNT EXIST');
+    }
     const filePath = fs.createWriteStream(filename);
     res.pipe(filePath);
     filePath

@@ -15,118 +15,33 @@ jobs:
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
-      - name: Upload coverage to Codecov (script)
-        uses: ./
-        with:
-          files: ./coverage/script/coverage-final.json
-          verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
-      - name: Upload coverage to Codecov (script)
-        uses: ./
-        with:
-          files: ./coverage/script/coverage-final.json
-          verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi
-      - name: Upload coverage to Codecov (script)
-        uses: ./
-        with:
-          files: ./coverage/script/coverage-final.json
-          verbose: true
-      - name: Does codecov.exe exist?
-        run: |
-          if [[ -f D:\a\codecov-action\codecov-action\dist\codecov.exe ]]; then
-            echo "it exists!"
-          else
-            echo "it does not exist"
-          fi

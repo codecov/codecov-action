@@ -24598,6 +24598,12 @@ try {
     const filename = external_path_.join(__dirname, getUploaderName(platform));
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         // Image will be stored at this path
+        if (external_fs_.existsSync(filename)) {
+            core.info('IT EXISTS');
+        }
+        else {
+            core.info('IT DOESNT EXIST');
+        }
         const filePath = external_fs_.createWriteStream(filename);
         res.pipe(filePath);
         filePath
