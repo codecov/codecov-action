@@ -23,16 +23,10 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
+  const filePath = fs.createWriteStream(filename);
+
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
-    // Image will be stored at this path
-
-    if (fs.existsSync(filename)) {
-      core.info('IT EXISTS');
-    } else {
-      core.info('IT DOESNT EXIST');
-    }
-
-    const filePath = fs.createWriteStream(filename);
+    res.pipe(filePath);
     filePath
         .on('error', (err) => {
           core.info(`${console.trace()}`);
@@ -68,7 +62,6 @@ try {
                 unlink();
               });
         });
-    res.pipe(filePath);
   });
 } catch (err) {
   setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);

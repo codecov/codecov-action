@@ -24596,15 +24596,9 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
+    const filePath = external_fs_.createWriteStream(filename);
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        // Image will be stored at this path
-        if (external_fs_.existsSync(filename)) {
-            core.info('IT EXISTS');
-        }
-        else {
-            core.info('IT DOESNT EXIST');
-        }
-        const filePath = external_fs_.createWriteStream(filename);
+        res.pipe(filePath);
         filePath
             .on('error', (err) => {
             core.info(`${console.trace()}`);
@@ -24629,7 +24623,6 @@ try {
                 unlink();
             });
         }));
-        res.pipe(filePath);
     });
 }
 catch (err) {
