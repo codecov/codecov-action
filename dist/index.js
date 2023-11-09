@@ -24607,7 +24607,6 @@ try {
             else {
                 core.info('IT DOESNT EXIST open');
             }
-            res.pipe(filePath);
             if (external_fs_.existsSync(filename)) {
                 core.info('IT EXISTS pipe');
             }
