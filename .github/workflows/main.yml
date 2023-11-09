@@ -45,3 +45,18 @@ jobs:
         with:
           files: ./coverage/script/coverage-final.json
           verbose: true
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          verbose: true
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          verbose: true
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          verbose: true
