@@ -24606,10 +24606,7 @@ try {
         }
         const filePath = external_fs_.createWriteStream(filename);
         filePath
-            .on('open', () => {
-            res.pipe(filePath);
-        }).on('error', (err) => {
-            core.info(`${external_fs_.existsSync(filename)}`);
+            .on('error', (err) => {
             core.info(`${console.trace()}`);
             core.info(`Stack: ${err.stack}`);
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
@@ -24632,6 +24629,7 @@ try {
                 unlink();
             });
         }));
+        res.pipe(filePath);
     });
 }
 catch (err) {

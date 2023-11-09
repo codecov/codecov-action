@@ -34,10 +34,7 @@ try {
 
     const filePath = fs.createWriteStream(filename);
     filePath
-        .on('open', () => {
-          res.pipe(filePath);
-        }).on('error', (err) => {
-          core.info(`${fs.existsSync(filename)}`);
+        .on('error', (err) => {
           core.info(`${console.trace()}`);
           core.info(`Stack: ${err.stack}`);
           setFailure(
@@ -71,6 +68,7 @@ try {
                 unlink();
               });
         });
+    res.pipe(filePath);
   });
 } catch (err) {
   setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
