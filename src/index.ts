@@ -28,12 +28,22 @@ try {
     const filePath = fs.createWriteStream(filename);
     filePath
         .on('open', () => {
+          if (fs.existsSync(filename)) {
+            core.info('IT EXISTS open');
+          } else {
+            core.info('IT DOESNT EXIST open');
+          }
           res.pipe(filePath);
+          if (fs.existsSync(filename)) {
+            core.info('IT EXISTS pipe');
+          } else {
+            core.info('IT DOESNT EXIST pipe');
+          }
         }).on('error', (err) => {
           if (fs.existsSync(filename)) {
-            core.info('IT EXISTS on');
+            core.info('IT EXISTS error');
           } else {
-            core.info('IT DOESNT EXIST on');
+            core.info('IT DOESNT EXIST error');
           }
           setFailure(
               `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,

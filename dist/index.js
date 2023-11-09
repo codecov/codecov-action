@@ -24600,13 +24600,25 @@ try {
         const filePath = external_fs_.createWriteStream(filename);
         filePath
             .on('open', () => {
-            res.pipe(filePath);
-        }).on('error', (err) => {
             if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS on');
+                core.info('IT EXISTS open');
             }
             else {
-                core.info('IT DOESNT EXIST on');
+                core.info('IT DOESNT EXIST open');
+            }
+            res.pipe(filePath);
+            if (external_fs_.existsSync(filename)) {
+                core.info('IT EXISTS pipe');
+            }
+            else {
+                core.info('IT DOESNT EXIST pipe');
+            }
+        }).on('error', (err) => {
+            if (external_fs_.existsSync(filename)) {
+                core.info('IT EXISTS error');
+            }
+            else {
+                core.info('IT DOESNT EXIST error');
             }
             setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
             core.info(`${console.trace()}`);
