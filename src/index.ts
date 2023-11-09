@@ -34,6 +34,7 @@ try {
           } else {
             core.info('IT DOESNT EXIST open');
           }
+
           if (fs.existsSync(filename)) {
             core.info('IT EXISTS pipe');
           } else {
