@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as path from 'path';
 
+import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
 import buildExec from './buildExec';
@@ -28,6 +29,7 @@ try {
     res.pipe(filePath);
     filePath
         .on('error', (err) => {
+          core.info(`Stack: ${err.stack}`);
           setFailure(
               `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
               true,
