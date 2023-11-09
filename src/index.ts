@@ -26,9 +26,10 @@ try {
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {
     const filePath = fs.createWriteStream(filename);
-    res.pipe(filePath);
     filePath
-        .on('error', (err) => {
+        .on('open', () => {
+          res.pipe(filePath);
+        }).on('error', (err) => {
           if (fs.existsSync(filename)) {
             core.info('IT EXISTS');
           } else {

@@ -24598,9 +24598,10 @@ try {
     const filename = external_path_.join(__dirname, getUploaderName(platform));
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         const filePath = external_fs_.createWriteStream(filename);
-        res.pipe(filePath);
         filePath
-            .on('error', (err) => {
+            .on('open', () => {
+            res.pipe(filePath);
+        }).on('error', (err) => {
             if (external_fs_.existsSync(filename)) {
                 core.info('IT EXISTS');
             }
