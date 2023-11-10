@@ -1,7 +1,7 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5241:
+/***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -135,7 +135,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
-const command_1 = __nccwpck_require__(5241);
+const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
 const os = __importStar(__nccwpck_require__(2037));
@@ -1911,7 +1911,7 @@ const os = __importStar(__nccwpck_require__(2037));
 const events = __importStar(__nccwpck_require__(2361));
 const child = __importStar(__nccwpck_require__(2081));
 const path = __importStar(__nccwpck_require__(1017));
-const io = __importStar(__nccwpck_require__(7351));
+const io = __importStar(__nccwpck_require__(7436));
 const ioUtil = __importStar(__nccwpck_require__(1962));
 const timers_1 = __nccwpck_require__(9512);
 /* eslint-disable @typescript-eslint/unbound-method */
@@ -3577,7 +3577,7 @@ exports.getCmdPath = getCmdPath;
 
 /***/ }),
 
-/***/ 7351:
+/***/ 7436:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -22065,10 +22065,10 @@ var external_fs_ = __nccwpck_require__(7147);
 var external_https_ = __nccwpck_require__(5687);
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
-// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./package.json
@@ -24590,30 +24590,43 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 
+
 let failCi;
 try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
-    external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        // Image will be stored at this path
-        const filePath = external_fs_.createWriteStream(filename);
-        res.pipe(filePath);
+    const unlink = () => {
+        external_fs_.unlink(filename, (err) => {
+            if (err) {
+                setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
+            }
+        });
+    };
+    const downloadUploader = (retries) => {
+        const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
+        external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => src_awaiter(void 0, void 0, void 0, function* () {
+            yield new Promise((r) => setTimeout(r, 2000));
+            res.pipe(filePath);
+        }));
         filePath
             .on('error', (err) => {
-            setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
+            const errMessage = `${err.message}\n${console.trace()}`;
+            if (retries == 0) {
+                core.info(`retries: ${retries}`);
+                setFailure(`Codecov:Failed to write uploader binary: ${errMessage}`, true);
+            }
+            else {
+                core.info(`Failed to write uploader: ${errMessage}`);
+                core.info(`  Trying ${retries} more times`);
+                filePath.close();
+                downloadUploader(retries - 1);
+            }
         }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
             filePath.close();
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
-            const unlink = () => {
-                external_fs_.unlink(filename, (err) => {
-                    if (err) {
-                        setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
-                    }
-                });
-            };
             yield exec.exec(filename, execArgs, options)
                 .catch((err) => {
                 setFailure(`Codecov: Failed to properly upload: ${err.message}`, failCi);
@@ -24621,7 +24634,9 @@ try {
                 unlink();
             });
         }));
-    });
+    };
+    const retries = 3;
+    downloadUploader(retries);
 }
 catch (err) {
     setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
