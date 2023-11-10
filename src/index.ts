@@ -23,6 +23,9 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
+  fs.access(filename, fs.constants.W_OK, (err) => {
+    core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
+  });
   core.info(`filename: ${filename}`);
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {

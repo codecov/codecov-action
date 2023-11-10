@@ -24596,6 +24596,9 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
+    external_fs_.access(filename, external_fs_.constants.W_OK, (err) => {
+        core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
+    });
     core.info(`filename: ${filename}`);
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
