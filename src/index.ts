@@ -26,6 +26,20 @@ try {
   fs.access(filename, fs.constants.W_OK, (err) => {
     core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
   });
+  fs.access(__dirname, fs.constants.R_OK, function(err) {
+    if (err) {
+      core.info('cant read');
+    } else {
+      core.info('can read');
+    }
+  });
+  fs.access(__dirname, fs.constants.W_OK, function(err) {
+    if (err) {
+      core.info('cant write');
+    } else {
+      core.info('can write');
+    }
+  });
   core.info(`filename: ${filename}`);
 
   https.get(getBaseUrl(platform, uploaderVersion), (res) => {

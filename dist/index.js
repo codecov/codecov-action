@@ -24599,6 +24599,22 @@ try {
     external_fs_.access(filename, external_fs_.constants.W_OK, (err) => {
         core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
     });
+    external_fs_.access(__dirname, external_fs_.constants.R_OK, function (err) {
+        if (err) {
+            core.info('cant read');
+        }
+        else {
+            core.info('can read');
+        }
+    });
+    external_fs_.access(__dirname, external_fs_.constants.W_OK, function (err) {
+        if (err) {
+            core.info('cant write');
+        }
+        else {
+            core.info('can write');
+        }
+    });
     core.info(`filename: ${filename}`);
     external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
         const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
