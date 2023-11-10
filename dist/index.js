@@ -24604,10 +24604,30 @@ try {
         });
     };
     const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
+    let retries = 3;
+    const downloadUploader = () => {
+        const req = external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+            res.pipe(filePath);
+        });
+        req.on('error', (err) => {
+            setFailure(`Codecov: Failed to write uploader: ${err.message}`, failCi);
+            unlink();
+        });
+    };
+    downloadUploader();
     filePath
         .on('error', (err) => {
-        setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
-        core.info(`${console.trace()}`);
+        const errMessage = `${err.message}\n${console.trace()}`;
+        if (retries == 0) {
+            core.info(`retries: ${retries}`);
+            setFailure(`Codecov:Failed to write uploader binary: ${errMessage}`, true);
+        }
+        else {
+            core.info(`Failed to write uploader: ${errMessage}`);
+            core.info(`  Trying ${retries} more times`);
+            retries -= 1;
+            downloadUploader();
+        }
     }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
         filePath.close();
         yield validate(filename, platform, uploaderVersion, verbose, failCi);
@@ -24620,13 +24640,6 @@ try {
             unlink();
         });
     }));
-    const req = external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        res.pipe(filePath);
-    });
-    req.on('error', (err) => {
-        setFailure(`Codecov: Failed to write uploader: ${err.message}`, failCi);
-        unlink();
-    });
 }
 catch (err) {
     setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
