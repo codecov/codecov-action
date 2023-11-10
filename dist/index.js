@@ -24605,9 +24605,10 @@ try {
     };
     const downloadUploader = (retries) => {
         const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
-        external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+        external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => src_awaiter(void 0, void 0, void 0, function* () {
+            yield new Promise((r) => setTimeout(r, 2000));
             res.pipe(filePath);
-        });
+        }));
         filePath
             .on('error', (err) => {
             const errMessage = `${err.message}\n${console.trace()}`;

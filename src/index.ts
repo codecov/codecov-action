@@ -36,7 +36,8 @@ try {
 
   const downloadUploader = (retries) => {
     const filePath = fs.createWriteStream(filename, {flags: 'w'});
-    https.get(getBaseUrl(platform, uploaderVersion), (res) => {
+    https.get(getBaseUrl(platform, uploaderVersion), async (res) => {
+      await new Promise((r) => setTimeout(r, 2000));
       res.pipe(filePath);
     });
     filePath
