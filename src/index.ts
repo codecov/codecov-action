@@ -51,6 +51,7 @@ try {
           } else {
             core.info(`Failed to write uploader: ${errMessage}`);
             core.info(`  Trying ${retries} more times`);
+            filePath.close();
             downloadUploader(retries - 1);
           }
         }).on('finish', async () => {
