@@ -23,88 +23,53 @@ try {
   const platform = getPlatform(os);
 
   const filename = path.join( __dirname, getUploaderName(platform));
-  fs.access(filename, fs.constants.W_OK, (err) => {
-    core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
-  });
-  fs.access(__dirname, fs.constants.R_OK, function(err) {
-    if (err) {
-      core.info('cant read');
-    } else {
-      core.info('can read');
-    }
-  });
-  fs.access(__dirname, fs.constants.W_OK, function(err) {
-    if (err) {
-      core.info('cant write');
-    } else {
-      core.info('can write');
-    }
-  });
-  core.info(`filename: ${filename}`);
+  const unlink = () => {
+    fs.unlink(filename, (err) => {
+      if (err) {
+        setFailure(
+            `Codecov: Could not unlink uploader: ${err.message}`,
+            failCi,
+        );
+      }
+    });
+  };
 
-  https.get(getBaseUrl(platform, uploaderVersion), (res) => {
-    const filePath = fs.createWriteStream(filename, {flags: 'w'});
-    filePath
-        .on('open', () => {
-          if (fs.existsSync(filename)) {
-            core.info('IT EXISTS open');
-          } else {
-            core.info('IT DOESNT EXIST open');
-          }
-          res.pipe(filePath);
-          if (fs.existsSync(filename)) {
-            core.info('IT EXISTS pipe');
-          } else {
-            core.info('IT DOESNT EXIST pipe');
-          }
-        }).on('error', (err) => {
-          if (fs.existsSync(filename)) {
-            core.info('IT EXISTS error');
-          } else {
-            core.info('IT DOESNT EXIST error');
-          }
-          setFailure(
-              `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
-              true,
-          );
-          core.info(`${console.trace()}`);
-        }).on('finish', async () => {
-          if (fs.existsSync(filename)) {
-            core.info('IT EXISTS finish');
-          } else {
-            core.info('IT DOESNT EXIST finish');
-          }
-          filePath.close();
-          if (fs.existsSync(filename)) {
-            core.info('IT EXISTS close');
-          } else {
-            core.info('IT DOESNT EXIST close');
-          }
+  const filePath = fs.createWriteStream(filename, {flags: 'w'});
+  filePath
+      .on('error', (err) => {
+        setFailure(
+            `Codecov:Failed to write uploader binary: ${err.message}\n${err}`,
+            true,
+        );
+        core.info(`${console.trace()}`);
+      }).on('finish', async () => {
+        filePath.close();
 
-          await verify(filename, platform, uploaderVersion, verbose, failCi);
-          await versionInfo(platform, uploaderVersion);
-          await fs.chmodSync(filename, '777');
+        await verify(filename, platform, uploaderVersion, verbose, failCi);
+        await versionInfo(platform, uploaderVersion);
+        await fs.chmodSync(filename, '777');
 
-          const unlink = () => {
-            fs.unlink(filename, (err) => {
-              if (err) {
-                setFailure(
-                    `Codecov: Could not unlink uploader: ${err.message}`,
-                    failCi,
-                );
-              }
+        await exec.exec(filename, execArgs, options)
+            .catch((err) => {
+              setFailure(
+                  `Codecov: Failed to properly upload: ${err.message}`,
+                  failCi,
+              );
+            }).then(() => {
+              unlink();
             });
-          };
-          await exec.exec(filename, execArgs, options)
-              .catch((err) => {
-                setFailure(
-                    `Codecov: Failed to properly upload: ${err.message}`,
-                    failCi,
-                );
-              }).then(() => {
-                unlink();
-              });
-        });
+      });
+
+  const req = https.get(getBaseUrl(platform, uploaderVersion), (res) => {
+    res.pipe(filePath);
+  });
+
+  req.on('error', (err) => {
+    setFailure(
+        `Codecov: Failed to write uploader: ${err.message}`,
+        failCi,
+    );
+    unlink();
   });
 } catch (err) {
   setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);

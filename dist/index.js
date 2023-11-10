@@ -24596,83 +24596,36 @@ try {
     const { execArgs, options, failCi, os, uploaderVersion, verbose } = src_buildExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
-    external_fs_.access(filename, external_fs_.constants.W_OK, (err) => {
-        core.info(`${filename} ${err ? 'is not writable' : 'is writable'}`);
+    const unlink = () => {
+        external_fs_.unlink(filename, (err) => {
+            if (err) {
+                setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
+            }
+        });
+    };
+    const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
+    filePath
+        .on('error', (err) => {
+        setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
+        core.info(`${console.trace()}`);
+    }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
+        filePath.close();
+        yield validate(filename, platform, uploaderVersion, verbose, failCi);
+        yield version(platform, uploaderVersion);
+        yield external_fs_.chmodSync(filename, '777');
+        yield exec.exec(filename, execArgs, options)
+            .catch((err) => {
+            setFailure(`Codecov: Failed to properly upload: ${err.message}`, failCi);
+        }).then(() => {
+            unlink();
+        });
+    }));
+    const req = external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+        res.pipe(filePath);
     });
-    external_fs_.access(__dirname, external_fs_.constants.R_OK, function (err) {
-        if (err) {
-            core.info('cant read');
-        }
-        else {
-            core.info('can read');
-        }
-    });
-    external_fs_.access(__dirname, external_fs_.constants.W_OK, function (err) {
-        if (err) {
-            core.info('cant write');
-        }
-        else {
-            core.info('can write');
-        }
-    });
-    core.info(`filename: ${filename}`);
-    external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        const filePath = external_fs_.createWriteStream(filename, { flags: 'w' });
-        filePath
-            .on('open', () => {
-            if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS open');
-            }
-            else {
-                core.info('IT DOESNT EXIST open');
-            }
-            res.pipe(filePath);
-            if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS pipe');
-            }
-            else {
-                core.info('IT DOESNT EXIST pipe');
-            }
-        }).on('error', (err) => {
-            if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS error');
-            }
-            else {
-                core.info('IT DOESNT EXIST error');
-            }
-            setFailure(`Codecov:Failed to write uploader binary: ${err.message}\n${err}`, true);
-            core.info(`${console.trace()}`);
-        }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
-            if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS finish');
-            }
-            else {
-                core.info('IT DOESNT EXIST finish');
-            }
-            filePath.close();
-            if (external_fs_.existsSync(filename)) {
-                core.info('IT EXISTS close');
-            }
-            else {
-                core.info('IT DOESNT EXIST close');
-            }
-            yield validate(filename, platform, uploaderVersion, verbose, failCi);
-            yield version(platform, uploaderVersion);
-            yield external_fs_.chmodSync(filename, '777');
-            const unlink = () => {
-                external_fs_.unlink(filename, (err) => {
-                    if (err) {
-                        setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
-                    }
-                });
-            };
-            yield exec.exec(filename, execArgs, options)
-                .catch((err) => {
-                setFailure(`Codecov: Failed to properly upload: ${err.message}`, failCi);
-            }).then(() => {
-                unlink();
-            });
-        }));
+    req.on('error', (err) => {
+        setFailure(`Codecov: Failed to write uploader: ${err.message}`, failCi);
+        unlink();
     });
 }
 catch (err) {
