@@ -62,9 +62,9 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `flags`  | Flag the upload to group coverage metrics (unittests, uitests, etc.). Multiple flags are separated by a comma (ui,chrome) | Optional
 | `full_report` | Specify the path of a full Codecov report to re-upload | Optional
 | `functionalities` | Toggle functionalities | Optional
-| -- `network` | Disable uploading the file network | Optional
-| -- `fixes` | Enable file fixes to ignore common lines from coverage | Optional
-| -- `search` | Disable searching for coverage files | Optional
+| `network` | Disable uploading the file network | Optional
+| `fixes` | Enable file fixes to ignore common lines from coverage | Optional
+| `search` | Disable searching for coverage files | Optional
 | `gcov` | Run with gcov support | Optional
 | `gcov_args` | Extra arguments to pass to gcov | Optional
 | `gcov_ignore` | Paths to ignore during gcov gathering | Optional
@@ -83,7 +83,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `directory` | Directory to search for coverage reports. | Optional
 | `slug` | Specify the slug manually (Enterprise use) | Optional
 | `swift` | Run with swift coverage support | Optional
-| -- `swift_project` | Specify the swift project to speed up coverage conversion | Optional
+| `swift_project` | Specify the swift project to speed up coverage conversion | Optional
 | `upstream_proxy` | The upstream http proxy server to connect through | Optional
 | `url` | Change the upload host (Enterprise use) | Optional
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
