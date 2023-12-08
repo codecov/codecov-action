@@ -27,7 +27,7 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
     "openpgp": "5.11",
-    "undici": "^6.0.0"
+    "undici": "^6.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
