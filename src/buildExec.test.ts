@@ -69,6 +69,7 @@ test('upload args', () => {
     'working-directory': 'src',
     'plugin': 'xcode',
     'exclude': 'src',
+    'useCwd': 'true',
   };
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
@@ -114,6 +115,7 @@ test('upload args', () => {
     'xcode',
     '--exclude',
     'src',
+    '--useCwd',
   ];
 
   expect(uploadExecArgs).toEqual(expectedArgs);
@@ -157,7 +159,7 @@ test('report args using context', () => {
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
-  const expectedArgs : string[] = [];
+  const expectedArgs: string[] = [];
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
@@ -207,7 +209,7 @@ test('commit args', () => {
 });
 
 test('commit args using context', () => {
-  const expectedArgs :string[] = [];
+  const expectedArgs: string[] = [];
 
   const {commitExecArgs, commitCommand} = buildCommitExec();
   if (context.eventName == 'pull_request') {

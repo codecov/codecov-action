@@ -30,7 +30,7 @@ const buildCommitExec = () => {
   const commitCommand = 'create-commit';
   const commitExecArgs = [];
 
-  const commitOptions:any = {};
+  const commitOptions: any = {};
   commitOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -97,7 +97,7 @@ const buildReportExec = () => {
   const reportCommand = 'create-report';
   const reportExecArgs = [];
 
-  const reportOptions:any = {};
+  const reportOptions: any = {};
   reportOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -148,10 +148,11 @@ const buildUploadExec = () => {
   const workingDir = core.getInput('working-directory');
   const plugin = core.getInput('plugin');
   const exclude = core.getInput('exclude');
+  const useCwd = isTrue(core.getInput('useCwd'));
 
   const uploadExecArgs = [];
   const uploadCommand = 'do-upload';
-  const uploadOptions:any = {};
+  const uploadOptions: any = {};
   uploadOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -243,6 +244,9 @@ const buildUploadExec = () => {
   }
   if (exclude) {
     uploadExecArgs.push('--exclude', `${exclude}`);
+  }
+  if (useCwd) {
+    uploadExecArgs.push('--useCwd');
   }
 
   if (uploaderVersion == '') {

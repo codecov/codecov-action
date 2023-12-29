@@ -56,6 +56,9 @@ inputs:
   slug:
     description: 'Specify the slug manually (Enterprise use)'
     required: false
+  useCwd:
+    description: 'Use the current working directory instead of the git root'
+    required: false
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
     required: false
