@@ -3,8 +3,8 @@ description: 'GitHub Action that uploads coverage reports for your repository to
 author: 'Ibrahim Ali <@ibrahim0814> & Thomas Hu <@thomasrockhu> | Codecov'
 inputs:
   token:
-    description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
-    required: false
+    description: 'Repository upload token - get it from codecov.io. Tokens should be added as a repository or organization secret (e.g. https://github.com/{owner}/{repo}/settings/secrets/actions).'
+    required: true
   file:
     description: 'Path to coverage file to upload'
     required: false
