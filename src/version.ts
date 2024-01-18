@@ -10,7 +10,7 @@ const versionInfo = async (
   }
 
   try {
-    const metadataRes = await request(`https://uploader.codecov.io/${platform}/latest`, {
+    const metadataRes = await request(`https://cli.codecov.io/${platform}/latest`, {
       headers: {'Accept': 'application/json'},
     });
     const metadata = await metadataRes.body.json();
