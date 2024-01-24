@@ -32307,12 +32307,16 @@ const buildCommitExec = () => {
 const buildGeneralExec = () => {
     const url = core.getInput('url');
     const verbose = isTrue(core.getInput('verbose'));
+    const xtraArgs = core.getInput('xtra_args');
     const args = [];
     if (url) {
         args.push('--enterprise-url', `${url}`);
     }
     if (verbose) {
         args.push('-v');
+    }
+    if (xtraArgs) {
+        args.push(xtraArgs);
     }
     return { args, verbose };
 };
