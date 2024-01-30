@@ -5,44 +5,36 @@
 [![Workflow for Codecov Action](https://github.com/codecov/codecov-action/actions/workflows/main.yml/badge.svg)](https://github.com/codecov/codecov-action/actions/workflows/main.yml)
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
-## v4 Beta Release
-`v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov. Currently, `v4` is in beta.
+## v4 Release
+`v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov.
 
 Breaking Changes
 - No current support for `aarch64` and `alpine` architectures.
-- Tokenless uploading is unsupported
+- Tokenless uploading is unsupported. However, PRs made from forks to 
 - Various arguments to the Action have been removed
 
-`v3` versions and below will not have access to CLI features (e.g. global upload token).
-
-## ⚠️  Deprecation of v1
-**As of February 1, 2022, v1 has been fully sunset and no longer functions**
-
-Due to the [deprecation](https://about.codecov.io/blog/introducing-codecovs-new-uploader/) of the underlying bash uploader,
-the Codecov GitHub Action has released `v2`/`v3` which will use the new [uploader](https://github.com/codecov/uploader). You can learn
-more about our deprecation plan and the new uploader on our [blog](https://about.codecov.io/blog/introducing-codecovs-new-uploader/).
-
-We will be restricting any updates to the `v1` Action to security updates and hotfixes.
+`v3` versions and below will not have access to CLI features (e.g. global upload token, ATS).
 
 ## Usage
 
-To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number (`@v3` is recommended) as a `step` within your `workflow.yml` file.
+To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number (`@v4` is recommended) as a `step` within your `workflow.yml` file.
 
-If you have a *private repository*, this Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, store it as a `secret`). Optionally, you can choose to include up to four additional inputs to customize the upload context. **For public repositories, no token is needed**
+This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, [store it](https://docs.codecov.com/docs/adding-the-codecov-token#github-actions) as a `secret`).
 
 Inside your `.github/workflows/workflow.yml` file:
 
 ```yaml
 steps:
 - uses: actions/checkout@master
-- uses: codecov/codecov-action@v3
+- uses: codecov/codecov-action@v4
   with:
-    token: ${{ secrets.CODECOV_TOKEN }}
     files: ./coverage1.xml,./coverage2.xml # optional
     flags: unittests # optional
     name: codecov-umbrella # optional
     fail_ci_if_error: true # optional (default = false)
     verbose: true # optional (default = false)
+  env:
+    token: ${{ secrets.CODECOV_TOKEN }}
 ```
 >**Note**: This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories.
 
@@ -118,9 +110,8 @@ jobs:
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/reports/
         env_vars: OS,PYTHON
         fail_ci_if_error: true
@@ -128,6 +119,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         verbose: true
+      env:
+        token: ${{ secrets.CODECOV_TOKEN }}
 ```
 ## Contributing
 
