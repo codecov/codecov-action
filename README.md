@@ -10,7 +10,7 @@
 
 Breaking Changes
 - No current support for `aarch64` and `alpine` architectures.
-- Tokenless uploading is unsupported. However, PRs made from forks to 
+- Tokenless uploading is unsupported. However, PRs made from forks to the upstream public repos will support tokenless (e.g. contributors to OS projects do not need the upstream repo's Codecov token)
 - Various arguments to the Action have been removed
 
 `v3` versions and below will not have access to CLI features (e.g. global upload token, ATS).
