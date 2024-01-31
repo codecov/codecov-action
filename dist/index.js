@@ -32477,6 +32477,9 @@ const PLATFORMS = [
     'linux',
     'macos',
     'windows',
+    'alpine',
+    'linux-arm64',
+    'alpine-arm64',
 ];
 const setFailure = (message, failCi) => {
     failCi ? core.setFailed(message) : core.warning(message);

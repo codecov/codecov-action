@@ -9,7 +9,6 @@
 `v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov.
 
 Breaking Changes
-- No current support for `aarch64` and `alpine` architectures.
 - Tokenless uploading is unsupported. However, PRs made from forks to the upstream public repos will support tokenless (e.g. contributors to OS projects do not need the upstream repo's Codecov token)
 - Various arguments to the Action have been removed
 
@@ -20,6 +19,14 @@ Breaking Changes
 To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number (`@v4` is recommended) as a `step` within your `workflow.yml` file.
 
 This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, [store it](https://docs.codecov.com/docs/adding-the-codecov-token#github-actions) as a `secret`).
+
+Currently, the Action will identify linux, macos, and windows runners. However, the Action may misidentify other architectures. The OS can be specified as
+- alpine
+- alpine-arm64
+- linux
+- linux-arm64
+- macos
+- windows
 
 Inside your `.github/workflows/workflow.yml` file:
 
