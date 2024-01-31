@@ -43,6 +43,9 @@ test('getBaseUrl', () => {
     'https://cli.codecov.io/latest/linux/codecov',
     'https://cli.codecov.io/latest/macos/codecov',
     'https://cli.codecov.io/latest/windows/codecov.exe',
+    'https://cli.codecov.io/latest/alpine/codecov',
+    'https://cli.codecov.io/latest/linux-arm64/codecov',
+    'https://cli.codecov.io/latest/alpine-arm64/codecov',
   ]);
 
   expect(PLATFORMS.map((platform) => {
@@ -51,19 +54,22 @@ test('getBaseUrl', () => {
     'https://cli.codecov.io/v0.1.0_8880/linux/codecov',
     'https://cli.codecov.io/v0.1.0_8880/macos/codecov',
     'https://cli.codecov.io/v0.1.0_8880/windows/codecov.exe',
+    'https://cli.codecov.io/v0.1.0_8880/alpine/codecov',
+    'https://cli.codecov.io/v0.1.0_8880/linux-arm64/codecov',
+    'https://cli.codecov.io/v0.1.0_8880/alpine-arm64/codecov',
   ]);
 });
 
 test('isWindows', () => {
   expect(PLATFORMS.map((platform) => {
     return isWindows(platform);
-  })).toEqual([false, false, true]);
+  })).toEqual([false, false, true, false, false, false]);
 });
 
 test('isValidPlatform', () => {
   expect(PLATFORMS.map((platform) => {
     return isValidPlatform(platform);
-  })).toEqual([true, true, true]);
+  })).toEqual([true, true, true, true, true, true]);
 
   expect(isValidPlatform('fakeos')).toBeFalsy();
 });
