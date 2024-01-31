@@ -4,6 +4,9 @@ const PLATFORMS = [
   'linux',
   'macos',
   'windows',
+  'alpine',
+  'linux-arm64',
+  'alpine-arm64',
 ];
 
 const setFailure = (message: string, failCi: boolean): void => {
