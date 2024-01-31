@@ -11,11 +11,11 @@ inputs:
   files:
     description: 'Comma-separated list of files to upload'
     required: false
+  commit_parent:
+    description: 'Override to specify the parent commit SHA'
+    required: false
   directory:
     description: 'Directory to search for coverage reports.'
-    required: false
-  flags:
-    description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
   dry_run:
     description: "Don't upload files to Codecov"
@@ -23,11 +23,14 @@ inputs:
   env_vars:
     description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
     required: false
+  exclude:
+    description: 'Folders to exclude from search'
+    required: false
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
-  gcov:
-    description: 'Run with gcov support'
+  flags:
+    description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
   name:
     description: 'User defined upload name. Visible in Codecov UI'
@@ -47,6 +50,9 @@ inputs:
   override_pr:
     description: 'Specify the pull request number'
     required: false
+  plugin:
+    description: 'plugins to run. Options: xcode, gcov, pycoverage. The default behavior runs them all.'
+    required: false
   plugins:
     description: 'Comma-separated list of plugins for use during upload.'
     required: false
@@ -55,6 +61,9 @@ inputs:
     required: false
   slug:
     description: 'Specify the slug manually (Enterprise use)'
+    required: false
+  url:
+    description: 'Specify the base url to upload (Enterprise use)'
     required: false
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
