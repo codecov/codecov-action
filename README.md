@@ -68,8 +68,8 @@ steps:
 Codecov's Action supports inputs from the user. These inputs, along with their descriptions and usage contexts, are listed in the table below:
 
 | Input  | Description | Required |
-| :---:     |     :---:   |    :---:   |
-| `token` | Repository Codecov token. Used to authorize report uploads | Optional 
+| :---       |     :---     |    :---:   |
+| `token` | Repository Codecov token. Used to authorize report uploads | *Required 
 | `codecov_yml_path` | Specify the path to the Codecov YML | Optional 
 | `commit_parent` | Override to specify the parent commit SHA | Optional 
 | `directory` | Directory to search for coverage reports. | Optional 
