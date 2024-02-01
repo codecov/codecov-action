@@ -12,6 +12,7 @@ const context = github.context;
 
 test('general args', () => {
   const envs = {
+    codecov_yml_path: 'dev/codecov.yml',
     url: 'https://codecov.enterprise.com',
     verbose: 't',
   };
@@ -23,6 +24,8 @@ test('general args', () => {
 
   expect(args).toEqual(
       expect.arrayContaining([
+        '--codecov-yml-path',
+        'dev/codecov.yml',
         '--enterprise-url',
         'https://codecov.enterprise.com',
         '-v',
@@ -53,8 +56,8 @@ test('upload args', () => {
     'codecov_yml_path': 'dev/codecov.yml',
     'commit_parent': 'fakeparentcommit',
     'directory': 'coverage/',
+    'disable_file_fixes': 'true',
     'disable_search': 'true',
-    'disable_file_fixes': 'false',
     'dry_run': 'true',
     'env_vars': 'OS,PYTHON',
     'exclude': 'node_modules/',
@@ -78,7 +81,7 @@ test('upload args', () => {
     'slug': 'fakeOwner/fakeRepo',
     'token': 'd3859757-ab80-4664-924d-aef22fa7557b',
     'url': 'https://enterprise.example.com',
-    'use_legacy_upload_endpoint': 'false',
+    'use_legacy_upload_endpoint': 'true',
     'verbose': 'true',
     'version': '0.1.2',
     'working-directory': 'src',
@@ -89,6 +92,7 @@ test('upload args', () => {
 
   const {uploadExecArgs, uploadCommand} = buildUploadExec();
   const expectedArgs = [
+    '--disable-file-fixes',
     '--disable-search',
     '-d',
     '-e',
@@ -135,6 +139,7 @@ test('upload args', () => {
     'coverage/',
     '-r',
     'fakeOwner/fakeRepo',
+    '--legacy',
   ];
 
   expect(uploadExecArgs).toEqual(expectedArgs);
@@ -148,8 +153,10 @@ test('upload args', () => {
 test('report args', () => {
   const envs = {
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
+    override_pr: 'fakePR',
     slug: 'fakeOwner/fakeRepo',
     token: 'd3859757-ab80-4664-924d-aef22fa7557b',
+    fail_ci_if_error: 'true',
   };
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
@@ -157,13 +164,17 @@ test('report args', () => {
 
   const {reportExecArgs, reportCommand} = buildReportExec();
 
-  expect(reportExecArgs).toEqual(
-      expect.arrayContaining([
-        '-C',
-        '9caabca5474b49de74ef5667deabaf74cdacc244',
-        '--slug',
-        'fakeOwner/fakeRepo',
-      ]));
+  const expectedArgs = [
+    '-C',
+    '9caabca5474b49de74ef5667deabaf74cdacc244',
+    '-P',
+    'fakePR',
+    '--slug',
+    'fakeOwner/fakeRepo',
+    '-Z',
+  ];
+
+  expect(reportExecArgs).toEqual(expectedArgs);
   expect(reportCommand).toEqual('create-report');
   for (const env of Object.keys(envs)) {
     delete process.env['INPUT_' + env.toUpperCase()];
@@ -195,32 +206,34 @@ test('report args using context', () => {
 
 test('commit args', () => {
   const envs = {
+    commit_parent: '83231650328f11695dfb754ca0f540516f188d27',
+    override_branch: 'thomasrockhu/test',
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
+    override_pr: '2',
     slug: 'fakeOwner/fakeRepo',
     token: 'd3859757-ab80-4664-924d-aef22fa7557b',
-    override_branch: 'thomasrockhu/test',
-    override_pr: '2',
-    commit_parent: '83231650328f11695dfb754ca0f540516f188d27',
+    fail_ci_if_error: 'true',
   };
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
   const {commitExecArgs, commitCommand} = buildCommitExec();
+  const expectedArgs = [
+    '--parent-sha',
+    '83231650328f11695dfb754ca0f540516f188d27',
+    '-B',
+    'thomasrockhu/test',
+    '-C',
+    '9caabca5474b49de74ef5667deabaf74cdacc244',
+    '--pr',
+    '2',
+    '--slug',
+    'fakeOwner/fakeRepo',
+    '-Z',
+  ];
 
-  expect(commitExecArgs).toEqual(
-      expect.arrayContaining([
-        '-C',
-        '9caabca5474b49de74ef5667deabaf74cdacc244',
-        '--slug',
-        'fakeOwner/fakeRepo',
-        '-B',
-        'thomasrockhu/test',
-        '--pr',
-        '2',
-        '--parent-sha',
-        '83231650328f11695dfb754ca0f540516f188d27',
-      ]));
+  expect(commitExecArgs).toEqual(expectedArgs);
   expect(commitCommand).toEqual('create-commit');
   for (const env of Object.keys(envs)) {
     delete process.env['INPUT_' + env.toUpperCase()];
