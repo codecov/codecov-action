@@ -25,7 +25,7 @@ const buildCommitExec = () => {
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
   const token = core.getInput('token');
-
+  const failCi = isTrue(core.getInput('fail_ci_if_error'));
 
   const commitCommand = 'create-commit';
   const commitExecArgs = [];
@@ -69,16 +69,23 @@ const buildCommitExec = () => {
   if (slug) {
     commitExecArgs.push('--slug', `${slug}`);
   }
+  if (failCi) {
+    commitExecArgs.push('-Z');
+  }
 
 
   return {commitExecArgs, commitOptions, commitCommand};
 };
 
 const buildGeneralExec = () => {
+  const codecovYmlPath = core.getInput('codecov_yml_path');
   const url = core.getInput('url');
   const verbose = isTrue(core.getInput('verbose'));
   const args = [];
 
+  if (codecovYmlPath) {
+    args.push('--codecov-yml-path', `${codecovYmlPath}`);
+  }
   if (url) {
     args.push('--enterprise-url', `${url}`);
   }
@@ -90,8 +97,10 @@ const buildGeneralExec = () => {
 
 const buildReportExec = () => {
   const overrideCommit = core.getInput('override_commit');
+  const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
   const token = core.getInput('token');
+  const failCi = isTrue(core.getInput('fail_ci_if_error'));
 
 
   const reportCommand = 'create-report';
@@ -119,35 +128,54 @@ const buildReportExec = () => {
   ) {
     reportExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
+  if (overridePr) {
+    reportExecArgs.push('-P', `${overridePr}`);
+  } else if (
+    `${context.eventName}` == 'pull_request_target'
+  ) {
+    reportExecArgs.push('-P', `${context.payload.number}`);
+  }
   if (slug) {
     reportExecArgs.push('--slug', `${slug}`);
+  }
+  if (failCi) {
+    reportExecArgs.push('-Z');
   }
 
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
 const buildUploadExec = () => {
-  const envVars = core.getInput('env_vars');
+  const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
+  const disableSearch = isTrue(core.getInput('disable_search'));
   const dryRun = isTrue(core.getInput('dry_run'));
+  const envVars = core.getInput('env_vars');
+  const exclude = core.getInput('exclude');
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
+  const handleNoReportsFound = isTrue(core.getInput('handle_no_reports_found'));
+  const jobCode = core.getInput('job_code');
   const name = core.getInput('name');
   const os = core.getInput('os');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
+  const overrideBuildUrl = core.getInput('override_build_url');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
+  const plugin = core.getInput('plugin');
   const plugins = core.getInput('plugins');
+  const reportCode = core.getInput('report_code');
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
   const token = core.getInput('token');
   let uploaderVersion = core.getInput('version');
+  const useLegacyUploadEndpoint = isTrue(
+      core.getInput('use_legacy_upload_endpoint'),
+  );
   const workingDir = core.getInput('working-directory');
-  const plugin = core.getInput('plugin');
-  const exclude = core.getInput('exclude');
 
   const uploadExecArgs = [];
   const uploadCommand = 'do-upload';
@@ -169,20 +197,23 @@ const buildUploadExec = () => {
       envVarsArg.push(envVarClean);
     }
   }
-  if (name) {
-    uploadExecArgs.push(
-        '-n',
-        `${name}`,
-    );
-  }
   if (token) {
     uploadOptions.env.CODECOV_TOKEN = token;
+  }
+  if (disableFileFixes) {
+    uploadExecArgs.push('--disable-file-fixes');
+  }
+  if (disableSearch) {
+    uploadExecArgs.push('--disable-search');
   }
   if (dryRun) {
     uploadExecArgs.push('-d');
   }
   if (envVarsArg.length) {
     uploadExecArgs.push('-e', envVarsArg.join(','));
+  }
+  if (exclude) {
+    uploadExecArgs.push('--exclude', `${exclude}`);
   }
   if (failCi) {
     uploadExecArgs.push('-Z');
@@ -200,11 +231,23 @@ const buildUploadExec = () => {
       uploadExecArgs.push('-F', `${f}`);
     });
   }
+  if (handleNoReportsFound) {
+    uploadExecArgs.push('--handle-no-reports-found');
+  }
+  if (jobCode) {
+    uploadExecArgs.push('--job-code', `${jobCode}`);
+  }
+  if (name) {
+    uploadExecArgs.push('-n', `${name}`);
+  }
   if (overrideBranch) {
     uploadExecArgs.push('-B', `${overrideBranch}`);
   }
   if (overrideBuild) {
     uploadExecArgs.push('-b', `${overrideBuild}`);
+  }
+  if (overrideBuildUrl) {
+    uploadExecArgs.push('--build-url', `${overrideBuildUrl}`);
   }
   if (overrideCommit) {
     uploadExecArgs.push('-C', `${overrideCommit}`);
@@ -221,10 +264,16 @@ const buildUploadExec = () => {
   ) {
     uploadExecArgs.push('-P', `${context.payload.number}`);
   }
+  if (plugin) {
+    uploadExecArgs.push('--plugin', `${plugin}`);
+  }
   if (plugins) {
     plugins.split(',').map((p) => p.trim()).forEach((p) => {
       uploadExecArgs.push('--plugin', `${p}`);
     });
+  }
+  if (reportCode) {
+    uploadExecArgs.push('--report-code', `${reportCode}`);
   }
   if (rootDir) {
     uploadExecArgs.push('--network-root-folder', `${rootDir}`);
@@ -238,15 +287,11 @@ const buildUploadExec = () => {
   if (workingDir) {
     uploadOptions.cwd = workingDir;
   }
-  if (plugin) {
-    uploadExecArgs.push('--plugin', `${plugin}`);
-  }
-  if (exclude) {
-    uploadExecArgs.push('--exclude', `${exclude}`);
-  }
-
   if (uploaderVersion == '') {
     uploaderVersion = 'latest';
+  }
+  if (useLegacyUploadEndpoint) {
+    uploadExecArgs.push('--legacy');
   }
 
   return {
