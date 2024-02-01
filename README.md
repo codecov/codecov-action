@@ -35,10 +35,25 @@ steps:
 - uses: actions/checkout@master
 - uses: codecov/codecov-action@v4
   with:
+    fail_ci_if_error: true # optional (default = false)
     files: ./coverage1.xml,./coverage2.xml # optional
     flags: unittests # optional
     name: codecov-umbrella # optional
+    token: ${{ secrets.CODECOV_TOKEN }} # required
+    verbose: true # optional (default = false)
+```
+
+The Codecov token can also be passed in via environment variables:
+
+```yaml
+steps:
+- uses: actions/checkout@master
+- uses: codecov/codecov-action@v4
+  with:
     fail_ci_if_error: true # optional (default = false)
+    files: ./coverage1.xml,./coverage2.xml # optional
+    flags: unittests # optional
+    name: codecov-umbrella # optional
     verbose: true # optional (default = false)
   env:
     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -125,9 +140,8 @@ jobs:
         files: ./coverage1.xml,./coverage2.xml,!./cache
         flags: unittests
         name: codecov-umbrella
+        token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
 ## Contributing
 
