@@ -5,17 +5,20 @@ inputs:
   token:
     description: 'Repository upload token - get it from codecov.io. Required only for private repositories'
     required: false
-  file:
-    description: 'Path to coverage file to upload'
-    required: false
-  files:
-    description: 'Comma-separated list of files to upload'
+  codecov_yml_path:
+    description: 'Specify the path to the Codecov YML'
     required: false
   commit_parent:
     description: 'Override to specify the parent commit SHA'
     required: false
   directory:
     description: 'Directory to search for coverage reports.'
+    required: false
+  disable_search:
+    description: 'Disable search for coverage files. This is helpful when specifying what files you want to upload with the --file option.'
+    required: false
+  disable_file_fixes:
+    description: 'Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets)'
     required: false
   dry_run:
     description: "Don't upload files to Codecov"
@@ -29,8 +32,20 @@ inputs:
   fail_ci_if_error:
     description: 'Specify whether or not CI build should fail if Codecov runs into an error during upload'
     required: false
+  file:
+    description: 'Path to coverage file to upload'
+    required: false
+  files:
+    description: 'Comma-separated list of files to upload'
+    required: false
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
+    required: false
+  handle_no_reports_found:
+    description: 'Raise no exceptions when no coverage reports found'
+    required: false
+  job_code:
+    description: 'The job code'
     required: false
   name:
     description: 'User defined upload name. Visible in Codecov UI'
@@ -44,6 +59,9 @@ inputs:
   override_build:
     description: 'Specify the build number'
     required: false
+  override_build_url:
+    description: 'The URL of the build where this is running'
+    required: false
   override_commit:
     description: 'Specify the commit SHA'
     required: false
@@ -56,6 +74,9 @@ inputs:
   plugins:
     description: 'Comma-separated list of plugins for use during upload.'
     required: false
+  report_code:
+    description: 'The code of the report. If unsure, do not include'
+    required: false
   root_dir:
     description: 'Used when not in git/hg project to identify project root directory'
     required: false
@@ -64,6 +85,9 @@ inputs:
     required: false
   url:
     description: 'Specify the base url to upload (Enterprise use)'
+    required: false
+  use_legacy_upload_endpoint:
+    description: 'Use the legacy upload endpoint'
     required: false
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
