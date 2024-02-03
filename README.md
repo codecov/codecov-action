@@ -13,7 +13,7 @@
 - Various arguments to the Action have been removed
 
 ### Dependabot
-- For repositories using `Dependabot`, users will need to ensure that it has access to the Codecov token for PRs from Dependabot to upload coverage.
+- For repositories using `Dependabot`, users will need to ensure that it has access to the Codecov token for PRs from Dependabot to upload coverage. To do this, please add your `CODECOV_TOKEN` as a Dependabot Secret. For more information, see ["Configuring access to private registries for Dependabot."](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-access-to-private-registries-for-dependabot#storing-credentials-for-dependabot-to-use)
 
 `v3` versions and below will not have access to CLI features (e.g. global upload token, ATS).
 
