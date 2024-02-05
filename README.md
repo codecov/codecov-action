@@ -76,16 +76,16 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `disable_search` | Disable search for coverage files. This is helpful when specifying what files you want to upload with the --file option. | Optional 
 | `disable_file_fixes` | Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets) | Optional 
 | `dry_run` | Don't upload files to Codecov | Optional 
-| `env_vars` | Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON) | Optional 
+| `env_vars` | Environment variables to tag the upload with (e.g. PYTHON \| OS,PYTHON) | Optional 
 | `exclude` | Folders to exclude from search | Optional 
 | `fail_ci_if_error` | Specify whether or not CI build should fail if Codecov runs into an error during upload | Optional 
 | `file` | Path to coverage file to upload | Optional 
 | `files` | Comma-separated list of files to upload | Optional 
-| `flags` | Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome) | Optional 
+| `flags` | Flag upload to group coverage metrics (e.g. unittests \| integration \| ui,chrome) | Optional 
 | `handle_no_reports_found` | Raise no exceptions when no coverage reports found | Optional 
 | `job_code` | The job code | Optional 
 | `name` | User defined upload name. Visible in Codecov UI | Optional 
-| `os` | Override the assumed OS. Options are linux | macos | windows | . | Optional 
+| `os` | Override the assumed OS. Options are linux \| macos \| windows \| . | Optional 
 | `override_branch` | Specify the branch name | Optional 
 | `override_build` | Specify the build number | Optional 
 | `override_build_url` | The URL of the build where this is running | Optional 
