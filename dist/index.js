@@ -32267,6 +32267,7 @@ const buildCommitExec = () => {
     const slug = core.getInput('slug');
     const token = core.getInput('token');
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
+    const workingDir = core.getInput('working-directory');
     const commitCommand = 'create-commit';
     const commitExecArgs = [];
     const commitOptions = {};
@@ -32306,6 +32307,9 @@ const buildCommitExec = () => {
     if (failCi) {
         commitExecArgs.push('-Z');
     }
+    if (workingDir) {
+        commitOptions.cwd = workingDir;
+    }
     return { commitExecArgs, commitOptions, commitCommand };
 };
 const buildGeneralExec = () => {
@@ -32330,6 +32334,7 @@ const buildReportExec = () => {
     const slug = core.getInput('slug');
     const token = core.getInput('token');
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
+    const workingDir = core.getInput('working-directory');
     const reportCommand = 'create-report';
     const reportExecArgs = [];
     const reportOptions = {};
@@ -32362,6 +32367,9 @@ const buildReportExec = () => {
     }
     if (failCi) {
         reportExecArgs.push('-Z');
+    }
+    if (workingDir) {
+        reportOptions.cwd = workingDir;
     }
     return { reportExecArgs, reportOptions, reportCommand };
 };
