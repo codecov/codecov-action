@@ -1,6 +1,46 @@
 name: Workflow for Codecov Action
 on: [push, pull_request]
 jobs:
+  test-container:
+    runs-on: ubuntu-latest
+    container: node:18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Run tests and collect coverage
+        run: npm run test
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script,${{ matrix.os }}
+          name: codecov-script
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (demo)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: demo,${{ matrix.os }}
+          name: codecov-demo
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: version,${{ matrix.os }}
+          name: codecov-version
+          version: v0.2.0
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   run:
     runs-on: ${{ matrix.os }}
     strategy:
