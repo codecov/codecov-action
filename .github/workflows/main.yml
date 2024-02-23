@@ -14,30 +14,19 @@ jobs:
       - name: Run tests and collect coverage
         run: npm run test
       - name: Upload coverage to Codecov (script)
-        uses: ./
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.os }}
           name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage to Codecov (demo)
+      - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
-          flags: demo,${{ matrix.os }}
-          name: codecov-demo
-          verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage to Codecov (version)
-        uses: ./
-        with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
-          flags: version,${{ matrix.os }}
-          name: codecov-version
-          version: v0.2.0
+          files: ./coverage/script/coverage-final.json
+          flags: script,${{ matrix.os }}
+          name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
