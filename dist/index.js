@@ -32752,7 +32752,7 @@ try {
             const doUpload = () => src_awaiter(void 0, void 0, void 0, function* () {
                 yield exec.exec(getCommand(filename, args, uploadCommand).join(' '), uploadExecArgs, uploadOptions)
                     .catch((err) => {
-                    setFailure(`Codecov: 
+                    setFailure(`Codecov:
                       Failed to properly upload report: ${err.message}`, failCi);
                 });
             });
@@ -32763,7 +32763,7 @@ try {
                         yield doUpload();
                     }
                 })).catch((err) => {
-                    setFailure(`Codecov: 
+                    setFailure(`Codecov:
                       Failed to properly create report: ${err.message}`, failCi);
                 });
             });

@@ -72,7 +72,7 @@ try {
                 uploadOptions)
                 .catch((err) => {
                   setFailure(
-                      `Codecov: 
+                      `Codecov:
                       Failed to properly upload report: ${err.message}`,
                       failCi,
                   );
@@ -89,7 +89,7 @@ try {
                   }
                 }).catch((err) => {
                   setFailure(
-                      `Codecov: 
+                      `Codecov:
                       Failed to properly create report: ${err.message}`,
                       failCi,
                   );
