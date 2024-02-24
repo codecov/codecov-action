@@ -1,4 +1,5 @@
 import * as core from '@actions/core';
+import * as exec from '@actions/exec';
 
 const PLATFORMS = [
   'linux',
@@ -64,6 +65,22 @@ const getCommand = (
   return fullCommand;
 };
 
+const setSafeDirectory = async () => {
+  const isSafe = await exec.exec('git config --get safe.directory');
+  if (!isSafe) {
+    const command = ([
+      'git',
+      'config',
+      '--global',
+      '--add',
+      'safe.directory',
+      `${process.env['GITHUB_WORKSPACE']}`,
+    ].join(' '));
+    core.info(`==> Running ${command}`);
+    await exec.exec(command);
+  }
+};
+
 export {
   PLATFORMS,
   getBaseUrl,
@@ -72,5 +89,6 @@ export {
   isValidPlatform,
   isWindows,
   setFailure,
+  setSafeDirectory,
   getCommand,
 };

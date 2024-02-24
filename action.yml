@@ -41,6 +41,9 @@ inputs:
   flags:
     description: 'Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)'
     required: false
+  git_service:
+    description: 'Override the git_service (e.g. github_enterprise)'
+    required: false
   handle_no_reports_found:
     description: 'Raise no exceptions when no coverage reports found'
     required: false
