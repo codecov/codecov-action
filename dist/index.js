@@ -32595,19 +32595,16 @@ const getCommand = (filename, generalArgs, command) => {
     return fullCommand;
 };
 const setSafeDirectory = () => __awaiter(void 0, void 0, void 0, function* () {
-    const isSafe = yield exec.exec('git config --get safe.directory');
-    if (!isSafe) {
-        const command = ([
-            'git',
-            'config',
-            '--global',
-            '--add',
-            'safe.directory',
-            `${process.env['GITHUB_WORKSPACE']}`,
-        ].join(' '));
-        core.info(`==> Running ${command}`);
-        yield exec.exec(command);
-    }
+    const command = ([
+        'git',
+        'config',
+        '--global',
+        '--add',
+        'safe.directory',
+        `${process.env['GITHUB_WORKSPACE']}`,
+    ].join(' '));
+    core.info(`==> Running ${command}`);
+    yield exec.exec(command);
 });
 
 

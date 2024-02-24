@@ -66,19 +66,16 @@ const getCommand = (
 };
 
 const setSafeDirectory = async () => {
-  const isSafe = await exec.exec('git config --get safe.directory');
-  if (!isSafe) {
-    const command = ([
-      'git',
-      'config',
-      '--global',
-      '--add',
-      'safe.directory',
-      `${process.env['GITHUB_WORKSPACE']}`,
-    ].join(' '));
-    core.info(`==> Running ${command}`);
-    await exec.exec(command);
-  }
+  const command = ([
+    'git',
+    'config',
+    '--global',
+    '--add',
+    'safe.directory',
+    `${process.env['GITHUB_WORKSPACE']}`,
+  ].join(' '));
+  core.info(`==> Running ${command}`);
+  await exec.exec(command);
 };
 
 export {
