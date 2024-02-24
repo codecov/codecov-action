@@ -43,7 +43,7 @@ jobs:
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  run:
+  run-container:
     runs-on: ubuntu-latest
     container: node:18
     steps:
