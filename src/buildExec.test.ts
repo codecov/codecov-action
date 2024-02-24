@@ -68,6 +68,7 @@ test('upload args', () => {
     'file': 'coverage.xml',
     'files': 'dir1/coverage.xml,dir2/coverage.xml',
     'flags': 'test,test2',
+    'git_service': 'github_enterprise',
     'handle_no_reports_found': 'true',
     'job_code': '32',
     'name': 'codecov',
@@ -114,7 +115,7 @@ test('upload args', () => {
     '-F',
     'test2',
     '--git-service',
-    'github',
+    'github_enterprise',
     '--handle-no-reports-found',
     '--job-code',
     '32',
@@ -157,6 +158,7 @@ test('upload args', () => {
 
 test('report args', () => {
   const envs = {
+    git_service: 'github_enterprise',
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
     override_pr: 'fakePR',
     slug: 'fakeOwner/fakeRepo',
@@ -171,7 +173,7 @@ test('report args', () => {
 
   const expectedArgs = [
     '--git-service',
-    'github',
+    'github_enterprise',
     '-C',
     '9caabca5474b49de74ef5667deabaf74cdacc244',
     '-P',

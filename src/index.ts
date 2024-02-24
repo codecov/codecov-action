@@ -30,6 +30,7 @@ try {
   const {
     uploadExecArgs,
     uploadOptions,
+    disableSafeDirectory,
     failCi,
     os,
     uploaderVersion,
@@ -56,7 +57,9 @@ try {
           await verify(filename, platform, uploaderVersion, verbose, failCi);
           await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
-          await setSafeDirectory();
+          if (!disableSafeDirectory) {
+            await setSafeDirectory();
+          }
 
           const unlink = () => {
             fs.unlink(filename, (err) => {

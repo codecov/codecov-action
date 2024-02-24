@@ -32379,6 +32379,7 @@ const buildReportExec = () => {
 };
 const buildUploadExec = () => {
     const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
+    const disableSafeDirectory = isTrue(core.getInput('diable_safe_directory'));
     const disableSearch = isTrue(core.getInput('disable_search'));
     const dryRun = isTrue(core.getInput('dry_run'));
     const envVars = core.getInput('env_vars');
@@ -32524,6 +32525,7 @@ const buildUploadExec = () => {
     return {
         uploadExecArgs,
         uploadOptions,
+        disableSafeDirectory,
         failCi,
         os,
         uploaderVersion,
@@ -32754,7 +32756,7 @@ let failCi;
 try {
     const { commitExecArgs, commitOptions, commitCommand } = buildCommitExec();
     const { reportExecArgs, reportOptions, reportCommand } = buildReportExec();
-    const { uploadExecArgs, uploadOptions, failCi, os, uploaderVersion, uploadCommand, } = buildUploadExec();
+    const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = buildUploadExec();
     const { args, verbose } = buildGeneralExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
@@ -32770,7 +32772,9 @@ try {
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
-            yield setSafeDirectory();
+            if (!disableSafeDirectory) {
+                yield setSafeDirectory();
+            }
             const unlink = () => {
                 external_fs_.unlink(filename, (err) => {
                     if (err) {
