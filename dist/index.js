@@ -32286,7 +32286,7 @@ const buildCommitExec = () => {
     if (commitParent) {
         commitExecArgs.push('--parent-sha', `${commitParent}`);
     }
-    commitExecArgs.push(`--git-service ${gitService ? gitService : 'github'}`);
+    commitExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (overrideBranch) {
         commitExecArgs.push('-B', `${overrideBranch}`);
     }
@@ -32352,7 +32352,7 @@ const buildReportExec = () => {
     if (token) {
         reportOptions.env.CODECOV_TOKEN = token;
     }
-    reportExecArgs.push(`--git-service ${gitService ? gitService : 'github'}`);
+    reportExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (overrideCommit) {
         reportExecArgs.push('-C', `${overrideCommit}`);
     }
@@ -32460,7 +32460,7 @@ const buildUploadExec = () => {
             uploadExecArgs.push('-F', `${f}`);
         });
     }
-    uploadExecArgs.push(`--git-service ${gitService ? gitService : 'github'}`);
+    uploadExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (handleNoReportsFound) {
         uploadExecArgs.push('--handle-no-reports-found');
     }

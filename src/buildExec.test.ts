@@ -38,7 +38,10 @@ test('general args', () => {
 
 
 test('upload args using context', () => {
-  const expectedArgs = [];
+  const expectedArgs = [
+    '--git-service',
+    'github',
+  ];
   const {uploadExecArgs, uploadCommand} = buildUploadExec();
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
@@ -110,6 +113,8 @@ test('upload args', () => {
     'test',
     '-F',
     'test2',
+    '--git-service',
+    'github',
     '--handle-no-reports-found',
     '--job-code',
     '32',
@@ -165,6 +170,8 @@ test('report args', () => {
   const {reportExecArgs, reportCommand} = buildReportExec();
 
   const expectedArgs = [
+    '--git-service',
+    'github',
     '-C',
     '9caabca5474b49de74ef5667deabaf74cdacc244',
     '-P',
@@ -189,7 +196,10 @@ test('report args using context', () => {
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
-  const expectedArgs : string[] = [];
+  const expectedArgs : string[] = [
+    '--git-service',
+    'github',
+  ];
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
@@ -206,6 +216,7 @@ test('report args using context', () => {
 
 test('commit args', () => {
   const envs = {
+    git_service: 'github_enterprise',
     commit_parent: '83231650328f11695dfb754ca0f540516f188d27',
     override_branch: 'thomasrockhu/test',
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
@@ -222,6 +233,8 @@ test('commit args', () => {
   const expectedArgs = [
     '--parent-sha',
     '83231650328f11695dfb754ca0f540516f188d27',
+    '--git-service',
+    'github_enterprise',
     '-B',
     'thomasrockhu/test',
     '-C',
@@ -241,7 +254,10 @@ test('commit args', () => {
 });
 
 test('commit args using context', () => {
-  const expectedArgs :string[] = [];
+  const expectedArgs :string[] = [
+    '--git-service',
+    'github',
+  ];
 
   const {commitExecArgs, commitCommand} = buildCommitExec();
   if (context.eventName == 'pull_request') {
