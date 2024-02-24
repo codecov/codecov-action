@@ -1,10 +1,13 @@
+import * as exec from '@actions/exec';
+
 import {
+  PLATFORMS,
   getBaseUrl,
+  getCommand,
   getPlatform,
   isValidPlatform,
   isWindows,
-  PLATFORMS,
-  getCommand,
+  setSafeDirectory,
 } from './helpers';
 
 let OLDOS = process.env.RUNNER_OS;
@@ -77,4 +80,17 @@ test('isValidPlatform', () => {
 test('getCommand', () => {
   expect(getCommand('path', ['-v', '-x'], 'do-upload'))
       .toEqual(['path', '-v', '-x', 'do-upload']);
+});
+
+test('setSafeDirectory', async () => {
+  process.env.GITHUB_WORKSPACE = 'testOrg/testRepo';
+  await setSafeDirectory();
+  const testSafeDirectory = ([
+    'git',
+    'config',
+    '--get',
+    'safe.directory',
+  ]).join(' ');
+  const safeDirectory = await exec.getExecOutput(testSafeDirectory);
+  expect(safeDirectory.stdout).toBe('testOrg/testRepo\n');
 });
