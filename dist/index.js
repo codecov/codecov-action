@@ -32261,6 +32261,7 @@ const isTrue = (variable) => {
 };
 const buildCommitExec = () => {
     const commitParent = core.getInput('commit_parent');
+    const gitService = core.getInput('git_service');
     const overrideBranch = core.getInput('override_branch');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
@@ -32285,6 +32286,7 @@ const buildCommitExec = () => {
     if (commitParent) {
         commitExecArgs.push('--parent-sha', `${commitParent}`);
     }
+    commitExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (overrideBranch) {
         commitExecArgs.push('-B', `${overrideBranch}`);
     }
@@ -32329,6 +32331,7 @@ const buildGeneralExec = () => {
     return { args, verbose };
 };
 const buildReportExec = () => {
+    const gitService = core.getInput('git_service');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
@@ -32349,6 +32352,7 @@ const buildReportExec = () => {
     if (token) {
         reportOptions.env.CODECOV_TOKEN = token;
     }
+    reportExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (overrideCommit) {
         reportExecArgs.push('-C', `${overrideCommit}`);
     }
@@ -32375,6 +32379,7 @@ const buildReportExec = () => {
 };
 const buildUploadExec = () => {
     const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
+    const disableSafeDirectory = isTrue(core.getInput('diable_safe_directory'));
     const disableSearch = isTrue(core.getInput('disable_search'));
     const dryRun = isTrue(core.getInput('dry_run'));
     const envVars = core.getInput('env_vars');
@@ -32383,6 +32388,7 @@ const buildUploadExec = () => {
     const file = core.getInput('file');
     const files = core.getInput('files');
     const flags = core.getInput('flags');
+    const gitService = core.getInput('git_service');
     const handleNoReportsFound = isTrue(core.getInput('handle_no_reports_found'));
     const jobCode = core.getInput('job_code');
     const name = core.getInput('name');
@@ -32455,6 +32461,7 @@ const buildUploadExec = () => {
             uploadExecArgs.push('-F', `${f}`);
         });
     }
+    uploadExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
     if (handleNoReportsFound) {
         uploadExecArgs.push('--handle-no-reports-found');
     }
@@ -32518,6 +32525,7 @@ const buildUploadExec = () => {
     return {
         uploadExecArgs,
         uploadOptions,
+        disableSafeDirectory,
         failCi,
         os,
         uploaderVersion,
@@ -32527,6 +32535,16 @@ const buildUploadExec = () => {
 
 
 ;// CONCATENATED MODULE: ./src/helpers.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
 
 const PLATFORMS = [
     'linux',
@@ -32578,6 +32596,18 @@ const getCommand = (filename, generalArgs, command) => {
     core.info(`==> Running command '${fullCommand.join(' ')}'`);
     return fullCommand;
 };
+const setSafeDirectory = () => __awaiter(void 0, void 0, void 0, function* () {
+    const command = ([
+        'git',
+        'config',
+        '--global',
+        '--add',
+        'safe.directory',
+        `${process.env['GITHUB_WORKSPACE']}`,
+    ].join(' '));
+    core.info(`==> Running ${command}`);
+    yield exec.exec(command);
+});
 
 
 // EXTERNAL MODULE: external "crypto"
@@ -32587,7 +32617,7 @@ var gpg = __nccwpck_require__(40);
 // EXTERNAL MODULE: ./node_modules/undici/index.js
 var undici = __nccwpck_require__(1773);
 ;// CONCATENATED MODULE: ./src/validate.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var validate_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -32603,7 +32633,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const verify = (filename, platform, version, verbose, failCi) => __awaiter(void 0, void 0, void 0, function* () {
+const verify = (filename, platform, version, verbose, failCi) => validate_awaiter(void 0, void 0, void 0, function* () {
     try {
         const uploaderName = getUploaderName(platform);
         // Get SHASUM and SHASUM signature files
@@ -32620,8 +32650,8 @@ const verify = (filename, platform, version, verbose, failCi) => __awaiter(void 
             console.log(`Received SHA256SUM signature ${shaSig}`);
         }
         yield external_fs_.writeFileSync(external_path_.join(__dirname, `${uploaderName}.SHA256SUM.sig`), shaSig);
-        const validateSha = () => __awaiter(void 0, void 0, void 0, function* () {
-            const calculateHash = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+        const validateSha = () => validate_awaiter(void 0, void 0, void 0, function* () {
+            const calculateHash = (filename) => validate_awaiter(void 0, void 0, void 0, function* () {
                 const stream = external_fs_.createReadStream(filename);
                 const uploaderSha = external_crypto_.createHash(`sha256`);
                 stream.pipe(uploaderSha);
@@ -32646,7 +32676,7 @@ const verify = (filename, platform, version, verbose, failCi) => __awaiter(void 
                 '--verify',
                 external_path_.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
                 external_path_.join(__dirname, `${uploaderName}.SHA256SUM`),
-            ], (err, verifyResult) => __awaiter(void 0, void 0, void 0, function* () {
+            ], (err, verifyResult) => validate_awaiter(void 0, void 0, void 0, function* () {
                 if (err) {
                     setFailure('Codecov: Error importing pgp key', failCi);
                 }
@@ -32661,7 +32691,7 @@ const verify = (filename, platform, version, verbose, failCi) => __awaiter(void 
             '--no-default-keyring',
             '--import',
             __nccwpck_require__.ab + "pgp_keys.asc",
-        ], (err, importResult) => __awaiter(void 0, void 0, void 0, function* () {
+        ], (err, importResult) => validate_awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 setFailure('Codecov: Error importing pgp key', failCi);
             }
@@ -32726,7 +32756,7 @@ let failCi;
 try {
     const { commitExecArgs, commitOptions, commitCommand } = buildCommitExec();
     const { reportExecArgs, reportOptions, reportCommand } = buildReportExec();
-    const { uploadExecArgs, uploadOptions, failCi, os, uploaderVersion, uploadCommand, } = buildUploadExec();
+    const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = buildUploadExec();
     const { args, verbose } = buildGeneralExec();
     const platform = getPlatform(os);
     const filename = external_path_.join(__dirname, getUploaderName(platform));
@@ -32742,6 +32772,9 @@ try {
             yield validate(filename, platform, uploaderVersion, verbose, failCi);
             yield version(platform, uploaderVersion);
             yield external_fs_.chmodSync(filename, '777');
+            if (!disableSafeDirectory) {
+                yield setSafeDirectory();
+            }
             const unlink = () => {
                 external_fs_.unlink(filename, (err) => {
                     if (err) {
@@ -32752,7 +32785,7 @@ try {
             const doUpload = () => src_awaiter(void 0, void 0, void 0, function* () {
                 yield exec.exec(getCommand(filename, args, uploadCommand).join(' '), uploadExecArgs, uploadOptions)
                     .catch((err) => {
-                    setFailure(`Codecov: 
+                    setFailure(`Codecov:
                       Failed to properly upload report: ${err.message}`, failCi);
                 });
             });
@@ -32763,7 +32796,7 @@ try {
                         yield doUpload();
                     }
                 })).catch((err) => {
-                    setFailure(`Codecov: 
+                    setFailure(`Codecov:
                       Failed to properly create report: ${err.message}`, failCi);
                 });
             });

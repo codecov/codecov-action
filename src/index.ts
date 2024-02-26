@@ -12,10 +12,11 @@ import {
 } from './buildExec';
 import {
   getBaseUrl,
+  getCommand,
   getPlatform,
   getUploaderName,
   setFailure,
-  getCommand,
+  setSafeDirectory,
 } from './helpers';
 
 import verify from './validate';
@@ -29,6 +30,7 @@ try {
   const {
     uploadExecArgs,
     uploadOptions,
+    disableSafeDirectory,
     failCi,
     os,
     uploaderVersion,
@@ -55,6 +57,9 @@ try {
           await verify(filename, platform, uploaderVersion, verbose, failCi);
           await versionInfo(platform, uploaderVersion);
           await fs.chmodSync(filename, '777');
+          if (!disableSafeDirectory) {
+            await setSafeDirectory();
+          }
 
           const unlink = () => {
             fs.unlink(filename, (err) => {
@@ -72,7 +77,7 @@ try {
                 uploadOptions)
                 .catch((err) => {
                   setFailure(
-                      `Codecov: 
+                      `Codecov:
                       Failed to properly upload report: ${err.message}`,
                       failCi,
                   );
@@ -89,7 +94,7 @@ try {
                   }
                 }).catch((err) => {
                   setFailure(
-                      `Codecov: 
+                      `Codecov:
                       Failed to properly create report: ${err.message}`,
                       failCi,
                   );
