@@ -10,7 +10,7 @@ jobs:
           curl -Os https://cli.codecov.io/latest/macos/codecov
           curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM
           curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM.sig
-          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+          gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
   run:
     runs-on: ${{ matrix.os }}
     strategy:
