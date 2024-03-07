@@ -93,12 +93,15 @@ const verify = async (
     };
 
     // Import gpg key
-    gpg.call('', [
+    const pgpKeyRes = await request(
+        'https://keybase.io/codecovsecurity/pgp_keys.asc',
+    );
+    const pgpKey = await pgpKeyRes.body.text();
+    gpg.call(pgpKey, [
       '--logger-fd',
       '1',
       '--no-default-keyring',
       '--import',
-      path.join(__dirname, 'pgp_keys.asc'),
     ], async (err, importResult) => {
       if (err) {
         setFailure('Codecov: Error importing pgp key', failCi);

@@ -32685,12 +32685,13 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
             }));
         };
         // Import gpg key
-        gpg.call('', [
+        const pgpKeyRes = yield (0,undici.request)('https://keybase.io/codecovsecurity/pgp_keys.asc');
+        const pgpKey = yield pgpKeyRes.body.text();
+        gpg.call(pgpKey, [
             '--logger-fd',
             '1',
             '--no-default-keyring',
             '--import',
-            __nccwpck_require__.ab + "pgp_keys.asc",
         ], (err, importResult) => validate_awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 setFailure('Codecov: Error importing pgp key', failCi);
