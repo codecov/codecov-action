@@ -9,9 +9,6 @@ jobs:
           curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
       - name: Run validation
         run: |
-          gpg --no-tty --generate-key
-      - name: Run validation
-        run: |
           gpg --no-tty --lsign-key ED779869
       - name: Run validation
         run: |
