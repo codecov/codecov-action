@@ -7,11 +7,23 @@ jobs:
       - name: Run validation
         run: |
           curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+      - name: Run validation
+        run: |
           gpg --no-tty --generate-key
+      - name: Run validation
+        run: |
           gpg --no-tty --lsign-key ED779869
+      - name: Run validation
+        run: |
           curl -Os https://cli.codecov.io/latest/macos/codecov
+      - name: Run validation
+        run: |
           curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM
+      - name: Run validation
+        run: |
           curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM.sig
+      - name: Run validation
+        run: |
           gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
   run:
     runs-on: ${{ matrix.os }}
