@@ -1,6 +1,16 @@
 name: Workflow for Codecov Action
 on: [push, pull_request]
 jobs:
+  test-validation:
+    runs-on: macos-latest
+    steps:
+      - name: Run validation
+        run: |
+          curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+          curl -Os https://cli.codecov.io/latest/macos/codecov
+          curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM
+          curl -Os https://cli.codecov.io/latest/macos/codecov.SHA256SUM.sig
+          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
   run:
     runs-on: ${{ matrix.os }}
     strategy:
