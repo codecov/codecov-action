@@ -5,6 +5,6 @@ set -e
 npm install
 npm run lint
 npm run build
-git add dist/
 chmod u+x dist/test.sh
+git add dist/
 git add package-lock.json
