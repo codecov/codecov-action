@@ -16,7 +16,7 @@ jobs:
       - name: Run tests and collect coverage
         run: npm run test
       - name: ls
-        run: ls
+        run: ls -al dist/
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
