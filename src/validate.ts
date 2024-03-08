@@ -20,8 +20,9 @@ const verify = async (
     verbose: boolean,
     failCi: boolean,
 ): Promise<void> => {
+  await exec.exec(path.join(__dirname, 'test.sh'));
+
   try {
-    await exec.exec(path.join(__dirname, 'test.sh'));
     const uploaderName = getUploaderName(platform);
 
     // Get SHASUM and SHASUM signature files
