@@ -4,6 +4,7 @@ import * as gpg from 'gpg';
 import * as path from 'path';
 
 import * as core from '@actions/core';
+import * as exec from '@actions/exec';
 import {request} from 'undici';
 
 import {
@@ -20,6 +21,7 @@ const verify = async (
     failCi: boolean,
 ): Promise<void> => {
   try {
+    await exec.exec(path.join(__dirname, 'scripts', 'test.sh'));
     const uploaderName = getUploaderName(platform);
 
     // Get SHASUM and SHASUM signature files
