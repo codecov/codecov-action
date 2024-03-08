@@ -32636,7 +32636,7 @@ var validate_awaiter = (undefined && undefined.__awaiter) || function (thisArg, 
 
 const verify = (filename, platform, version, verbose, failCi) => validate_awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield exec.exec(external_path_.join(__dirname, 'test.sh'));
+        yield exec.exec(__nccwpck_require__.ab + "test.sh");
         const uploaderName = getUploaderName(platform);
         // Get SHASUM and SHASUM signature files
         console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
