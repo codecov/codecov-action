@@ -22,6 +22,7 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
+.coverage
 
 # nyc test coverage
 .nyc_output
@@ -93,3 +94,7 @@ public/
 
 # macOS Finder metadata
 .DS_Store
+
+# python things
+*.py[oc]
+__pycache__
