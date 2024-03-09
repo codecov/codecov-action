@@ -115,7 +115,7 @@ runs:
       if: ${{ inputs.os }} != ""
       shell: bash
       run: |
-        ./determine_os.sh
+        ./dist/scripts/determine_os.sh
 
     - name: Upload to Codecov
       id: codecov-upload
