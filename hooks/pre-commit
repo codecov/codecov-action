@@ -2,9 +2,6 @@
 
 set -e
 
-npm install
-npm run lint
-npm run build
-chmod u+x dist/test.sh
+cp -r src/scripts dist/
+chmod -R u+x dist/scripts/
 git add dist/
-git add package-lock.json
