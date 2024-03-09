@@ -108,5 +108,9 @@ branding:
   color: 'red'
   icon: 'umbrella'
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - id: codecov-upload
+      run: |
+        echo "meow"
+      shell: bash
