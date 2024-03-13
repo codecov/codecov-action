@@ -7,3 +7,4 @@ codecov_os="windows"
   osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
 [[ $osID == "alpine" ]] && codecov_os="alpine"
 echo "==> ${codecov_os} detected"
+echo "CODECOV_OS=${codecov_os}" >> "$GITHUB_OUTPUT"
