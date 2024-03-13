@@ -108,5 +108,26 @@ branding:
   color: 'red'
   icon: 'umbrella'
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Determine os
+      id: determine-os
+      if: ${{ inputs.os }} != ""
+      shell: bash
+      run: |
+        ./dist/scripts/determine_os.sh
+
+    - name: Upload to Codecov
+      id: codecov-upload
+      shell: bash
+      run: |
+        echo $CODECOV_OS
+        gpg --import ./dist/pgp_keys.asc
+        curl -Os https://cli.codecov.io/latest/$CODECOV_OS/codecov
+        curl -Os https://cli.codecov.io/latest/$CODECOV_OS/codecov.SHA256SUM
+        curl -Os https://cli.codecov.io/latest/$CODECOV_OS/codecov.SHA256SUM.sig
+        gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
+
+        shasum -a 256 -c codecov.SHA256SUM
+        sudo chmod +x codecov
+        ./codecov

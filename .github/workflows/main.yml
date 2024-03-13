@@ -5,16 +5,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest, macos-latest-xlarge]
+        #os: [macos-latest, windows-latest, ubuntu-latest, macos-latest-xlarge]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r demo/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest --cov demo
+      - name: ls
+        run: ls -al dist/
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
