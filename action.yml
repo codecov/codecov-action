@@ -121,7 +121,7 @@ runs:
       id: codecov-upload
       shell: bash
       run: |
-        gpg --import dist/pgp_keys.asc
+        gpg --import ./dist/pgp_keys.asc
         curl -Os https://cli.codecov.io/latest/${CODECOV_OS}/codecov
         curl -Os https://cli.codecov.io/latest/${CODECOV_OS}/codecov.SHA256SUM
         curl -Os https://cli.codecov.io/latest/${CODECOV_OS}/codecov.SHA256SUM.sig
