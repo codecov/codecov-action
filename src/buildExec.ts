@@ -3,6 +3,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
+import {setFailure} from './helpers';
 
 const context = github.context;
 
@@ -17,15 +18,36 @@ const isTrue = (variable) => {
   );
 };
 
+const getToken = async () => {
+  let token = core.getInput('token');
+  let url = core.getInput('url');
+  const useOIDC = isTrue(core.getInput('use_oidc'));
 
-const buildCommitExec = () => {
+  if (useOIDC) {
+    if (!url) {
+      url = 'https://codecov.io';
+    }
+    try {
+      token = await core.getIDToken(url);
+      return token;
+    } catch (err) {
+      setFailure(
+          `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,
+          true,
+      );
+    }
+  }
+  return token;
+};
+
+const buildCommitExec = async () => {
   const commitParent = core.getInput('commit_parent');
   const gitService = core.getInput('git_service');
   const overrideBranch = core.getInput('override_branch');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
+  const token = await getToken();
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
 
@@ -101,12 +123,12 @@ const buildGeneralExec = () => {
   return {args, verbose};
 };
 
-const buildReportExec = () => {
+const buildReportExec = async () => {
   const gitService = core.getInput('git_service');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
+  const token = await getToken();
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
 
@@ -158,7 +180,7 @@ const buildReportExec = () => {
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
-const buildUploadExec = () => {
+const buildUploadExec = async () => {
   const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
   const disableSafeDirectory = isTrue(core.getInput('disable_safe_directory'));
   const disableSearch = isTrue(core.getInput('disable_search'));
@@ -185,7 +207,7 @@ const buildUploadExec = () => {
   const rootDir = core.getInput('root_dir');
   const searchDir = core.getInput('directory');
   const slug = core.getInput('slug');
-  const token = core.getInput('token');
+  const token = await getToken();
   let uploaderVersion = core.getInput('version');
   const useLegacyUploadEndpoint = isTrue(
       core.getInput('use_legacy_upload_endpoint'),

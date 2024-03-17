@@ -32452,8 +32452,94 @@ var exec = __nccwpck_require__(1514);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
+;// CONCATENATED MODULE: ./src/helpers.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+const PLATFORMS = [
+    'linux',
+    'macos',
+    'windows',
+    'alpine',
+    'linux-arm64',
+    'alpine-arm64',
+];
+const setFailure = (message, failCi) => {
+    failCi ? core.setFailed(message) : core.warning(message);
+    if (failCi) {
+        process.exit();
+    }
+};
+const getUploaderName = (platform) => {
+    if (isWindows(platform)) {
+        return 'codecov.exe';
+    }
+    else {
+        return 'codecov';
+    }
+};
+const isValidPlatform = (platform) => {
+    return PLATFORMS.includes(platform);
+};
+const isWindows = (platform) => {
+    return platform === 'windows';
+};
+const getPlatform = (os) => {
+    var _a;
+    if (isValidPlatform(os)) {
+        core.info(`==> ${os} OS provided`);
+        return os;
+    }
+    const platform = (_a = process.env.RUNNER_OS) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+    if (isValidPlatform(platform)) {
+        core.info(`==> ${platform} OS detected`);
+        return platform;
+    }
+    core.info('==> Could not detect OS or provided OS is invalid. Defaulting to linux');
+    return 'linux';
+};
+const getBaseUrl = (platform, version) => {
+    return `https://cli.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
+};
+const getCommand = (filename, generalArgs, command) => {
+    const fullCommand = [filename, ...generalArgs, command];
+    core.info(`==> Running command '${fullCommand.join(' ')}'`);
+    return fullCommand;
+};
+const setSafeDirectory = () => __awaiter(void 0, void 0, void 0, function* () {
+    const command = ([
+        'git',
+        'config',
+        '--global',
+        '--add',
+        'safe.directory',
+        `${process.env['GITHUB_WORKSPACE']}`,
+    ].join(' '));
+    core.info(`==> Running ${command}`);
+    yield exec.exec(command);
+});
+
+
 ;// CONCATENATED MODULE: ./src/buildExec.ts
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+var buildExec_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
 
 
 const context = github.context;
@@ -32465,14 +32551,32 @@ const isTrue = (variable) => {
         lowercase === 'y' ||
         lowercase === 'yes');
 };
-const buildCommitExec = () => {
+const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
+    let token = core.getInput('token');
+    let url = core.getInput('url');
+    const useOIDC = isTrue(core.getInput('use_oidc'));
+    if (useOIDC) {
+        if (!url) {
+            url = 'https://codecov.io';
+        }
+        try {
+            token = yield core.getIDToken(url);
+            return token;
+        }
+        catch (err) {
+            setFailure(`Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`, true);
+        }
+    }
+    return token;
+});
+const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const commitParent = core.getInput('commit_parent');
     const gitService = core.getInput('git_service');
     const overrideBranch = core.getInput('override_branch');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
-    const token = core.getInput('token');
+    const token = yield getToken();
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
     const workingDir = core.getInput('working-directory');
     const commitCommand = 'create-commit';
@@ -32519,7 +32623,7 @@ const buildCommitExec = () => {
         commitOptions.cwd = workingDir;
     }
     return { commitExecArgs, commitOptions, commitCommand };
-};
+});
 const buildGeneralExec = () => {
     const codecovYmlPath = core.getInput('codecov_yml_path');
     const url = core.getInput('url');
@@ -32536,12 +32640,12 @@ const buildGeneralExec = () => {
     }
     return { args, verbose };
 };
-const buildReportExec = () => {
+const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const gitService = core.getInput('git_service');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
-    const token = core.getInput('token');
+    const token = yield getToken();
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
     const workingDir = core.getInput('working-directory');
     const reportCommand = 'create-report';
@@ -32582,8 +32686,8 @@ const buildReportExec = () => {
         reportOptions.cwd = workingDir;
     }
     return { reportExecArgs, reportOptions, reportCommand };
-};
-const buildUploadExec = () => {
+});
+const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
     const disableSafeDirectory = isTrue(core.getInput('disable_safe_directory'));
     const disableSearch = isTrue(core.getInput('disable_search'));
@@ -32610,7 +32714,7 @@ const buildUploadExec = () => {
     const rootDir = core.getInput('root_dir');
     const searchDir = core.getInput('directory');
     const slug = core.getInput('slug');
-    const token = core.getInput('token');
+    const token = yield getToken();
     let uploaderVersion = core.getInput('version');
     const useLegacyUploadEndpoint = isTrue(core.getInput('use_legacy_upload_endpoint'));
     const workingDir = core.getInput('working-directory');
@@ -32737,82 +32841,6 @@ const buildUploadExec = () => {
         uploaderVersion,
         uploadCommand,
     };
-};
-
-
-;// CONCATENATED MODULE: ./src/helpers.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-const PLATFORMS = [
-    'linux',
-    'macos',
-    'windows',
-    'alpine',
-    'linux-arm64',
-    'alpine-arm64',
-];
-const setFailure = (message, failCi) => {
-    failCi ? core.setFailed(message) : core.warning(message);
-    if (failCi) {
-        process.exit();
-    }
-};
-const getUploaderName = (platform) => {
-    if (isWindows(platform)) {
-        return 'codecov.exe';
-    }
-    else {
-        return 'codecov';
-    }
-};
-const isValidPlatform = (platform) => {
-    return PLATFORMS.includes(platform);
-};
-const isWindows = (platform) => {
-    return platform === 'windows';
-};
-const getPlatform = (os) => {
-    var _a;
-    if (isValidPlatform(os)) {
-        core.info(`==> ${os} OS provided`);
-        return os;
-    }
-    const platform = (_a = process.env.RUNNER_OS) === null || _a === void 0 ? void 0 : _a.toLowerCase();
-    if (isValidPlatform(platform)) {
-        core.info(`==> ${platform} OS detected`);
-        return platform;
-    }
-    core.info('==> Could not detect OS or provided OS is invalid. Defaulting to linux');
-    return 'linux';
-};
-const getBaseUrl = (platform, version) => {
-    return `https://cli.codecov.io/${version}/${platform}/${getUploaderName(platform)}`;
-};
-const getCommand = (filename, generalArgs, command) => {
-    const fullCommand = [filename, ...generalArgs, command];
-    core.info(`==> Running command '${fullCommand.join(' ')}'`);
-    return fullCommand;
-};
-const setSafeDirectory = () => __awaiter(void 0, void 0, void 0, function* () {
-    const command = ([
-        'git',
-        'config',
-        '--global',
-        '--add',
-        'safe.directory',
-        `${process.env['GITHUB_WORKSPACE']}`,
-    ].join(' '));
-    core.info(`==> Running ${command}`);
-    yield exec.exec(command);
 });
 
 
@@ -32957,68 +32985,71 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 let failCi;
-try {
-    const { commitExecArgs, commitOptions, commitCommand } = buildCommitExec();
-    const { reportExecArgs, reportOptions, reportCommand } = buildReportExec();
-    const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = buildUploadExec();
-    const { args, verbose } = buildGeneralExec();
-    const platform = getPlatform(os);
-    const filename = external_path_.join(__dirname, getUploaderName(platform));
-    external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
-        // Image will be stored at this path
-        const filePath = external_fs_.createWriteStream(filename);
-        res.pipe(filePath);
-        filePath
-            .on('error', (err) => {
-            setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
-        }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
-            filePath.close();
-            yield validate(filename, platform, uploaderVersion, verbose, failCi);
-            yield version(platform, uploaderVersion);
-            yield external_fs_.chmodSync(filename, '777');
-            if (!disableSafeDirectory) {
-                yield setSafeDirectory();
-            }
-            const unlink = () => {
-                external_fs_.unlink(filename, (err) => {
-                    if (err) {
-                        setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
-                    }
+const run = () => src_awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { commitExecArgs, commitOptions, commitCommand } = yield buildCommitExec();
+        const { reportExecArgs, reportOptions, reportCommand } = yield buildReportExec();
+        const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = yield buildUploadExec();
+        const { args, verbose } = buildGeneralExec();
+        const platform = getPlatform(os);
+        const filename = external_path_.join(__dirname, getUploaderName(platform));
+        external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+            // Image will be stored at this path
+            const filePath = external_fs_.createWriteStream(filename);
+            res.pipe(filePath);
+            filePath
+                .on('error', (err) => {
+                setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
+            }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
+                filePath.close();
+                yield validate(filename, platform, uploaderVersion, verbose, failCi);
+                yield version(platform, uploaderVersion);
+                yield external_fs_.chmodSync(filename, '777');
+                if (!disableSafeDirectory) {
+                    yield setSafeDirectory();
+                }
+                const unlink = () => {
+                    external_fs_.unlink(filename, (err) => {
+                        if (err) {
+                            setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
+                        }
+                    });
+                };
+                const doUpload = () => src_awaiter(void 0, void 0, void 0, function* () {
+                    yield exec.exec(getCommand(filename, args, uploadCommand).join(' '), uploadExecArgs, uploadOptions)
+                        .catch((err) => {
+                        setFailure(`Codecov:
+                        Failed to properly upload report: ${err.message}`, failCi);
+                    });
                 });
-            };
-            const doUpload = () => src_awaiter(void 0, void 0, void 0, function* () {
-                yield exec.exec(getCommand(filename, args, uploadCommand).join(' '), uploadExecArgs, uploadOptions)
-                    .catch((err) => {
-                    setFailure(`Codecov:
-                      Failed to properly upload report: ${err.message}`, failCi);
+                const createReport = () => src_awaiter(void 0, void 0, void 0, function* () {
+                    yield exec.exec(getCommand(filename, args, reportCommand).join(' '), reportExecArgs, reportOptions)
+                        .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
+                        if (exitCode == 0) {
+                            yield doUpload();
+                        }
+                    })).catch((err) => {
+                        setFailure(`Codecov:
+                        Failed to properly create report: ${err.message}`, failCi);
+                    });
                 });
-            });
-            const createReport = () => src_awaiter(void 0, void 0, void 0, function* () {
-                yield exec.exec(getCommand(filename, args, reportCommand).join(' '), reportExecArgs, reportOptions)
+                yield exec.exec(getCommand(filename, args, commitCommand).join(' '), commitExecArgs, commitOptions)
                     .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
                     if (exitCode == 0) {
-                        yield doUpload();
+                        yield createReport();
                     }
+                    unlink();
                 })).catch((err) => {
-                    setFailure(`Codecov:
-                      Failed to properly create report: ${err.message}`, failCi);
+                    setFailure(`Codecov: Failed to properly create commit: ${err.message}`, failCi);
                 });
-            });
-            yield exec.exec(getCommand(filename, args, commitCommand).join(' '), commitExecArgs, commitOptions)
-                .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
-                if (exitCode == 0) {
-                    yield createReport();
-                }
-                unlink();
-            })).catch((err) => {
-                setFailure(`Codecov: Failed to properly create commit: ${err.message}`, failCi);
-            });
-        }));
-    });
-}
-catch (err) {
-    setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
-}
+            }));
+        });
+    }
+    catch (err) {
+        setFailure(`Codecov: Encountered an unexpected error ${err.message}`, failCi);
+    }
+});
+run();
 
 })();
 
