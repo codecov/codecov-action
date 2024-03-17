@@ -3,14 +3,12 @@ import {request} from 'undici';
 
 const versionInfo = async (
     platform: string,
-    version?: string,
+    version: string,
 ): Promise<void> => {
-  if (version) {
-    core.info(`==> Running version ${version}`);
-  }
+  core.info(`==> Running version ${version}`);
 
   try {
-    const metadataRes = await request(`https://cli.codecov.io/${platform}/latest`, {
+    const metadataRes = await request(`https://cli.codecov.io/${platform}/${version}`, {
       headers: {'Accept': 'application/json'},
     });
     const metadata = await metadataRes.body.json();
