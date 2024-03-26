@@ -1,6 +1,6 @@
 {
   "name": "codecov-action",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Upload coverage reports to Codecov from GitHub Actions",
   "main": "index.js",
   "scripts": {
