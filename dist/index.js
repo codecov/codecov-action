@@ -32379,7 +32379,7 @@ const buildReportExec = () => {
 };
 const buildUploadExec = () => {
     const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
-    const disableSafeDirectory = isTrue(core.getInput('diable_safe_directory'));
+    const disableSafeDirectory = isTrue(core.getInput('disable_safe_directory'));
     const disableSearch = isTrue(core.getInput('disable_search'));
     const dryRun = isTrue(core.getInput('dry_run'));
     const envVars = core.getInput('env_vars');
