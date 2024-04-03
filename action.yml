@@ -95,6 +95,9 @@ inputs:
   use_legacy_upload_endpoint:
     description: 'Use the legacy upload endpoint'
     required: false
+  use_oidc:
+    description: 'Use OIDC instead of token. This will ignore any token supplied'
+    default: false
   verbose:
     description: 'Specify whether the Codecov output should be verbose'
     required: false

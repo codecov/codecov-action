@@ -10,7 +10,7 @@ import {
 
 const context = github.context;
 
-test('general args', () => {
+test('general args', async () => {
   const envs = {
     codecov_yml_path: 'dev/codecov.yml',
     url: 'https://codecov.enterprise.com',
@@ -20,7 +20,7 @@ test('general args', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {args, verbose} = buildGeneralExec();
+  const {args, verbose} = await buildGeneralExec();
 
   expect(args).toEqual(
       expect.arrayContaining([
@@ -36,13 +36,12 @@ test('general args', () => {
   }
 });
 
-
-test('upload args using context', () => {
+test('upload args using context', async () => {
   const expectedArgs = [
     '--git-service',
     'github',
   ];
-  const {uploadExecArgs, uploadCommand} = buildUploadExec();
+  const {uploadExecArgs, uploadCommand} = await buildUploadExec();
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
@@ -54,7 +53,7 @@ test('upload args using context', () => {
   expect(uploadCommand).toEqual('do-upload');
 });
 
-test('upload args', () => {
+test('upload args', async () => {
   const envs = {
     'codecov_yml_path': 'dev/codecov.yml',
     'commit_parent': 'fakeparentcommit',
@@ -94,7 +93,7 @@ test('upload args', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {uploadExecArgs, uploadCommand} = buildUploadExec();
+  const {uploadExecArgs, uploadCommand} = await buildUploadExec();
   const expectedArgs = [
     '--disable-file-fixes',
     '--disable-search',
@@ -156,7 +155,7 @@ test('upload args', () => {
 });
 
 
-test('report args', () => {
+test('report args', async () => {
   const envs = {
     git_service: 'github_enterprise',
     override_commit: '9caabca5474b49de74ef5667deabaf74cdacc244',
@@ -169,7 +168,7 @@ test('report args', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {reportExecArgs, reportCommand} = buildReportExec();
+  const {reportExecArgs, reportCommand} = await buildReportExec();
 
   const expectedArgs = [
     '--git-service',
@@ -191,7 +190,7 @@ test('report args', () => {
 });
 
 
-test('report args using context', () => {
+test('report args using context', async () => {
   const envs = {
     token: 'd3859757-ab80-4664-924d-aef22fa7557b',
   };
@@ -206,7 +205,7 @@ test('report args using context', () => {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
 
-  const {reportExecArgs, reportCommand} = buildReportExec();
+  const {reportExecArgs, reportCommand} = await buildReportExec();
 
   expect(reportExecArgs).toEqual(expectedArgs);
   expect(reportCommand).toEqual('create-report');
@@ -216,7 +215,7 @@ test('report args using context', () => {
 });
 
 
-test('commit args', () => {
+test('commit args', async () => {
   const envs = {
     git_service: 'github_enterprise',
     commit_parent: '83231650328f11695dfb754ca0f540516f188d27',
@@ -231,7 +230,7 @@ test('commit args', () => {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
 
-  const {commitExecArgs, commitCommand} = buildCommitExec();
+  const {commitExecArgs, commitCommand} = await buildCommitExec();
   const expectedArgs = [
     '--parent-sha',
     '83231650328f11695dfb754ca0f540516f188d27',
@@ -255,13 +254,13 @@ test('commit args', () => {
   }
 });
 
-test('commit args using context', () => {
+test('commit args using context', async () => {
   const expectedArgs :string[] = [
     '--git-service',
     'github',
   ];
 
-  const {commitExecArgs, commitCommand} = buildCommitExec();
+  const {commitExecArgs, commitCommand} = await buildCommitExec();
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
   }
