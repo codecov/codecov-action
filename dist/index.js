@@ -32551,6 +32551,17 @@ const isTrue = (variable) => {
         lowercase === 'y' ||
         lowercase === 'yes');
 };
+const getGitService = () => {
+    const overrideGitService = core.getInput('git_service');
+    const serverUrl = process.env.GITHUB_SERVER_URL;
+    if (overrideGitService) {
+        return overrideGitService;
+    }
+    else if (serverUrl !== undefined && serverUrl !== 'https://github.com') {
+        return 'github_enterprise';
+    }
+    return 'github';
+};
 const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     let token = core.getInput('token');
     let url = core.getInput('url');
@@ -32571,7 +32582,7 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
 });
 const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const commitParent = core.getInput('commit_parent');
-    const gitService = core.getInput('git_service');
+    const gitService = getGitService();
     const overrideBranch = core.getInput('override_branch');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
@@ -32596,7 +32607,7 @@ const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function
     if (commitParent) {
         commitExecArgs.push('--parent-sha', `${commitParent}`);
     }
-    commitExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
+    commitExecArgs.push('--git-service', `${gitService}`);
     if (overrideBranch) {
         commitExecArgs.push('-B', `${overrideBranch}`);
     }
@@ -32641,7 +32652,7 @@ const buildGeneralExec = () => {
     return { args, verbose };
 };
 const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
-    const gitService = core.getInput('git_service');
+    const gitService = getGitService();
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
@@ -32662,7 +32673,7 @@ const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function
     if (token) {
         reportOptions.env.CODECOV_TOKEN = token;
     }
-    reportExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
+    reportExecArgs.push('--git-service', `${gitService}`);
     if (overrideCommit) {
         reportExecArgs.push('-C', `${overrideCommit}`);
     }
@@ -32698,7 +32709,7 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
     const file = core.getInput('file');
     const files = core.getInput('files');
     const flags = core.getInput('flags');
-    const gitService = core.getInput('git_service');
+    const gitService = getGitService();
     const handleNoReportsFound = isTrue(core.getInput('handle_no_reports_found'));
     const jobCode = core.getInput('job_code');
     const name = core.getInput('name');
@@ -32771,7 +32782,7 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
             uploadExecArgs.push('-F', `${f}`);
         });
     }
-    uploadExecArgs.push('--git-service', `${gitService ? gitService : 'github'}`);
+    uploadExecArgs.push('--git-service', `${gitService}`);
     if (handleNoReportsFound) {
         uploadExecArgs.push('--handle-no-reports-found');
     }

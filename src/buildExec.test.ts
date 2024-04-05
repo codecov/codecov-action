@@ -7,8 +7,18 @@ import {
   buildUploadExec,
 } from './buildExec';
 
-
 const context = github.context;
+
+let OLDOS = process.env.RUNNER_OS;
+
+beforeEach(() => {
+  jest.resetModules();
+  OLDOS = process.env.RUNNER_OS;
+});
+
+afterAll(() => {
+  process.env.RUNNER_OS = OLDOS;
+});
 
 test('general args', async () => {
   const envs = {
@@ -259,6 +269,26 @@ test('commit args using context', async () => {
     '--git-service',
     'github',
   ];
+
+  const {commitExecArgs, commitCommand} = await buildCommitExec();
+  if (context.eventName == 'pull_request') {
+    expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+  }
+  if (context.eventName == 'pull_request_target') {
+    expectedArgs.push('-P', `${context.payload.number}`);
+  }
+
+  expect(commitExecArgs).toEqual(expectedArgs);
+  expect(commitCommand).toEqual('create-commit');
+});
+
+test('commit args using github server url', async () => {
+  const expectedArgs :string[] = [
+    '--git-service',
+    'github_enterprise',
+  ];
+
+  process.env.GITHUB_SERVER_URL = 'https://example.com';
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
   if (context.eventName == 'pull_request') {
