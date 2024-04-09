@@ -206,6 +206,8 @@ const buildUploadExec = async () => {
   const handleNoReportsFound = isTrue(core.getInput('handle_no_reports_found'));
   const jobCode = core.getInput('job_code');
   const name = core.getInput('name');
+  const networkFilter = core.getInput('network_filter');
+  const networkPrefix = core.getInput('network_prefix');
   const os = core.getInput('os');
   const overrideBranch = core.getInput('override_branch');
   const overrideBuild = core.getInput('override_build');
@@ -288,6 +290,12 @@ const buildUploadExec = async () => {
   }
   if (name) {
     uploadExecArgs.push('-n', `${name}`);
+  }
+  if (networkFilter) {
+    uploadExecArgs.push('--network-filter', `${networkFilter}`);
+  }
+  if (networkPrefix) {
+    uploadExecArgs.push('--network-prefix', `${networkPrefix}`);
   }
   if (overrideBranch) {
     uploadExecArgs.push('-B', `${overrideBranch}`);
