@@ -85,7 +85,7 @@ const verify = async (
         path.join(__dirname, `${uploaderName}.SHA256SUM`),
       ], async (err, verifyResult) => {
         if (err) {
-          setFailure('Codecov: Error importing pgp key', failCi);
+          setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
         }
         core.info(verifyResult);
         await validateSha();
@@ -101,7 +101,7 @@ const verify = async (
       path.join(__dirname, 'pgp_keys.asc'),
     ], async (err, importResult) => {
       if (err) {
-        setFailure('Codecov: Error importing pgp key', failCi);
+        setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
       }
       core.info(importResult);
       verifySignature();
