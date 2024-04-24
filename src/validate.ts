@@ -9,7 +9,6 @@ import {request} from 'undici';
 import {
   getBaseUrl,
   getUploaderName,
-  setFailure,
 } from './helpers';
 
 const verify = async (
@@ -17,7 +16,6 @@ const verify = async (
     platform: string,
     version: string,
     verbose: boolean,
-    failCi: boolean,
 ): Promise<void> => {
   try {
     const uploaderName = getUploaderName(platform);
@@ -68,10 +66,9 @@ const verify = async (
       if (hash === shasum) {
         core.info(`==> Uploader SHASUM verified (${hash})`);
       } else {
-        setFailure(
+        throw new Error(
             'Codecov: Uploader shasum does not match -- ' +
               `uploader hash: ${hash}, public hash: ${shasum}`,
-            failCi,
         );
       }
     };
@@ -85,7 +82,7 @@ const verify = async (
         path.join(__dirname, `${uploaderName}.SHA256SUM`),
       ], async (err, verifyResult) => {
         if (err) {
-          setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
+          throw new Error(`Codecov: Error importing pgp key: ${err.message}`);
         }
         core.info(verifyResult);
         await validateSha();
@@ -101,13 +98,13 @@ const verify = async (
       path.join(__dirname, 'pgp_keys.asc'),
     ], async (err, importResult) => {
       if (err) {
-        setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
+        throw new Error(`Codecov: Error importing pgp key: ${err.message}`);
       }
       core.info(importResult);
       verifySignature();
     });
   } catch (err) {
-    setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
+    throw new Error(`Codecov: Error validating uploader: ${err.message}`);
   }
 };
 export default verify;

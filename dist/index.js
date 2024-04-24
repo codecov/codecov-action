@@ -32886,7 +32886,7 @@ var validate_awaiter = (undefined && undefined.__awaiter) || function (thisArg, 
 
 
 
-const verify = (filename, platform, version, verbose, failCi) => validate_awaiter(void 0, void 0, void 0, function* () {
+const verify = (filename, platform, version, verbose) => validate_awaiter(void 0, void 0, void 0, function* () {
     try {
         const uploaderName = getUploaderName(platform);
         // Get SHASUM and SHASUM signature files
@@ -32918,8 +32918,8 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 core.info(`==> Uploader SHASUM verified (${hash})`);
             }
             else {
-                setFailure('Codecov: Uploader shasum does not match -- ' +
-                    `uploader hash: ${hash}, public hash: ${shasum}`, failCi);
+                throw new Error('Codecov: Uploader shasum does not match -- ' +
+                    `uploader hash: ${hash}, public hash: ${shasum}`);
             }
         });
         const verifySignature = () => {
@@ -32931,7 +32931,7 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 external_path_.join(__dirname, `${uploaderName}.SHA256SUM`),
             ], (err, verifyResult) => validate_awaiter(void 0, void 0, void 0, function* () {
                 if (err) {
-                    setFailure('Codecov: Error importing pgp key', failCi);
+                    throw new Error(`Codecov: Error importing pgp key: ${err.message}`);
                 }
                 core.info(verifyResult);
                 yield validateSha();
@@ -32946,14 +32946,14 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
             __nccwpck_require__.ab + "pgp_keys.asc",
         ], (err, importResult) => validate_awaiter(void 0, void 0, void 0, function* () {
             if (err) {
-                setFailure('Codecov: Error importing pgp key', failCi);
+                throw new Error(`Codecov: Error importing pgp key: ${err.message}`);
             }
             core.info(importResult);
             verifySignature();
         }));
     }
     catch (err) {
-        setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
+        throw new Error(`Codecov: Error validating uploader: ${err.message}`);
     }
 });
 /* harmony default export */ const validate = (verify);
@@ -33021,7 +33021,21 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
                 setFailure(`Codecov: Failed to write uploader binary: ${err.message}`, true);
             }).on('finish', () => src_awaiter(void 0, void 0, void 0, function* () {
                 filePath.close();
-                yield validate(filename, platform, uploaderVersion, verbose, failCi);
+                let verifyRetries = 3;
+                while (verifyRetries > 0) {
+                    try {
+                        yield validate(filename, platform, uploaderVersion, verbose);
+                        break;
+                    }
+                    catch (err) {
+                        if (verifyRetries > 0) {
+                            verifyRetries--;
+                        }
+                        else {
+                            setFailure(err.message, failCi);
+                        }
+                    }
+                }
                 yield version(platform, uploaderVersion);
                 yield external_fs_.chmodSync(filename, '777');
                 if (!disableSafeDirectory) {

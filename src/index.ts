@@ -55,7 +55,19 @@ const run = async () => {
           }).on('finish', async () => {
             filePath.close();
 
-            await verify(filename, platform, uploaderVersion, verbose, failCi);
+            let verifyRetries = 3;
+            while (verifyRetries > 0) {
+              try {
+                await verify(filename, platform, uploaderVersion, verbose);
+                break;
+              } catch (err) {
+                if (verifyRetries > 0) {
+                  verifyRetries--;
+                } else {
+                  setFailure(err.message, failCi);
+                }
+              }
+            }
             await versionInfo(platform, uploaderVersion);
             await fs.chmodSync(filename, '777');
             if (!disableSafeDirectory) {
