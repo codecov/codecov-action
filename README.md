@@ -35,7 +35,7 @@ Inside your `.github/workflows/workflow.yml` file:
 
 ```yaml
 steps:
-- uses: actions/checkout@master
+- uses: actions/checkout@main
 - uses: codecov/codecov-action@v4
   with:
     fail_ci_if_error: true # optional (default = false)
@@ -50,7 +50,7 @@ The Codecov token can also be passed in via environment variables:
 
 ```yaml
 steps:
-- uses: actions/checkout@master
+- uses: actions/checkout@main
 - uses: codecov/codecov-action@v4
   with:
     fail_ci_if_error: true # optional (default = false)
@@ -130,9 +130,9 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.10'
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@main
     - name: Setup Python
-      uses: actions/setup-python@master
+      uses: actions/setup-python@main
       with:
         python-version: 3.10
     - name: Generate coverage report
