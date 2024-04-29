@@ -7,7 +7,7 @@ import {setFailure} from './helpers';
 
 const context = github.context;
 
-const isTrue = (variable) => {
+const isTrue = (variable: string): boolean => {
   const lowercase = variable.toLowerCase();
   return (
     lowercase === '1' ||
@@ -18,7 +18,7 @@ const isTrue = (variable) => {
   );
 };
 
-const getGitService = () => {
+const getGitService = (): string => {
   const overrideGitService = core.getInput('git_service');
   const serverUrl = process.env.GITHUB_SERVER_URL;
   if (overrideGitService) {
@@ -29,7 +29,7 @@ const getGitService = () => {
   return 'github';
 };
 
-const getToken = async () => {
+const getToken = async (): Promise<string> => {
   let token = core.getInput('token');
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -51,7 +51,11 @@ const getToken = async () => {
   return token;
 };
 
-const buildCommitExec = async () => {
+const buildCommitExec = async (): Promise<{
+  commitExecArgs: any[];
+  commitOptions: any;
+  commitCommand: string;
+}> => {
   const commitParent = core.getInput('commit_parent');
   const gitService = getGitService();
   const overrideBranch = core.getInput('override_branch');
@@ -116,7 +120,10 @@ const buildCommitExec = async () => {
   return {commitExecArgs, commitOptions, commitCommand};
 };
 
-const buildGeneralExec = () => {
+const buildGeneralExec = (): {
+  args: any[];
+  verbose: boolean;
+} => {
   const codecovYmlPath = core.getInput('codecov_yml_path');
   const url = core.getInput('url');
   const verbose = isTrue(core.getInput('verbose'));
@@ -134,7 +141,11 @@ const buildGeneralExec = () => {
   return {args, verbose};
 };
 
-const buildReportExec = async () => {
+const buildReportExec = async (): Promise<{
+  reportExecArgs: any[];
+  reportOptions: any;
+  reportCommand: string;
+}> => {
   const gitService = getGitService();
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
@@ -191,7 +202,15 @@ const buildReportExec = async () => {
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
-const buildUploadExec = async () => {
+const buildUploadExec = async (): Promise<{
+  uploadExecArgs: any[];
+  uploadOptions: any;
+  disableSafeDirectory: boolean;
+  failCi: boolean;
+  os: string;
+  uploaderVersion: string;
+  uploadCommand: string;
+}> => {
   const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
   const disableSafeDirectory = isTrue(core.getInput('disable_safe_directory'));
   const disableSearch = isTrue(core.getInput('disable_search'));

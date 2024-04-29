@@ -24,7 +24,7 @@ import versionInfo from './version';
 
 let failCi;
 
-const run = async () => {
+const run = async (): Promise<void> => {
   try {
     const {commitExecArgs, commitOptions, commitCommand} = await buildCommitExec();
     const {reportExecArgs, reportOptions, reportCommand} = await buildReportExec();
@@ -62,7 +62,7 @@ const run = async () => {
               await setSafeDirectory();
             }
 
-            const unlink = () => {
+            const unlink = (): void => {
               fs.unlink(filename, (err) => {
                 if (err) {
                   setFailure(
@@ -72,7 +72,7 @@ const run = async () => {
                 }
               });
             };
-            const doUpload = async () => {
+            const doUpload = async (): Promise<void> => {
               await exec.exec(getCommand(filename, args, uploadCommand).join(' '),
                   uploadExecArgs,
                   uploadOptions)
@@ -84,7 +84,7 @@ const run = async () => {
                     );
                   });
             };
-            const createReport = async () => {
+            const createReport = async (): Promise<void> => {
               await exec.exec(
                   getCommand(filename, args, reportCommand).join(' '),
                   reportExecArgs,

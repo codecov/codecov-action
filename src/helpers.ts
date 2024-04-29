@@ -8,7 +8,8 @@ const PLATFORMS = [
   'alpine',
   'linux-arm64',
   'alpine-arm64',
-];
+] as const;
+type Platform = typeof PLATFORMS[number];
 
 const setFailure = (message: string, failCi: boolean): void => {
     failCi ? core.setFailed(message) : core.warning(message);
@@ -25,8 +26,8 @@ const getUploaderName = (platform: string): string => {
   }
 };
 
-const isValidPlatform = (platform: string): boolean => {
-  return PLATFORMS.includes(platform);
+const isValidPlatform = (platform: string): platform is Platform => {
+  return PLATFORMS.includes(platform as Platform);
 };
 
 const isWindows = (platform: string): boolean => {
