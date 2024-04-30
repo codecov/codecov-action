@@ -53,7 +53,7 @@ test('upload args using context', async () => {
   ];
   const {uploadExecArgs, uploadCommand} = await buildUploadExec();
   if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
   if (context.eventName == 'pull_request_target') {
     expectedArgs.push('-P', `${context.payload.number}`);
@@ -218,7 +218,7 @@ test('report args using context', async () => {
     'github',
   ];
   if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
 
   const {reportExecArgs, reportCommand} = await buildReportExec();
@@ -278,7 +278,7 @@ test('commit args using context', async () => {
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
   if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
   if (context.eventName == 'pull_request_target') {
     expectedArgs.push('-P', `${context.payload.number}`);
@@ -298,7 +298,7 @@ test('commit args using github server url', async () => {
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
   if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
   if (context.eventName == 'pull_request_target') {
     expectedArgs.push('-P', `${context.payload.number}`);
