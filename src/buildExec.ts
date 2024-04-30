@@ -33,6 +33,7 @@ const isFork = (): boolean => {
   const baseLabel = context.payload.pull_request.base.label;
   const headLabel = context.payload.pull_request.head.label;
 
+  core.info(`base: ${baseLabel} | head: ${headLabel}`);
   return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 
