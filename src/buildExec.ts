@@ -29,7 +29,19 @@ const getGitService = (): string => {
   return 'github';
 };
 
+const isFork = (): boolean => {
+  const baseLabel = context.payload.pull_request.base.label;
+  const headLabel = context.payload.pull_request.head.label;
+
+  return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
+};
+
 const getToken = async (): Promise<string> => {
+  if (isFork) {
+    core.info('==> Fork detected, tokenless uploading used');
+    return Promise.resolve('');
+  }
+
   let token = core.getInput('token');
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
