@@ -41,7 +41,6 @@ const getToken = async (): Promise<string> => {
     core.info('==> Fork detected, tokenless uploading used');
     return Promise.resolve('');
   }
-
   let token = core.getInput('token');
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
