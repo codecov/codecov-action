@@ -30,18 +30,21 @@ const getGitService = (): string => {
 };
 
 const isFork = (): boolean => {
+  if (
+    `${context.eventName}` !== 'pull_request' ||
+    `${context.eventName}` !== 'pull_request_target'
+  ) {
+    return false;
+  }
+
   const baseLabel = context.payload.pull_request.base.label;
   const headLabel = context.payload.pull_request.head.label;
 
-  core.info(`base: ${baseLabel} | head: ${headLabel}`);
+  core.info(`baseRef: ${baseLabel} | headRef: ${headLabel}`);
   return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 
 const getToken = async (): Promise<string> => {
-  const baseLabel = context.payload.pull_request.base.label;
-  const headLabel = context.payload.pull_request.head.label;
-
-  core.info(`base: ${baseLabel} | head: ${headLabel}`);
   if (isFork()) {
     core.info('==> Fork detected, tokenless uploading used');
     return Promise.resolve('');
