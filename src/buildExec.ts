@@ -33,7 +33,6 @@ const getToken = async (): Promise<string> => {
   let token = core.getInput('token');
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
-
   if (useOIDC) {
     if (!url) {
       url = 'https://codecov.io';
