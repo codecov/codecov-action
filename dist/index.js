@@ -32440,12 +32440,12 @@ var __webpack_exports__ = {};
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
 
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(7147);
-// EXTERNAL MODULE: external "https"
-var external_https_ = __nccwpck_require__(5687);
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(1017);
+;// CONCATENATED MODULE: external "node:fs"
+const external_node_fs_namespaceObject = require("node:fs");
+;// CONCATENATED MODULE: external "node:https"
+const external_node_https_namespaceObject = require("node:https");
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = require("node:path");
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
 var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
@@ -32562,7 +32562,21 @@ const getGitService = () => {
     }
     return 'github';
 };
+const isFork = () => {
+    if (`${context.eventName}` !== 'pull_request' ||
+        `${context.eventName}` !== 'pull_request_target') {
+        return false;
+    }
+    const baseLabel = context.payload.pull_request.base.label;
+    const headLabel = context.payload.pull_request.head.label;
+    core.info(`baseRef: ${baseLabel} | headRef: ${headLabel}`);
+    return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
+};
 const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
+    if (isFork()) {
+        core.info('==> Fork detected, tokenless uploading used');
+        return Promise.resolve('');
+    }
     let token = core.getInput('token');
     let url = core.getInput('url');
     const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -32863,8 +32877,8 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
 });
 
 
-// EXTERNAL MODULE: external "crypto"
-var external_crypto_ = __nccwpck_require__(6113);
+;// CONCATENATED MODULE: external "node:crypto"
+const external_node_crypto_namespaceObject = require("node:crypto");
 // EXTERNAL MODULE: ./node_modules/gpg/lib/gpg.js
 var gpg = __nccwpck_require__(40);
 // EXTERNAL MODULE: ./node_modules/undici/index.js
@@ -32896,24 +32910,24 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
         if (verbose) {
             console.log(`Received SHA256SUM ${shasum}`);
         }
-        yield external_fs_.writeFileSync(external_path_.join(__dirname, `${uploaderName}.SHA256SUM`), shasum);
+        yield external_node_fs_namespaceObject.writeFileSync(external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM`), shasum);
         const shaSigRes = yield (0,undici.request)(`${getBaseUrl(platform, version)}.SHA256SUM.sig`);
         const shaSig = yield shaSigRes.body.text();
         if (verbose) {
             console.log(`Received SHA256SUM signature ${shaSig}`);
         }
-        yield external_fs_.writeFileSync(external_path_.join(__dirname, `${uploaderName}.SHA256SUM.sig`), shaSig);
+        yield external_node_fs_namespaceObject.writeFileSync(external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM.sig`), shaSig);
         const validateSha = () => validate_awaiter(void 0, void 0, void 0, function* () {
             const calculateHash = (filename) => validate_awaiter(void 0, void 0, void 0, function* () {
-                const stream = external_fs_.createReadStream(filename);
-                const uploaderSha = external_crypto_.createHash(`sha256`);
+                const stream = external_node_fs_namespaceObject.createReadStream(filename);
+                const uploaderSha = external_node_crypto_namespaceObject.createHash(`sha256`);
                 stream.pipe(uploaderSha);
                 return new Promise((resolve, reject) => {
                     stream.on('end', () => resolve(`${uploaderSha.digest('hex')}  ${uploaderName}`));
                     stream.on('error', reject);
                 });
             });
-            const hash = yield calculateHash(external_path_.join(__dirname, `${uploaderName}`));
+            const hash = yield calculateHash(external_node_path_namespaceObject.join(__dirname, `${uploaderName}`));
             if (hash === shasum) {
                 core.info(`==> Uploader SHASUM verified (${hash})`);
             }
@@ -32927,11 +32941,11 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 '--logger-fd',
                 '1',
                 '--verify',
-                external_path_.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
-                external_path_.join(__dirname, `${uploaderName}.SHA256SUM`),
+                external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
+                external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM`),
             ], (err, verifyResult) => validate_awaiter(void 0, void 0, void 0, function* () {
                 if (err) {
-                    setFailure('Codecov: Error importing pgp key', failCi);
+                    setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
                 }
                 core.info(verifyResult);
                 yield validateSha();
@@ -32943,10 +32957,10 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
             '1',
             '--no-default-keyring',
             '--import',
-            __nccwpck_require__.ab + "pgp_keys.asc",
+            external_node_path_namespaceObject.join(__dirname, 'pgp_keys.asc'),
         ], (err, importResult) => validate_awaiter(void 0, void 0, void 0, function* () {
             if (err) {
-                setFailure('Codecov: Error importing pgp key', failCi);
+                setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
             }
             core.info(importResult);
             verifySignature();
@@ -33011,10 +33025,10 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
         const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = yield buildUploadExec();
         const { args, verbose } = buildGeneralExec();
         const platform = getPlatform(os);
-        const filename = external_path_.join(__dirname, getUploaderName(platform));
-        external_https_.get(getBaseUrl(platform, uploaderVersion), (res) => {
+        const filename = external_node_path_namespaceObject.join(__dirname, getUploaderName(platform));
+        external_node_https_namespaceObject.get(getBaseUrl(platform, uploaderVersion), (res) => {
             // Image will be stored at this path
-            const filePath = external_fs_.createWriteStream(filename);
+            const filePath = external_node_fs_namespaceObject.createWriteStream(filename);
             res.pipe(filePath);
             filePath
                 .on('error', (err) => {
@@ -33023,12 +33037,12 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
                 filePath.close();
                 yield validate(filename, platform, uploaderVersion, verbose, failCi);
                 yield version(platform, uploaderVersion);
-                yield external_fs_.chmodSync(filename, '777');
+                yield external_node_fs_namespaceObject.chmodSync(filename, '777');
                 if (!disableSafeDirectory) {
                     yield setSafeDirectory();
                 }
                 const unlink = () => {
-                    external_fs_.unlink(filename, (err) => {
+                    external_node_fs_namespaceObject.unlink(filename, (err) => {
                         if (err) {
                             setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
                         }
