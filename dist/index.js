@@ -33029,9 +33029,11 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
                     }
                     catch (err) {
                         if (verifyRetries > 0) {
+                            console.log(`Verification failed ${err.message}. Retrying...`);
                             verifyRetries--;
                         }
                         else {
+                            console.log(`Verification failed. No more retries`);
                             setFailure(err.message, failCi);
                         }
                     }

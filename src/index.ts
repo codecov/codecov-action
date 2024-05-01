@@ -62,8 +62,10 @@ const run = async () => {
                 break;
               } catch (err) {
                 if (verifyRetries > 0) {
+                  console.log(`Verification failed ${err.message}. Retrying...`);
                   verifyRetries--;
                 } else {
+                  console.log(`Verification failed. No more retries`);
                   setFailure(err.message, failCi);
                 }
               }
