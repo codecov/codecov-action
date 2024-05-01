@@ -61,9 +61,10 @@ const getToken = async (): Promise<string> => {
       return token;
     } catch (err) {
       setFailure(
-          `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,
-          true,
+          `Codecov: Failed to get OIDC token with url, uploading using tokenless: ${url}. ${err.message}`,
+          false,
       );
+      return '';
     }
   }
   return token;
