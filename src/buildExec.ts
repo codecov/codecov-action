@@ -29,7 +29,7 @@ const getGitService = (): string => {
   return 'github';
 };
 
-const isFork = (): boolean => {
+const isPullRequestFromFork = (): boolean => {
   if (
     `${context.eventName}` !== 'pull_request' ||
     `${context.eventName}` !== 'pull_request_target'
@@ -45,7 +45,7 @@ const isFork = (): boolean => {
 };
 
 const getToken = async (): Promise<string> => {
-  if (isFork()) {
+  if (isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
     return Promise.resolve('');
   }
