@@ -27,7 +27,7 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
     "gpg": "^0.6.0",
-    "undici": "5.28.4"
+    "undici": "6.16.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
