@@ -83,7 +83,7 @@ const verify = async (
         '1',
         '--verify',
         path.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
-        path.join(__dirname, `${uploaderName}.SHA256SUM`),
+        path.join(__dirname, `${uploaderName}`),
       ].join(' ');
 
       try {
@@ -110,6 +110,7 @@ const verify = async (
       }
     };
 
+    core.info('I ran!');
     await importKey();
     await verifySignature();
     await validateSha();

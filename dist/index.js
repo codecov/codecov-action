@@ -32720,7 +32720,7 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 '1',
                 '--verify',
                 external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
-                external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM`),
+                external_node_path_namespaceObject.join(__dirname, `${uploaderName}`),
             ].join(' ');
             try {
                 yield (0,external_node_child_process_namespaceObject.execSync)(command);
@@ -32745,6 +32745,7 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
             }
         });
+        core.info('I ran!');
         yield importKey();
         yield verifySignature();
         yield validateSha();
