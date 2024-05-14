@@ -32739,7 +32739,7 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 external_node_path_namespaceObject.join(__dirname, 'pgp_keys.asc'),
             ].join(' ');
             try {
-                yield (0,external_node_child_process_namespaceObject.execSync)(command);
+                yield (0,external_node_child_process_namespaceObject.execSync)(command, { stdio: 'inherit' });
             }
             catch (err) {
                 setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
