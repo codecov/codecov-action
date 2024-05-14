@@ -87,7 +87,7 @@ const verify = async (
       ].join(' ');
 
       try {
-        await execSync(command);
+        await execSync(command, {stdio: 'inherit'});
       } catch (err) {
         setFailure(`Codecov: Error verifying gpg signature: ${err.message}`, failCi);
       }
