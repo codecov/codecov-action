@@ -32726,9 +32726,26 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 yield (0,external_node_child_process_namespaceObject.execSync)(command);
             }
             catch (err) {
-                setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
+                setFailure(`Codecov: Error verifying gpg signature: ${err.message}`, failCi);
             }
         });
+        const importKey = () => validate_awaiter(void 0, void 0, void 0, function* () {
+            const command = [
+                'gpg',
+                '--logger-fd',
+                '1',
+                '--no-default-keyring',
+                '--import',
+                external_node_path_namespaceObject.join(__dirname, 'pgp_keys.asc'),
+            ].join(' ');
+            try {
+                yield (0,external_node_child_process_namespaceObject.execSync)(command);
+            }
+            catch (err) {
+                setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
+            }
+        });
+        yield importKey();
         yield verifySignature();
         yield validateSha();
     }

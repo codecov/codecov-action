@@ -89,9 +89,28 @@ const verify = async (
       try {
         await execSync(command);
       } catch (err) {
-        setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
+        setFailure(`Codecov: Error verifying gpg signature: ${err.message}`, failCi);
       }
     };
+
+    const importKey = async () => {
+      const command = [
+        'gpg',
+        '--logger-fd',
+        '1',
+        '--no-default-keyring',
+        '--import',
+        path.join(__dirname, 'pgp_keys.asc'),
+      ].join(' ');
+
+      try {
+        await execSync(command);
+      } catch (err) {
+        setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
+      }
+    };
+
+    await importKey();
     await verifySignature();
     await validateSha();
   } catch (err) {
