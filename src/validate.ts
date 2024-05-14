@@ -1,7 +1,7 @@
+import {execSync} from 'node:child_process';
 import * as crypto from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as gpg from 'gpg';
 
 import * as core from '@actions/core';
 import {request} from 'undici';
@@ -76,36 +76,24 @@ const verify = async (
       }
     };
 
-    const verifySignature = () => {
-      gpg.call('', [
+    const verifySignature = async () => {
+      const command = [
+        'gpg',
         '--logger-fd',
         '1',
         '--verify',
         path.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
         path.join(__dirname, `${uploaderName}.SHA256SUM`),
-      ], async (err, verifyResult) => {
-        if (err) {
-          setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
-        }
-        core.info(verifyResult);
-        await validateSha();
-      });
-    };
+      ].join(' ');
 
-    // Import gpg key
-    gpg.call('', [
-      '--logger-fd',
-      '1',
-      '--no-default-keyring',
-      '--import',
-      path.join(__dirname, 'pgp_keys.asc'),
-    ], async (err, importResult) => {
-      if (err) {
+      try {
+        await execSync(command);
+      } catch (err) {
         setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
       }
-      core.info(importResult);
-      verifySignature();
-    });
+    };
+    await verifySignature();
+    await validateSha();
   } catch (err) {
     setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
   }
