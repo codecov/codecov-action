@@ -110,7 +110,6 @@ const verify = async (
       }
     };
 
-    core.info('I ran!');
     await importKey();
     await verifySignature();
     await validateSha();

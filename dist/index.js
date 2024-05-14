@@ -32745,7 +32745,6 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
             }
         });
-        core.info('I ran!');
         yield importKey();
         yield verifySignature();
         yield validateSha();
