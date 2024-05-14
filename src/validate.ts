@@ -83,7 +83,7 @@ const verify = async (
         '1',
         '--verify',
         path.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
-        path.join(__dirname, `${uploaderName}`),
+        path.join(__dirname, `${uploaderName}.SHA256SUM`),
       ].join(' ');
 
       try {

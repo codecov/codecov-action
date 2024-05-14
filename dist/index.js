@@ -32720,7 +32720,7 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                 '1',
                 '--verify',
                 external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
-                external_node_path_namespaceObject.join(__dirname, `${uploaderName}`),
+                external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM`),
             ].join(' ');
             try {
                 yield (0,external_node_child_process_namespaceObject.execSync)(command);
