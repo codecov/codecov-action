@@ -7049,444 +7049,6 @@ exports.Deprecation = Deprecation;
 
 /***/ }),
 
-/***/ 40:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-/*!
- * node-gpg
- * Copyright(c) 2011 Nicholas Penree <drudge@conceited.net>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-var fs = __nccwpck_require__(7147);
-var spawnGPG = __nccwpck_require__(4228);
-var keyRegex = /^gpg: key (.*?):/;
-
-/**
- * Base `GPG` object.
- */
-var GPG = {
-
-  /**
-   * Raw call to gpg.
-   *
-   * @param  {String}   stdin  String to send to stdin.
-   * @param  {Array}    [args] Array of arguments.
-   * @param  {Function} [fn]   Callback.
-   * @api public
-   */
-  call: function(stdin, args, fn) {
-    spawnGPG(stdin, args, fn);
-  },
-
-  /**
-   * Raw streaming call to gpg. Reads from input file and writes to output file.
-   *
-   * @param  {String}   inputFileName  Name of input file.
-   * @param  {String}   outputFileName Name of output file.
-   * @param  {Array}    [args]         Array of arguments.
-   * @param  {Function} [fn]           Callback.
-   * @api public
-   */
-  callStreaming: function(inputFileName, outputFileName, args, fn) {
-    spawnGPG.streaming({source: inputFileName, dest: outputFileName}, args, fn);
-  },
-
-  /**
-   * Encrypt source file passed as `options.source` and store it in a file specified in `options.dest`.
-   *
-   * @param {Object}   options  Should contain 'source' and 'dest' keys.
-   * @param {Function} [fn]     Callback.
-   * @api public
-   */
-  encryptToFile: function (options, fn){
-    spawnGPG.streaming(options, ['--encrypt'], fn);
-  },
-
-  /**
-   * Encrypt source `file` and pass the encrypted contents to the callback `fn`.
-   *
-   * @param {String}   file   Filename.
-   * @param {Function} [fn]   Callback containing the encrypted file contents.
-   * @api public
-   */
-  encryptFile: function(file, fn){
-    var self = this;
-
-    fs.readFile(file, function(err, content){
-      if (err) return fn(err);
-      self.encrypt(content, fn);
-    });
-  },
-
-  /**
-   * Encrypt source stream passed as `options.source` and pass it to the stream specified in `options.dest`.
-   * Is basicaly the same method as `encryptToFile()`.
-   *
-   * @param {Object}   options  Should contain 'source' and 'dest' keys that are streams.
-   * @param {Function} [fn]     Callback.
-   * @api public
-   */
-  encryptToStream: function (options, fn){
-    spawnGPG.streaming(options, ['--encrypt'], fn);
-  },
-
-  /**
-   * Encrypt source `stream` and pass the encrypted contents to the callback `fn`.
-   *
-   * @param {ReadableStream} stream Stream to read from.
-   * @param {Array}          [args] Array of additonal gpg arguments.
-   * @param {Function}       [fn]   Callback containing the encrypted file contents.
-   * @api public
-   */
-  encryptStream: function (stream, args, fn){
-    var self   = this;
-    var chunks = [];
-
-    stream.on('data', function (chunk){
-      chunks.push(chunk);
-    });
-
-    stream.on('end', function (){
-      self.encrypt(Buffer.concat(chunks), args, fn);
-    });
-
-    stream.on('error', fn);
-  },
-
-  /**
-   * Encrypt `str` and pass the encrypted version to the callback `fn`.
-   *
-   * @param {String|Buffer}   str    String to encrypt.
-   * @param {Array}    [args] Array of additonal gpg arguments.
-   * @param {Function} [fn]   Callback containing the encrypted Buffer.
-   * @api public
-   */
-  encrypt: function(str, args, fn){
-    spawnGPG(str, ['--encrypt'], args, fn);
-  },
-
-  /**
-   * Decrypt `str` and pass the decrypted version to the callback `fn`.
-   *
-   * @param {String|Buffer} str    Data to decrypt.
-   * @param {Array}         [args] Array of additonal gpg arguments.
-   * @param {Function}      [fn]   Callback containing the decrypted Buffer.
-   * @api public
-   */
-  decrypt: function(str, args, fn){
-    spawnGPG(str, ['--decrypt'], args, fn);
-  },
-
-  /**
-   * Decrypt source `file` and pass the decrypted contents to the callback `fn`.
-   *
-   * @param {String}   file Filename.
-   * @param {Function} fn   Callback containing the decrypted file contents.
-   * @api public
-   */
-  decryptFile: function(file, fn){
-    var self = this;
-
-    fs.readFile(file, function(err, content){
-      if (err) return fn(err);
-      self.decrypt(content, fn);
-    });
-  },
-
-  /**
-   * Decrypt source file passed as `options.source` and store it in a file specified in `options.dest`.
-   *
-   * @param {Object}   options  Should contain 'source' and 'dest' keys.
-   * @param {Function} fn       Callback
-   * @api public
-   */
-  decryptToFile: function (options, fn){
-    spawnGPG.streaming(options, ['--decrypt'], fn);
-  },
-
-  /**
-   * Decrypt source `stream` and pass the decrypted contents to the callback `fn`.
-   *
-   * @param {ReadableStream} stream Stream to read from.
-   * @param {Array}          [args] Array of additonal gpg arguments.
-   * @param {Function}       [fn]   Callback containing the decrypted file contents.
-   * @api public
-   */
-  decryptStream: function(stream, args, fn){
-    var self   = this;
-    var chunks = [];
-
-    stream.on('data', function (chunk){
-      chunks.push(chunk);
-    });
-
-    stream.on('end', function (){
-      self.decrypt(Buffer.concat(chunks), args, fn);
-    });
-
-    stream.on('error', fn);
-  },
-
-  /**
-   * Decrypt source stream passed as `options.source` and pass it to the stream specified in `options.dest`.
-   * This is basicaly the same method as `decryptToFile()`.
-   *
-   * @param {Object}   options  Should contain 'source' and 'dest' keys that are streams.
-   * @param {Function} fn       Callback
-   * @api public
-   */
-  decryptToStream: function (options, fn){
-    spawnGPG.streaming(options, ['--decrypt'], fn);
-  },
-
-  /**
-   * Clearsign `str` and pass the signed message to the callback `fn`.
-   *
-   * @param {String|Buffer} str  String to clearsign.
-   * @param {Array}         [args] Array of additonal gpg arguments.
-   * @param {Function}      fn   Callback containing the signed message Buffer.
-   * @api public
-   */
-  clearsign: function(str, args, fn){
-    spawnGPG(str, ['--clearsign'], args, fn);
-  },
-
-  /**
-   * Verify `str` and pass the output to the callback `fn`.
-   *
-   * @param {String|Buffer} str    Signature to verify.
-   * @param {Array}         [args] Array of additonal gpg arguments.
-   * @param {Function}      [fn]   Callback containing the signed message Buffer.
-   * @api public
-   */
-  verifySignature: function(str, args, fn){
-    // Set logger fd, verify otherwise outputs to stderr for whatever reason
-    var defaultArgs = ['--logger-fd', '1', '--verify'];
-    spawnGPG(str, defaultArgs, args, fn);
-  },
-
-  /**
-   * Add a key to the keychain by filename.
-   *
-   * @param {String}  fileName  Key filename.
-   * @param {Array}   [args]    Array of additonal gpg arguments.
-   * @param {Function} [fn]     Callback containing the signed message Buffer.
-   * @api public
-   */
-  importKeyFromFile: function(fileName, args, fn){
-    if (typeof args === 'function') {
-      fn = args;
-      args = [];
-    }
-
-    var self = this;
-
-    fs.readFile(fileName, function(readErr, str) {
-      if (readErr) return fn(readErr);
-      self.importKey(str, args, fn);
-    });
-  },
-
-  /**
-   * Add an ascii-armored key to gpg. Expects the key to be passed as input.
-   *
-   * @param {String}   keyStr  Key string (armored).
-   * @param {Array}    args    Optional additional arguments to pass to gpg.
-   * @param {Function} fn      Callback containing the signed message Buffer.
-   * @api public
-   */
-  importKey: function(keyStr, args, fn){
-    if (typeof args === 'function') {
-      fn = args;
-      args = [];
-    }
-
-    // Set logger fd, verify otherwise outputs to stderr for whatever reason
-    var defaultArgs = ['--logger-fd', '1', '--import'];
-
-    spawnGPG(keyStr, defaultArgs, args, function(importError, result) {
-      if (importError) {
-        // Ignorable errors
-        if (/already in secret keyring/.test(importError.message)) {
-          result = importError.message;
-        } else {
-          return fn(importError);
-        }
-      }
-      // Grab key fingerprint and send it back as second arg
-      var match = result.toString().match(keyRegex);
-      fn(null, result.toString(), match && match[1]);
-    });
-  },
-
-  /**
-   * Removes a key by fingerprint. Warning: this will remove both pub and privkeys!
-   *
-   * @param {String}   keyID  Key fingerprint.
-   * @param {Array}    [args] Array of additonal gpg arguments.
-   * @param {Function} fn     Callback containing the signed message Buffer.
-   * @api public
-   */
-  removeKey: function(keyID, args, fn){
-    // Set logger fd, verify otherwise outputs to stderr for whatever reason
-    var defaultArgs = ['--logger-fd', '1', '--delete-secret-and-public-key'];
-    spawnGPG(keyID, defaultArgs, args, fn);
-  }
-
-};
-
-/**
- * Expose `GPG` object.
- */
-module.exports = GPG;
-
-
-/***/ }),
-
-/***/ 4228:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-var spawn = (__nccwpck_require__(2081).spawn);
-var globalArgs = ['--batch'];
-var readStream = (__nccwpck_require__(7147).createReadStream);
-var writeStream = (__nccwpck_require__(7147).createWriteStream);
-
-/**
- * Wrapper around spawning GPG. Handles stdout, stderr, and default args.
- *
- * @param  {String}   input       Input string. Piped to stdin.
- * @param  {Array}    defaultArgs Default arguments for this task.
- * @param  {Array}    args        Arguments to pass to GPG when spawned.
- * @param  {Function} cb          Callback.
- */
-module.exports = function(input, defaultArgs, args, cb) {
-  // Allow calling with (input, defaults, cb)
-  if (typeof args === 'function'){
-    cb = args;
-    args = [];
-  }
-
-  cb = once(cb);
-
-  var gpgArgs = (args || []).concat(defaultArgs);
-  var buffers = [];
-  var buffersLength = 0;
-  var error = '';
-  var gpg = spawnIt(gpgArgs, cb);
-
-  gpg.stdout.on('data', function (buf){
-    buffers.push(buf);
-    buffersLength += buf.length;
-  });
-
-  gpg.stderr.on('data', function(buf){
-    error += buf.toString('utf8');
-  });
-
-  gpg.on('close', function(code){
-    var msg = Buffer.concat(buffers, buffersLength);
-    if (code !== 0) {
-      // If error is empty, we probably redirected stderr to stdout (for verifySignature, import, etc)
-      return cb(new Error(error || msg));
-    }
-
-    cb(null, msg, error);
-  });
-
-  gpg.stdin.end(input);
-};
-
-/**
- * Similar to spawnGPG, but sets up a read/write pipe to/from a stream.
- *
- * @param  {Object}   options Options. Should have source and dest strings or streams.
- * @param  {Array}    args    GPG args.
- * @param  {Function} cb      Callback
- */
-module.exports.streaming = function(options, args, cb) {
-  cb = once(cb);
-  options = options || {};
-
-  var isSourceStream = isStream(options.source);
-  var isDestStream   = isStream(options.dest);
-
-  if (typeof options.source !== 'string' && !isSourceStream){
-    return cb(new Error('Missing \'source\' option (string or stream)'));
-  } else if (typeof options.dest !== 'string' && !isDestStream){
-    return cb(new Error('Missing \'dest\' option (string or stream)'));
-  }
-
-  var sourceStream;
-  if (!isSourceStream) {
-    // This will throw if the file doesn't exist
-    try {
-      sourceStream = readStream(options.source);
-    } catch(e) {
-      return cb(new Error(options.source + ' does not exist. Error: ' + e.message));
-    }
-  } else {
-    sourceStream = options.source;
-  }
-
-  var destStream;
-  if (!isDestStream) {
-    try {
-      destStream = writeStream(options.dest);
-    } catch(e) {
-      return cb(new Error('Error opening ' + options.dest + '. Error: ' + e.message));
-    }
-  } else {
-    destStream = options.dest;
-  }
-
-  // Go for it
-  var gpg = spawnIt(args, cb);
-
-  if (!isDestStream) {
-    gpg.on('close', function (code){
-      cb(null);
-    });
-  } else {
-    cb(null, destStream);
-  }
-
-  // Pipe input file into gpg stdin; gpg stdout into output file..
-  sourceStream.pipe(gpg.stdin);
-  gpg.stdout.pipe(destStream);
-};
-
-// Wrapper around spawn. Catches error events and passed global args.
-function spawnIt(args, fn) {
-  var gpg = spawn('gpg', globalArgs.concat(args || []) );
-  gpg.on('error', fn);
-  return gpg;
-}
-
-// Ensures a callback is only ever called once.
-function once(fn) {
-  var called = false;
-  return function() {
-    if (called) return;
-    called = true;
-    fn.apply(this, arguments);
-  };
-}
-
-// Check if input is stream with duck typing
-function isStream (stream) {
-  return stream != null && typeof stream === 'object' && typeof stream.pipe === 'function';
-};
-
-
-/***/ }),
-
 /***/ 3287:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -33092,10 +32654,10 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
 });
 
 
+;// CONCATENATED MODULE: external "node:child_process"
+const external_node_child_process_namespaceObject = require("node:child_process");
 ;// CONCATENATED MODULE: external "node:crypto"
 const external_node_crypto_namespaceObject = require("node:crypto");
-// EXTERNAL MODULE: ./node_modules/gpg/lib/gpg.js
-var gpg = __nccwpck_require__(40);
 // EXTERNAL MODULE: ./node_modules/undici/index.js
 var undici = __nccwpck_require__(1773);
 ;// CONCATENATED MODULE: ./src/validate.ts
@@ -33151,35 +32713,41 @@ const verify = (filename, platform, version, verbose, failCi) => validate_awaite
                     `uploader hash: ${hash}, public hash: ${shasum}`, failCi);
             }
         });
-        const verifySignature = () => {
-            gpg.call('', [
+        const verifySignature = () => validate_awaiter(void 0, void 0, void 0, function* () {
+            const command = [
+                'gpg',
                 '--logger-fd',
                 '1',
                 '--verify',
                 external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM.sig`),
                 external_node_path_namespaceObject.join(__dirname, `${uploaderName}.SHA256SUM`),
-            ], (err, verifyResult) => validate_awaiter(void 0, void 0, void 0, function* () {
-                if (err) {
-                    setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
-                }
-                core.info(verifyResult);
-                yield validateSha();
-            }));
-        };
-        // Import gpg key
-        gpg.call('', [
-            '--logger-fd',
-            '1',
-            '--no-default-keyring',
-            '--import',
-            external_node_path_namespaceObject.join(__dirname, 'pgp_keys.asc'),
-        ], (err, importResult) => validate_awaiter(void 0, void 0, void 0, function* () {
-            if (err) {
-                setFailure(`Codecov: Error importing pgp key: ${err.message}`, failCi);
+            ].join(' ');
+            try {
+                yield (0,external_node_child_process_namespaceObject.execSync)(command, { stdio: 'inherit' });
             }
-            core.info(importResult);
-            verifySignature();
-        }));
+            catch (err) {
+                setFailure(`Codecov: Error verifying gpg signature: ${err.message}`, failCi);
+            }
+        });
+        const importKey = () => validate_awaiter(void 0, void 0, void 0, function* () {
+            const command = [
+                'gpg',
+                '--logger-fd',
+                '1',
+                '--no-default-keyring',
+                '--import',
+                external_node_path_namespaceObject.join(__dirname, 'pgp_keys.asc'),
+            ].join(' ');
+            try {
+                yield (0,external_node_child_process_namespaceObject.execSync)(command, { stdio: 'inherit' });
+            }
+            catch (err) {
+                setFailure(`Codecov: Error importing gpg key: ${err.message}`, failCi);
+            }
+        });
+        yield importKey();
+        yield verifySignature();
+        yield validateSha();
     }
     catch (err) {
         setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
