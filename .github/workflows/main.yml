@@ -61,7 +61,6 @@ jobs:
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          fail_ci_if_error: true
           files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.os }}
           name: codecov-script
@@ -70,7 +69,6 @@ jobs:
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
@@ -80,7 +78,6 @@ jobs:
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
-          fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
