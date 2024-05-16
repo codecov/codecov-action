@@ -47,13 +47,9 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   run-macos-latest-xlarge:
-    if: github.repository == 'codecov/codecov-action'
+    if: github.head.repo.full_name == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - name: Checkout
         uses: actions/checkout@v4.1.5
       - name: Install dependencies
