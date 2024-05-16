@@ -47,7 +47,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   run-macos-latest-xlarge:
-    if: github.repository == ‘codecov/codecov-action’
+    if: github.repository == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
     steps:
       - name: Checkout
