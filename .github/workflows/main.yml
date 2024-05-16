@@ -50,7 +50,7 @@ jobs:
     if: github.repository == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
     steps:
-			- name: Dump GitHub context
+      - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
