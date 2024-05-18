@@ -31,7 +31,7 @@ const getGitService = (): string => {
 
 const isPullRequestFromFork = (): boolean => {
   if (
-    `${context.eventName}` !== 'pull_request' ||
+    `${context.eventName}` !== 'pull_request' &&
     `${context.eventName}` !== 'pull_request_target'
   ) {
     return false;
