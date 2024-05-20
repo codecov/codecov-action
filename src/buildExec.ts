@@ -48,7 +48,7 @@ const isPullRequestFromFork = (): boolean => {
 const getToken = async (): Promise<string> => {
   if (isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
-    return '';
+    return Promise.resolve('');
   }
   let token = core.getInput('token');
   let url = core.getInput('url');
@@ -281,7 +281,9 @@ const buildUploadExec = async (): Promise<{
       envVarsArg.push(envVarClean);
     }
   }
-  uploadOptions.env.CODECOV_TOKEN = token;
+  if (token) {
+    uploadOptions.env.CODECOV_TOKEN = token;
+  }
   if (disableFileFixes) {
     uploadExecArgs.push('--disable-file-fixes');
   }
