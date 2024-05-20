@@ -81,7 +81,6 @@ jobs:
           os: alpine
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -93,7 +92,6 @@ jobs:
           os: alpine
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -106,7 +104,6 @@ jobs:
           version: v0.6.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
 
   run-alpine-aarch64:
     runs-on: ubuntu-latest
@@ -145,7 +142,6 @@ jobs:
           os: alpine-arm64
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -157,7 +153,6 @@ jobs:
           os: alpine-arm64
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -170,7 +165,6 @@ jobs:
           version: v0.6.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        shell: alpine.sh {0}
 
   run-macos-latest-xlarge:
     if: github.head.repo.full_name == 'codecov/codecov-action'
