@@ -32340,7 +32340,7 @@ const getGitService = () => {
     return 'github';
 };
 const isPullRequestFromFork = () => {
-    core.info(`evenName: ${context.eventName}`);
+    core.info(`eventName: ${context.eventName}`);
     if (`${context.eventName}` !== 'pull_request' &&
         `${context.eventName}` !== 'pull_request_target') {
         return false;

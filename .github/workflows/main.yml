@@ -46,15 +46,11 @@ jobs:
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  run-alpine:
+  run-alpine-x86:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - distro: "python:3.11-alpine3.18"
-            arch: arm64
-            distro_name: alpine
     steps:
+      - name: Setup alpine
+        uses: jirutka/setup-alpine@v1
       - name: Checkout
         uses: actions/checkout@v4.1.6
       - name: Install dependencies
@@ -70,7 +66,7 @@ jobs:
           files: ./coverage/script/coverage-final.json
           flags: script,alpine
           name: codecov-script
-          os: alpine-arm64
+          os: alpine
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (demo)
@@ -81,7 +77,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,alpine
           name: codecov-demo
-          os: alpine-arm64
+          os: alpine
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (version)
@@ -91,6 +87,55 @@ jobs:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
           flags: version,alpine
+          name: codecov-version
+          os: alpine
+          version: v0.6.0
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  run-alpine-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup alpine
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: aarch64
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Run tests and collect coverage
+        run: npm run test
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/script/coverage-final.json
+          flags: script,alpine-arm64
+          name: codecov-script
+          os: alpine-arm64
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (demo)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: demo,alpine-arm64
+          name: codecov-demo
+          os: alpine-arm64
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: version,alpine-arm64
           name: codecov-version
           os: alpine-arm64
           version: v0.6.0
