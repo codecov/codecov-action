@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs nodejs-npm git curl
+          apk add --update nodejs npm git curl
           node -v
           which node
       - name: Checkout
@@ -116,7 +116,7 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs nodejs-npm git curl
+          apk add --update nodejs npm git curl
           node -v
           which node
       - name: Checkout
