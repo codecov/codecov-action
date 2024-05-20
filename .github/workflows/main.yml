@@ -53,8 +53,9 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs npm git curl
+          apk add --update nodejs nodejs-npm git curl
           node -v
+          which node
       - name: Checkout
         uses: actions/checkout@v4.1.6
       - name: Install dependencies
@@ -115,8 +116,9 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs npm git curl
+          apk add --update nodejs nodejs-npm git curl
           node -v
+          which node
       - name: Checkout
         uses: actions/checkout@v4.1.6
       - name: Install dependencies
