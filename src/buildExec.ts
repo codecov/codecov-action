@@ -99,7 +99,9 @@ const buildCommitExec = async (): Promise<{
   });
 
 
-  commitOptions.env.CODECOV_TOKEN = token;
+  if (token) {
+    commitOptions.env.CODECOV_TOKEN = token;
+  }
   if (commitParent) {
     commitExecArgs.push('--parent-sha', `${commitParent}`);
   }
@@ -186,7 +188,9 @@ const buildReportExec = async (): Promise<{
   });
 
 
-  reportOptions.env.CODECOV_TOKEN = token;
+  if (token) {
+    reportOptions.env.CODECOV_TOKEN = token;
+  }
   reportExecArgs.push('--git-service', `${gitService}`);
 
   if (overrideCommit) {
