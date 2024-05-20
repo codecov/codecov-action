@@ -99,9 +99,7 @@ const buildCommitExec = async (): Promise<{
   });
 
 
-  if (token) {
-    commitOptions.env.CODECOV_TOKEN = token;
-  }
+  commitOptions.env.CODECOV_TOKEN = token;
   if (commitParent) {
     commitExecArgs.push('--parent-sha', `${commitParent}`);
   }
@@ -188,9 +186,7 @@ const buildReportExec = async (): Promise<{
   });
 
 
-  if (token) {
-    reportOptions.env.CODECOV_TOKEN = token;
-  }
+  reportOptions.env.CODECOV_TOKEN = token;
   reportExecArgs.push('--git-service', `${gitService}`);
 
   if (overrideCommit) {
@@ -285,9 +281,7 @@ const buildUploadExec = async (): Promise<{
       envVarsArg.push(envVarClean);
     }
   }
-  if (token) {
-    uploadOptions.env.CODECOV_TOKEN = token;
-  }
+  uploadOptions.env.CODECOV_TOKEN = token;
   if (disableFileFixes) {
     uploadExecArgs.push('--disable-file-fixes');
   }
