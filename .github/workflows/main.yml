@@ -46,6 +46,57 @@ jobs:
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  run-alpine:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - distro: "python:3.11-alpine3.18"
+            arch: arm64
+            distro_name: alpine
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Run tests and collect coverage
+        run: npm run test
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/script/coverage-final.json
+          flags: script,alpine
+          name: codecov-script
+          os: alpine-arm64
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (demo)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: demo,alpine
+          name: codecov-demo
+          os: alpine-arm64
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
+          file: ./coverage/coverage-final.json
+          flags: version,alpine
+          name: codecov-version
+          os: alpine-arm64
+          version: v0.6.0
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   run-macos-latest-xlarge:
     if: github.head.repo.full_name == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
@@ -83,7 +134,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
           file: ./coverage/coverage-final.json
-          flags: version,maxos-latest-xlarge
+          flags: version,macos-latest-xlarge
           name: codecov-version
           version: v0.6.0
           verbose: true
