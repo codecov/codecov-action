@@ -61,15 +61,15 @@ jobs:
         run: npm run test
       - name: Detect os
         run: |
-					family=$(uname -s | tr '[:upper:]' '[:lower:]')
-					codecov_os="windows"
-					[[ $family == "darwin" ]] && codecov_os="macos"
+          family=$(uname -s | tr '[:upper:]' '[:lower:]')
+          codecov_os="windows"
+          [[ $family == "darwin" ]] && codecov_os="macos"
 
-					[[ $family == "linux" ]] && codecov_os="linux"
-					[[ $codecov_os == "linux" ]] && \
-						osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
-					[[ $osID == "alpine" ]] && codecov_os="alpine"
-					echo "Detected ${codecov_os}"
+          [[ $family == "linux" ]] && codecov_os="linux"
+          [[ $codecov_os == "linux" ]] && \
+            osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
+          [[ $osID == "alpine" ]] && codecov_os="alpine"
+          echo "Detected ${codecov_os}"
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
@@ -121,15 +121,15 @@ jobs:
         run: npm run test
       - name: Detect os
         run: |
-					family=$(uname -s | tr '[:upper:]' '[:lower:]')
-					codecov_os="windows"
-					[[ $family == "darwin" ]] && codecov_os="macos"
+          family=$(uname -s | tr '[:upper:]' '[:lower:]')
+          codecov_os="windows"
+          [[ $family == "darwin" ]] && codecov_os="macos"
 
-					[[ $family == "linux" ]] && codecov_os="linux"
-					[[ $codecov_os == "linux" ]] && \
-						osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
-					[[ $osID == "alpine" ]] && codecov_os="alpine"
-					echo "Detected ${codecov_os}"
+          [[ $family == "linux" ]] && codecov_os="linux"
+          [[ $codecov_os == "linux" ]] && \
+            osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
+          [[ $osID == "alpine" ]] && codecov_os="alpine"
+          echo "Detected ${codecov_os}"
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
