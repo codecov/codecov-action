@@ -53,7 +53,8 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs npm git curl
+          apk update
+          apk add git nodejs python3 openssh g++ make openssl linux-headers npm patch
           node -v
           which node
       - name: Checkout
@@ -116,7 +117,8 @@ jobs:
     steps:
       - name: Install deps for alpine
         run: |
-          apk add --update nodejs npm git curl
+          apk update
+          apk add git nodejs python3 openssh g++ make openssl linux-headers npm patch
           node -v
           which node
       - name: Checkout
