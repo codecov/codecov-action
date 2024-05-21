@@ -49,7 +49,7 @@ jobs:
   run-alpine-x86:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/linuxcontainers/alpine:3.18.0@sha256:eb2b13602562cca1424257ab17945d5c7e402764da66a6216d9de385e5f9e3ad
+      image: node:20-alpine
     steps:
       - name: Install deps for alpine
         run: |
@@ -113,7 +113,7 @@ jobs:
   run-alpine-aarch64:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/linuxcontainers/alpine:3.18.0@sha256:b333a6ba512596007c2683825dd364570303624164926019bbe674d90c28d5fc
+      image: node:20-alpine
     steps:
       - name: Install deps for alpine
         run: |
