@@ -30,7 +30,7 @@ const getGitService = (): string => {
 };
 
 const isPullRequestFromFork = (): boolean => {
-  core.info(`evenName: ${context.eventName}`);
+  core.info(`eventName: ${context.eventName}`);
   if (
     `${context.eventName}` !== 'pull_request' &&
     `${context.eventName}` !== 'pull_request_target'
@@ -48,7 +48,7 @@ const isPullRequestFromFork = (): boolean => {
 const getToken = async (): Promise<string> => {
   if (isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
-    return Promise.resolve('tokenless');
+    return Promise.resolve('');
   }
   let token = core.getInput('token');
   let url = core.getInput('url');
