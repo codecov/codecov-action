@@ -32393,9 +32393,7 @@ const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
     });
-    if (token) {
-        commitOptions.env.CODECOV_TOKEN = token;
-    }
+    commitOptions.env.CODECOV_TOKEN = token;
     if (commitParent) {
         commitExecArgs.push('--parent-sha', `${commitParent}`);
     }
@@ -32462,9 +32460,7 @@ const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function
         GITHUB_SHA: process.env.GITHUB_SHA,
         GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
     });
-    if (token) {
-        reportOptions.env.CODECOV_TOKEN = token;
-    }
+    reportOptions.env.CODECOV_TOKEN = token;
     reportExecArgs.push('--git-service', `${gitService}`);
     if (overrideCommit) {
         reportExecArgs.push('-C', `${overrideCommit}`);
@@ -32542,9 +32538,7 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
             envVarsArg.push(envVarClean);
         }
     }
-    if (token) {
-        uploadOptions.env.CODECOV_TOKEN = token;
-    }
+    uploadOptions.env.CODECOV_TOKEN = token;
     if (disableFileFixes) {
         uploadExecArgs.push('--disable-file-fixes');
     }
