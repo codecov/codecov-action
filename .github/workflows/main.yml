@@ -7,10 +7,6 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - name: Checkout
         uses: actions/checkout@v4.1.6
       - name: Install dependencies
@@ -27,6 +23,7 @@ jobs:
           flags: script,${{ matrix.os }}
           name: codecov-script
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -36,6 +33,7 @@ jobs:
           flags: demo,${{ matrix.os }}
           name: codecov-demo
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -89,6 +87,7 @@ jobs:
           name: codecov-version
           version: v0.6.0
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   run-container:
     runs-on: ubuntu-latest
