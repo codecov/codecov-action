@@ -32568,7 +32568,9 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
     }
     if (files) {
         files.split(',').map((f) => f.trim()).forEach((f) => {
-            uploadExecArgs.push('-f', `${f}`);
+            if (f.length > 0) { // this handles trailing commas
+                uploadExecArgs.push('-f', `${f}`);
+            }
         });
     }
     if (flags) {
