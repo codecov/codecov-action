@@ -46,11 +46,11 @@ const isPullRequestFromFork = (): boolean => {
 };
 
 const getToken = async (): Promise<string> => {
-  if (isPullRequestFromFork()) {
+  let token = core.getInput('token');
+  if (!token && isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
     return Promise.resolve('');
   }
-  let token = core.getInput('token');
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
   if (useOIDC) {
