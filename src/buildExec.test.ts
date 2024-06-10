@@ -75,7 +75,7 @@ test('upload args', async () => {
     'exclude': 'node_modules/',
     'fail_ci_if_error': 'true',
     'file': 'coverage.xml',
-    'files': 'dir1/coverage.xml,dir2/coverage.xml',
+    'files': 'dir1/coverage.xml,dir2/coverage.xml,',
     'flags': 'test,test2',
     'git_service': 'github_enterprise',
     'handle_no_reports_found': 'true',
