@@ -48,6 +48,7 @@ const isPullRequestFromFork = (): boolean => {
 const getToken = async (): Promise<string> => {
   if (isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
+    process.env['TOKENLESS'] = context.payload.pull_request.head.label;
     return Promise.resolve('');
   }
   let token = core.getInput('token');
