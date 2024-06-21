@@ -66,7 +66,7 @@ const run = async (): Promise<void> => {
               fs.unlink(filename, (err) => {
                 if (err) {
                   setFailure(
-                      `Codecov: Could not unlink uploader: ${err.message}`,
+                      `Codecov: Could not unlink: ${err.message}`,
                       failCi,
                   );
                 }

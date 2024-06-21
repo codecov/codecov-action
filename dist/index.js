@@ -32351,12 +32351,12 @@ const isPullRequestFromFork = () => {
     return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
-    if (isPullRequestFromFork()) {
+    let token = core.getInput('token');
+    if (!token && isPullRequestFromFork()) {
         core.info('==> Fork detected, tokenless uploading used');
         process.env['TOKENLESS'] = context.payload.pull_request.head.label;
         return Promise.resolve('');
     }
-    let token = core.getInput('token');
     let url = core.getInput('url');
     const useOIDC = isTrue(core.getInput('use_oidc'));
     if (useOIDC) {
@@ -32831,7 +32831,7 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
                 const unlink = () => {
                     external_node_fs_namespaceObject.unlink(filename, (err) => {
                         if (err) {
-                            setFailure(`Codecov: Could not unlink uploader: ${err.message}`, failCi);
+                            setFailure(`Codecov: Could not unlink: ${err.message}`, failCi);
                         }
                     });
                 };
