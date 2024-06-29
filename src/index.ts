@@ -25,6 +25,7 @@ import versionInfo from './version';
 let failCi;
 
 const run = async (): Promise<void> => {
+  console.log('Codecov: Starting action');
   try {
     const {commitExecArgs, commitOptions, commitCommand} = await buildCommitExec();
     const {reportExecArgs, reportOptions, reportCommand} = await buildReportExec();
