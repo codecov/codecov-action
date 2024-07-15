@@ -213,7 +213,7 @@ test('report args using context', async () => {
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
-  const expectedArgs : string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github',
   ];
@@ -271,7 +271,7 @@ test('commit args', async () => {
 });
 
 test('commit args using context', async () => {
-  const expectedArgs :string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github',
   ];
@@ -289,7 +289,7 @@ test('commit args using context', async () => {
 });
 
 test('commit args using github server url', async () => {
-  const expectedArgs :string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github_enterprise',
   ];

@@ -32351,11 +32351,12 @@ const isPullRequestFromFork = () => {
     return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     let token = core.getInput('token');
     if (!token && isPullRequestFromFork()) {
         core.info('==> Fork detected, tokenless uploading used');
         process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-        return Promise.resolve('');
+        return [false, (_a = context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.label];
     }
     let url = core.getInput('url');
     const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -32365,22 +32366,25 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
         }
         try {
             token = yield core.getIDToken(url);
-            return token;
+            return [true, token];
         }
         catch (err) {
             setFailure(`Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`, true);
         }
     }
-    return token;
+    return [true, token];
 });
 const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const commitParent = core.getInput('commit_parent');
     const gitService = getGitService();
-    const overrideBranch = core.getInput('override_branch');
+    let overrideBranch = core.getInput('override_branch');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
-    const token = yield getToken();
+    const [tokenAvailable, token] = yield getToken();
+    if (!tokenAvailable) {
+        overrideBranch = token;
+    }
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
     const workingDir = core.getInput('working-directory');
     const commitCommand = 'create-commit';
