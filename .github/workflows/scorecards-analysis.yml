@@ -12,6 +12,7 @@ permissions: read-all
 
 jobs:
   analysis:
+    if: github.repository == 'codecov/codecov-action'
     name: Scorecards analysis
     runs-on: ubuntu-latest
     permissions:
@@ -21,7 +22,7 @@ jobs:
       id-token: write
       actions: read
       contents: read
-    
+
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4.1.7 # v3.0.0
@@ -40,8 +41,8 @@ jobs:
           # repo_token: ${{ secrets.SCORECARD_READ_TOKEN }}
 
           # Publish the results for public repositories to enable scorecard badges. For more details, see
-          # https://github.com/ossf/scorecard-action#publishing-results. 
-          # For private repositories, `publish_results` will automatically be set to `false`, regardless 
+          # https://github.com/ossf/scorecard-action#publishing-results.
+          # For private repositories, `publish_results` will automatically be set to `false`, regardless
           # of the value entered here.
           publish_results: true
 
@@ -53,7 +54,7 @@ jobs:
           name: SARIF file
           path: results.sarif
           retention-days: 5
-      
+
       # Upload the results to GitHub's code scanning dashboard.
       - name: "Upload to code-scanning"
         uses: github/codeql-action/upload-sarif@v3.25.12 # v1.0.26
