@@ -58,7 +58,7 @@ describe('versionInfo', () => {
     expect(coreInfoSpy).toHaveBeenCalledTimes(2);
     expect(coreInfoSpy).toHaveBeenCalledWith('==> Running version unsupported');
     expect(coreInfoSpy).toHaveBeenCalledWith(
-        'Could not pull latest version information: SyntaxError: Unexpected token \'M\', "MESSAGE" is not valid JSON',
+        'Could not pull latest version information: Unexpected token \'M\', "MESSAGE" is not valid JSON',
     );
   });
 });
