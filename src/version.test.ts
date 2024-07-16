@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import {Agent, MockAgent, setGlobalDispatcher} from 'undici';
+
 import versionInfo from './version';
 
 const mockAgent = new MockAgent();
