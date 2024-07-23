@@ -45,12 +45,12 @@ const isPullRequestFromFork = (): boolean => {
   return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 
-const getToken = async (): Promise<[boolean, string]> => {
+const getToken = async (): Promise<string | null> => {
   let token = core.getInput('token');
   if (!token && isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
     process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-    return [false, context.payload.pull_request?.head.label];
+    return null;
   }
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -60,7 +60,7 @@ const getToken = async (): Promise<[boolean, string]> => {
     }
     try {
       token = await core.getIDToken(url);
-      return [true, token];
+      return token;
     } catch (err) {
       setFailure(
           `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,
@@ -68,7 +68,7 @@ const getToken = async (): Promise<[boolean, string]> => {
       );
     }
   }
-  return [true, token];
+  return token;
 };
 
 const buildCommitExec = async (): Promise<{
@@ -82,9 +82,9 @@ const buildCommitExec = async (): Promise<{
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
-  const [tokenAvailable, token] = await getToken();
-  if (!tokenAvailable) {
-    overrideBranch = token;
+  const token = await getToken();
+  if (token == null) {
+    overrideBranch = context.payload.pull_request?.head.label;
   }
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
