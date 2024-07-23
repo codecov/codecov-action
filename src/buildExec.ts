@@ -60,7 +60,7 @@ const getToken = async (): Promise<string | null> => {
     }
     try {
       token = await core.getIDToken(url);
-      return token;
+      return Promise.resolve(token);
     } catch (err) {
       setFailure(
           `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,

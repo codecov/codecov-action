@@ -32365,7 +32365,7 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
         }
         try {
             token = yield core.getIDToken(url);
-            return token;
+            return Promise.resolve(token);
         }
         catch (err) {
             setFailure(`Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`, true);
