@@ -2,6 +2,7 @@
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import {glob} from 'tinyglobby';
 
 import {setFailure} from './helpers';
 
@@ -238,7 +239,6 @@ const buildUploadExec = async (): Promise<{
   const envVars = core.getInput('env_vars');
   const exclude = core.getInput('exclude');
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
-  const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
   const gitService = getGitService();
@@ -307,14 +307,15 @@ const buildUploadExec = async (): Promise<{
   if (failCi) {
     uploadExecArgs.push('-Z');
   }
-  if (file) {
-    uploadExecArgs.push('-f', `${file}`);
-  }
   if (files) {
-    files.split(',').map((f) => f.trim()).forEach((f) => {
-      if (f.length > 0) { // this handles trailing commas
-        uploadExecArgs.push('-f', `${f}`);
-      }
+    const globs = files
+        .split(',')
+        .map((f) => f.trim())
+        // This handles trailing commas.
+        .filter((f) => f.length > 0);
+    const globbed = await glob(globs);
+    globbed.map((f) => {
+      uploadExecArgs.push('-f', `${f}`);
     });
   }
   if (flags) {
