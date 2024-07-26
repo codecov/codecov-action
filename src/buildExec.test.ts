@@ -307,3 +307,31 @@ test('commit args using github server url', async () => {
   expect(commitExecArgs).toEqual(expectedArgs);
   expect(commitCommand).toEqual('create-commit');
 });
+
+test('get token when token arg is unset and from fork', async () => {
+  context.eventName = 'pull_request';
+  context.payload.pull_request = {
+    'number': 1,
+    'base': {
+      'label': 'hello:main',
+    },
+    'head': {
+      'label': 'world:feat',
+      'sha': 'aaaaaa',
+    },
+  };
+
+  const expectedArgs: string[] = [
+    '--git-service',
+    'github_enterprise',
+    '-B',
+    'world:feat',
+    '-C',
+    `${context.payload.pull_request?.head.sha}`,
+  ];
+
+  const {commitExecArgs, commitCommand} = await buildCommitExec();
+
+  expect(commitExecArgs).toEqual(expectedArgs);
+  expect(commitCommand).toEqual('create-commit');
+});
