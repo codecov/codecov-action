@@ -278,17 +278,17 @@ test('commit args using context', async () => {
   ];
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
-  if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
-  }
-  if (context.eventName == 'pull_request_target') {
-    expectedArgs.push('-P', `${context.payload.number}`);
-  }
   if (
     (context.eventName == 'pull_request' || context.eventName == 'pull_request_target') &&
     context.payload.pull_request?.base.label.split(':')[0] != context.payload.pull_request?.head.label.split(':')[0]
   ) {
     expectedArgs.push('-B', `${context.payload.pull_request?.head.label}`);
+  }
+  if (context.eventName == 'pull_request') {
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
+  }
+  if (context.eventName == 'pull_request_target') {
+    expectedArgs.push('-P', `${context.payload.number}`);
   }
 
   expect(commitExecArgs).toEqual(expectedArgs);
@@ -304,17 +304,17 @@ test('commit args using github server url', async () => {
   process.env.GITHUB_SERVER_URL = 'https://example.com';
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
-  if (context.eventName == 'pull_request') {
-    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
-  }
-  if (context.eventName == 'pull_request_target') {
-    expectedArgs.push('-P', `${context.payload.number}`);
-  }
   if (
     (context.eventName == 'pull_request' || context.eventName == 'pull_request_target') &&
     context.payload.pull_request?.base.label.split(':')[0] != context.payload.pull_request?.head.label.split(':')[0]
   ) {
     expectedArgs.push('-B', `${context.payload.pull_request?.head.label}`);
+  }
+  if (context.eventName == 'pull_request') {
+    expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
+  }
+  if (context.eventName == 'pull_request_target') {
+    expectedArgs.push('-P', `${context.payload.number}`);
   }
   expect(commitExecArgs).toEqual(expectedArgs);
   expect(commitCommand).toEqual('create-commit');
