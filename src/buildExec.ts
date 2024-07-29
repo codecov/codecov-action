@@ -412,4 +412,5 @@ export {
   buildGeneralExec,
   buildReportExec,
   buildUploadExec,
+  getToken,
 };
