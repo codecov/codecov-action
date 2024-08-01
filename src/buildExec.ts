@@ -45,12 +45,18 @@ const isPullRequestFromFork = (): boolean => {
   return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 
+/**
+ * Returning null in getToken means that we're using tokenless.
+ * Returning an empty string from getToken means that the token was not set
+   and we don't seem to be uploading from a fork so we are not using tokenless
+*/
 const getToken = async (): Promise<string | null> => {
   let token = core.getInput('token');
   if (!token && isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
+    // backwards compatibility with certain versions of the CLI that expect this
     process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-    return null;
+    return Promise.resolve(null);
   }
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -83,7 +89,7 @@ const buildCommitExec = async (): Promise<{
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
   const token = await getToken();
-  if (token == null) {
+  if (!overrideBranch && token == null) {
     overrideBranch = context.payload.pull_request?.head.label;
   }
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
