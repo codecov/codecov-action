@@ -45,12 +45,18 @@ const isPullRequestFromFork = (): boolean => {
   return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
 };
 
-const getToken = async (): Promise<string> => {
+/**
+ * Returning null in getToken means that we're using tokenless.
+ * Returning an empty string from getToken means that the token was not set
+   and we don't seem to be uploading from a fork so we are not using tokenless
+*/
+const getToken = async (): Promise<string | null> => {
   let token = core.getInput('token');
   if (!token && isPullRequestFromFork()) {
     core.info('==> Fork detected, tokenless uploading used');
+    // backwards compatibility with certain versions of the CLI that expect this
     process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-    return Promise.resolve('');
+    return Promise.resolve(null);
   }
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
@@ -60,7 +66,7 @@ const getToken = async (): Promise<string> => {
     }
     try {
       token = await core.getIDToken(url);
-      return token;
+      return Promise.resolve(token);
     } catch (err) {
       setFailure(
           `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,
@@ -78,18 +84,21 @@ const buildCommitExec = async (): Promise<{
 }> => {
   const commitParent = core.getInput('commit_parent');
   const gitService = getGitService();
-  const overrideBranch = core.getInput('override_branch');
+  let overrideBranch = core.getInput('override_branch');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
   const token = await getToken();
+  if (!overrideBranch && token == null) {
+    overrideBranch = context.payload.pull_request?.head.label;
+  }
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
 
   const commitCommand = 'create-commit';
   const commitExecArgs = [];
 
-  const commitOptions:any = {};
+  const commitOptions: any = {};
   commitOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -178,7 +187,7 @@ const buildReportExec = async (): Promise<{
   const reportCommand = 'create-report';
   const reportExecArgs = [];
 
-  const reportOptions:any = {};
+  const reportOptions: any = {};
   reportOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -268,7 +277,7 @@ const buildUploadExec = async (): Promise<{
 
   const uploadExecArgs = [];
   const uploadCommand = 'do-upload';
-  const uploadOptions:any = {};
+  const uploadOptions: any = {};
   uploadOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -409,4 +418,5 @@ export {
   buildGeneralExec,
   buildReportExec,
   buildUploadExec,
+  getToken,
 };
