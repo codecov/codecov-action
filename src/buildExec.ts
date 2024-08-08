@@ -2,6 +2,7 @@
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import {type PullRequestEvent} from '@octokit/webhooks-types';
 
 import {setFailure} from './helpers';
 
@@ -32,8 +33,9 @@ const getGitService = (): string => {
 const isPullRequestFromFork = (): boolean => {
   core.info(`evenName: ${context.eventName}`);
   if (
-    `${context.eventName}` !== 'pull_request' &&
-    `${context.eventName}` !== 'pull_request_target'
+    ['pull_request', 'pull_request_target'].every(
+        (event) => event !== context.eventName,
+    )
   ) {
     return false;
   }
@@ -42,7 +44,7 @@ const isPullRequestFromFork = (): boolean => {
   const headLabel = context.payload.pull_request.head.label;
 
   core.info(`baseRef: ${baseLabel} | headRef: ${headLabel}`);
-  return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
+  return baseLabel.split(':')[0] !== headLabel.split(':')[0];
 };
 
 const getToken = async (): Promise<string> => {
@@ -87,9 +89,9 @@ const buildCommitExec = async (): Promise<{
   const workingDir = core.getInput('working-directory');
 
   const commitCommand = 'create-commit';
-  const commitExecArgs = [];
+  const commitExecArgs: string[] = [];
 
-  const commitOptions:any = {};
+  const commitOptions: any = {};
   commitOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -99,35 +101,33 @@ const buildCommitExec = async (): Promise<{
     GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
   });
 
-
   if (token) {
     commitOptions.env.CODECOV_TOKEN = token;
   }
   if (commitParent) {
-    commitExecArgs.push('--parent-sha', `${commitParent}`);
+    commitExecArgs.push('--parent-sha', commitParent);
   }
-  commitExecArgs.push('--git-service', `${gitService}`);
+  commitExecArgs.push('--git-service', gitService);
 
   if (overrideBranch) {
-    commitExecArgs.push('-B', `${overrideBranch}`);
+    commitExecArgs.push('-B', overrideBranch);
   }
   if (overrideCommit) {
-    commitExecArgs.push('-C', `${overrideCommit}`);
+    commitExecArgs.push('-C', overrideCommit);
   } else if (
-    `${context.eventName}` == 'pull_request' ||
-    `${context.eventName}` == 'pull_request_target'
+    ['pull_request', 'pull_request_target'].includes(context.eventName)
   ) {
-    commitExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    const payload = context.payload as PullRequestEvent;
+    commitExecArgs.push('-C', payload.pull_request.head.sha);
   }
   if (overridePr) {
-    commitExecArgs.push('--pr', `${overridePr}`);
-  } else if (
-    `${context.eventName}` == 'pull_request_target'
-  ) {
-    commitExecArgs.push('--pr', `${context.payload.number}`);
+    commitExecArgs.push('--pr', overridePr);
+  } else if (context.eventName === 'pull_request_target') {
+    const payload = context.payload as PullRequestEvent;
+    commitExecArgs.push('--pr', payload.number.toString());
   }
   if (slug) {
-    commitExecArgs.push('--slug', `${slug}`);
+    commitExecArgs.push('--slug', slug);
   }
   if (failCi) {
     commitExecArgs.push('-Z');
@@ -135,7 +135,6 @@ const buildCommitExec = async (): Promise<{
   if (workingDir) {
     commitOptions.cwd = workingDir;
   }
-
 
   return {commitExecArgs, commitOptions, commitCommand};
 };
@@ -150,10 +149,10 @@ const buildGeneralExec = (): {
   const args = [];
 
   if (codecovYmlPath) {
-    args.push('--codecov-yml-path', `${codecovYmlPath}`);
+    args.push('--codecov-yml-path', codecovYmlPath);
   }
   if (url) {
-    args.push('--enterprise-url', `${url}`);
+    args.push('--enterprise-url', url);
   }
   if (verbose) {
     args.push('-v');
@@ -174,11 +173,10 @@ const buildReportExec = async (): Promise<{
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
 
-
   const reportCommand = 'create-report';
-  const reportExecArgs = [];
+  const reportExecArgs: string[] = [];
 
-  const reportOptions:any = {};
+  const reportOptions: any = {};
   reportOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -188,29 +186,27 @@ const buildReportExec = async (): Promise<{
     GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
   });
 
-
   if (token) {
     reportOptions.env.CODECOV_TOKEN = token;
   }
-  reportExecArgs.push('--git-service', `${gitService}`);
+  reportExecArgs.push('--git-service', gitService);
 
   if (overrideCommit) {
-    reportExecArgs.push('-C', `${overrideCommit}`);
+    reportExecArgs.push('-C', overrideCommit);
   } else if (
-    `${context.eventName}` == 'pull_request' ||
-    `${context.eventName}` == 'pull_request_target'
+    ['pull_request', 'pull_request_target'].includes(context.eventName)
   ) {
-    reportExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    const payload = context.payload as PullRequestEvent;
+    reportExecArgs.push('-C', payload.pull_request.head.sha);
   }
   if (overridePr) {
-    reportExecArgs.push('-P', `${overridePr}`);
-  } else if (
-    `${context.eventName}` == 'pull_request_target'
-  ) {
-    reportExecArgs.push('-P', `${context.payload.number}`);
+    reportExecArgs.push('-P', overridePr);
+  } else if (context.eventName == 'pull_request_target') {
+    const payload = context.payload as PullRequestEvent;
+    reportExecArgs.push('-P', payload.number.toString());
   }
   if (slug) {
-    reportExecArgs.push('--slug', `${slug}`);
+    reportExecArgs.push('--slug', slug);
   }
   if (failCi) {
     reportExecArgs.push('-Z');
@@ -266,9 +262,9 @@ const buildUploadExec = async (): Promise<{
   );
   const workingDir = core.getInput('working-directory');
 
-  const uploadExecArgs = [];
+  const uploadExecArgs: string[] = [];
   const uploadCommand = 'do-upload';
-  const uploadOptions:any = {};
+  const uploadOptions: any = {};
   uploadOptions.env = Object.assign(process.env, {
     GITHUB_ACTION: process.env.GITHUB_ACTION,
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -302,85 +298,94 @@ const buildUploadExec = async (): Promise<{
     uploadExecArgs.push('-e', envVarsArg.join(','));
   }
   if (exclude) {
-    uploadExecArgs.push('--exclude', `${exclude}`);
+    uploadExecArgs.push('--exclude', exclude);
   }
   if (failCi) {
     uploadExecArgs.push('-Z');
   }
   if (file) {
-    uploadExecArgs.push('-f', `${file}`);
+    uploadExecArgs.push('-f', file);
   }
   if (files) {
-    files.split(',').map((f) => f.trim()).forEach((f) => {
-      if (f.length > 0) { // this handles trailing commas
-        uploadExecArgs.push('-f', `${f}`);
-      }
-    });
+    files
+        .split(',')
+        .map((f) => f.trim())
+        .forEach((f) => {
+          if (f.length > 0) {
+          // this handles trailing commas
+            uploadExecArgs.push('-f', f);
+          }
+        });
   }
   if (flags) {
-    flags.split(',').map((f) => f.trim()).forEach((f) => {
-      uploadExecArgs.push('-F', `${f}`);
-    });
+    flags
+        .split(',')
+        .map((f) => f.trim())
+        .forEach((f) => {
+          uploadExecArgs.push('-F', f);
+        });
   }
-  uploadExecArgs.push('--git-service', `${gitService}`);
+  uploadExecArgs.push('--git-service', gitService);
   if (handleNoReportsFound) {
     uploadExecArgs.push('--handle-no-reports-found');
   }
   if (jobCode) {
-    uploadExecArgs.push('--job-code', `${jobCode}`);
+    uploadExecArgs.push('--job-code', jobCode);
   }
   if (name) {
-    uploadExecArgs.push('-n', `${name}`);
+    uploadExecArgs.push('-n', name);
   }
   if (networkFilter) {
-    uploadExecArgs.push('--network-filter', `${networkFilter}`);
+    uploadExecArgs.push('--network-filter', networkFilter);
   }
   if (networkPrefix) {
-    uploadExecArgs.push('--network-prefix', `${networkPrefix}`);
+    uploadExecArgs.push('--network-prefix', networkPrefix);
   }
   if (overrideBranch) {
-    uploadExecArgs.push('-B', `${overrideBranch}`);
+    uploadExecArgs.push('-B', overrideBranch);
   }
   if (overrideBuild) {
-    uploadExecArgs.push('-b', `${overrideBuild}`);
+    uploadExecArgs.push('-b', overrideBuild);
   }
   if (overrideBuildUrl) {
-    uploadExecArgs.push('--build-url', `${overrideBuildUrl}`);
+    uploadExecArgs.push('--build-url', overrideBuildUrl);
   }
   if (overrideCommit) {
-    uploadExecArgs.push('-C', `${overrideCommit}`);
+    uploadExecArgs.push('-C', overrideCommit);
   } else if (
-    `${context.eventName}` == 'pull_request' ||
-    `${context.eventName}` == 'pull_request_target'
+    ['pull_request', 'pull_request_target'].includes(context.eventName)
   ) {
-    uploadExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    const payload = context.payload as PullRequestEvent;
+    uploadExecArgs.push('-C', payload.pull_request.head.sha);
   }
   if (overridePr) {
-    uploadExecArgs.push('-P', `${overridePr}`);
-  } else if (
-    `${context.eventName}` == 'pull_request_target'
-  ) {
-    uploadExecArgs.push('-P', `${context.payload.number}`);
+    uploadExecArgs.push('-P', overridePr);
+  } else if (context.eventName == 'pull_request_target') {
+    const payload = context.payload as PullRequestEvent;
+    uploadExecArgs.push('-P', payload.number.toString());
   }
   if (plugin) {
-    uploadExecArgs.push('--plugin', `${plugin}`);
+    uploadExecArgs.push('--plugin', plugin);
   }
   if (plugins) {
-    plugins.split(',').map((p) => p.trim()).forEach((p) => {
-      uploadExecArgs.push('--plugin', `${p}`);
-    });
+    plugins
+        .split(',')
+        .map((p) => p.trim())
+        .forEach((p) => {
+          uploadExecArgs.push('--plugin', p);
+        });
   }
   if (reportCode) {
-    uploadExecArgs.push('--report-code', `${reportCode}`);
+    uploadExecArgs.push('--report-code', reportCode);
   }
   if (rootDir) {
-    uploadExecArgs.push('--network-root-folder', `${rootDir}`);
+    uploadExecArgs.push('--network-root-folder', rootDir);
   }
   if (searchDir) {
-    uploadExecArgs.push('-s', `${searchDir}`);
+    uploadExecArgs.push('-s', searchDir);
   }
   if (slug) {
-    uploadExecArgs.push('-r', `${slug}`);
+    uploadExecArgs.push('-r', slug);
   }
   if (workingDir) {
     uploadOptions.cwd = workingDir;
@@ -403,10 +408,4 @@ const buildUploadExec = async (): Promise<{
   };
 };
 
-
-export {
-  buildCommitExec,
-  buildGeneralExec,
-  buildReportExec,
-  buildUploadExec,
-};
+export {buildCommitExec, buildGeneralExec, buildReportExec, buildUploadExec};
