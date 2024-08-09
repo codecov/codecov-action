@@ -32,11 +32,7 @@ const getGitService = (): string => {
 
 const isPullRequestFromFork = (): boolean => {
   core.info(`evenName: ${context.eventName}`);
-  if (
-    ['pull_request', 'pull_request_target'].every(
-        (event) => event !== context.eventName,
-    )
-  ) {
+  if (!['pull_request', 'pull_request_target'].includes(context.eventName)) {
     return false;
   }
 
