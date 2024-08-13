@@ -29,7 +29,7 @@
     "undici": "5.28.4"
   },
   "devDependencies": {
-    "@octokit/webhooks-types": "^3.67.3",
+    "@octokit/webhooks-types": "^7.5.1",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.18.0",
