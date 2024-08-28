@@ -364,5 +364,5 @@ test('get token when token arg is unset and from fork', async () => {
 
   const token = await getToken();
 
-  expect(token).toEqual(null);
+  expect(token).toEqual('');
 });
