@@ -45,11 +45,6 @@ const isPullRequestFromFork = (): boolean => {
 
 const getToken = async (): Promise<string> => {
   let token = core.getInput('token');
-  if (!token && isPullRequestFromFork()) {
-    core.info('==> Fork detected, tokenless uploading used');
-    process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-    return Promise.resolve('');
-  }
   let url = core.getInput('url');
   const useOIDC = isTrue(core.getInput('use_oidc'));
   if (useOIDC) {
@@ -58,7 +53,7 @@ const getToken = async (): Promise<string> => {
     }
     try {
       token = await core.getIDToken(url);
-      return token;
+      return Promise.resolve(token);
     } catch (err) {
       setFailure(
           `Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`,
@@ -69,6 +64,17 @@ const getToken = async (): Promise<string> => {
   return token;
 };
 
+const getOverrideBranch = (token: string): string => {
+  let overrideBranch = core.getInput('override_branch');
+  if (!overrideBranch && !token && isPullRequestFromFork()) {
+    core.info('==> Fork detected, tokenless uploading used');
+    // backwards compatibility with certain versions of the CLI that expect this
+    process.env['TOKENLESS'] = context.payload.pull_request.head.label;
+    overrideBranch =context.payload.pull_request.head.label;
+  }
+  return overrideBranch;
+};
+
 const buildCommitExec = async (): Promise<{
   commitExecArgs: any[];
   commitOptions: any;
@@ -76,11 +82,11 @@ const buildCommitExec = async (): Promise<{
 }> => {
   const commitParent = core.getInput('commit_parent');
   const gitService = getGitService();
-  const overrideBranch = core.getInput('override_branch');
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
   const slug = core.getInput('slug');
   const token = await getToken();
+  const overrideBranch = getOverrideBranch(token);
   const failCi = isTrue(core.getInput('fail_ci_if_error'));
   const workingDir = core.getInput('working-directory');
 
@@ -404,4 +410,11 @@ const buildUploadExec = async (): Promise<{
   };
 };
 
-export {buildCommitExec, buildGeneralExec, buildReportExec, buildUploadExec};
+
+export {
+  buildCommitExec,
+  buildGeneralExec,
+  buildReportExec,
+  buildUploadExec,
+  getToken,
+};

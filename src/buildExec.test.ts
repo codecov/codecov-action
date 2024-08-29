@@ -5,6 +5,7 @@ import {
   buildGeneralExec,
   buildReportExec,
   buildUploadExec,
+  getToken,
 } from './buildExec';
 
 const context = github.context;
@@ -213,7 +214,7 @@ test('report args using context', async () => {
   for (const env of Object.keys(envs)) {
     process.env['INPUT_' + env.toUpperCase()] = envs[env];
   }
-  const expectedArgs : string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github',
   ];
@@ -271,12 +272,18 @@ test('commit args', async () => {
 });
 
 test('commit args using context', async () => {
-  const expectedArgs :string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github',
   ];
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
+  if (
+    (context.eventName == 'pull_request' || context.eventName == 'pull_request_target') &&
+    context.payload.pull_request?.base.label.split(':')[0] != context.payload.pull_request?.head.label.split(':')[0]
+  ) {
+    expectedArgs.push('-B', `${context.payload.pull_request?.head.label}`);
+  }
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
@@ -289,7 +296,7 @@ test('commit args using context', async () => {
 });
 
 test('commit args using github server url', async () => {
-  const expectedArgs :string[] = [
+  const expectedArgs: string[] = [
     '--git-service',
     'github_enterprise',
   ];
@@ -297,13 +304,65 @@ test('commit args using github server url', async () => {
   process.env.GITHUB_SERVER_URL = 'https://example.com';
 
   const {commitExecArgs, commitCommand} = await buildCommitExec();
+  if (
+    (context.eventName == 'pull_request' || context.eventName == 'pull_request_target') &&
+    context.payload.pull_request?.base.label.split(':')[0] != context.payload.pull_request?.head.label.split(':')[0]
+  ) {
+    expectedArgs.push('-B', `${context.payload.pull_request?.head.label}`);
+  }
   if (context.eventName == 'pull_request') {
     expectedArgs.push('-C', `${context.payload.pull_request?.head.sha}`);
   }
   if (context.eventName == 'pull_request_target') {
     expectedArgs.push('-P', `${context.payload.number}`);
   }
+  expect(commitExecArgs).toEqual(expectedArgs);
+  expect(commitCommand).toEqual('create-commit');
+});
+
+test('build commit args when token arg is unset and from fork', async () => {
+  context.eventName = 'pull_request';
+  context.payload.pull_request = {
+    'number': 1,
+    'base': {
+      'label': 'hello:main',
+    },
+    'head': {
+      'label': 'world:feat',
+      'sha': 'aaaaaa',
+    },
+  };
+
+  const expectedArgs: string[] = [
+    '--git-service',
+    'github_enterprise',
+    '-B',
+    'world:feat',
+    '-C',
+    `${context.payload.pull_request?.head.sha}`,
+  ];
+
+  const {commitExecArgs, commitCommand} = await buildCommitExec();
 
   expect(commitExecArgs).toEqual(expectedArgs);
   expect(commitCommand).toEqual('create-commit');
+});
+
+test('get token when token arg is unset and from fork', async () => {
+  context.eventName = 'pull_request';
+  context.payload.pull_request = {
+    'number': 1,
+    'base': {
+      'label': 'hello:main',
+    },
+    'head': {
+      'label': 'world:feat',
+      'sha': 'aaaaaa',
+    },
+  };
+
+
+  const token = await getToken();
+
+  expect(token).toEqual('');
 });

@@ -32341,22 +32341,16 @@ const getGitService = () => {
 };
 const isPullRequestFromFork = () => {
     core.info(`evenName: ${context.eventName}`);
-    if (`${context.eventName}` !== 'pull_request' &&
-        `${context.eventName}` !== 'pull_request_target') {
+    if (!['pull_request', 'pull_request_target'].includes(context.eventName)) {
         return false;
     }
     const baseLabel = context.payload.pull_request.base.label;
     const headLabel = context.payload.pull_request.head.label;
     core.info(`baseRef: ${baseLabel} | headRef: ${headLabel}`);
-    return (baseLabel.split(':')[0] !== headLabel.split(':')[0]);
+    return baseLabel.split(':')[0] !== headLabel.split(':')[0];
 };
 const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     let token = core.getInput('token');
-    if (!token && isPullRequestFromFork()) {
-        core.info('==> Fork detected, tokenless uploading used');
-        process.env['TOKENLESS'] = context.payload.pull_request.head.label;
-        return Promise.resolve('');
-    }
     let url = core.getInput('url');
     const useOIDC = isTrue(core.getInput('use_oidc'));
     if (useOIDC) {
@@ -32365,7 +32359,7 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
         }
         try {
             token = yield core.getIDToken(url);
-            return token;
+            return Promise.resolve(token);
         }
         catch (err) {
             setFailure(`Codecov: Failed to get OIDC token with url: ${url}. ${err.message}`, true);
@@ -32373,14 +32367,24 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     }
     return token;
 });
+const getOverrideBranch = (token) => {
+    let overrideBranch = core.getInput('override_branch');
+    if (!overrideBranch && !token && isPullRequestFromFork()) {
+        core.info('==> Fork detected, tokenless uploading used');
+        // backwards compatibility with certain versions of the CLI that expect this
+        process.env['TOKENLESS'] = context.payload.pull_request.head.label;
+        overrideBranch = context.payload.pull_request.head.label;
+    }
+    return overrideBranch;
+};
 const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const commitParent = core.getInput('commit_parent');
     const gitService = getGitService();
-    const overrideBranch = core.getInput('override_branch');
     const overrideCommit = core.getInput('override_commit');
     const overridePr = core.getInput('override_pr');
     const slug = core.getInput('slug');
     const token = yield getToken();
+    const overrideBranch = getOverrideBranch(token);
     const failCi = isTrue(core.getInput('fail_ci_if_error'));
     const workingDir = core.getInput('working-directory');
     const commitCommand = 'create-commit';
@@ -32398,27 +32402,28 @@ const buildCommitExec = () => buildExec_awaiter(void 0, void 0, void 0, function
         commitOptions.env.CODECOV_TOKEN = token;
     }
     if (commitParent) {
-        commitExecArgs.push('--parent-sha', `${commitParent}`);
+        commitExecArgs.push('--parent-sha', commitParent);
     }
-    commitExecArgs.push('--git-service', `${gitService}`);
+    commitExecArgs.push('--git-service', gitService);
     if (overrideBranch) {
-        commitExecArgs.push('-B', `${overrideBranch}`);
+        commitExecArgs.push('-B', overrideBranch);
     }
     if (overrideCommit) {
-        commitExecArgs.push('-C', `${overrideCommit}`);
+        commitExecArgs.push('-C', overrideCommit);
     }
-    else if (`${context.eventName}` == 'pull_request' ||
-        `${context.eventName}` == 'pull_request_target') {
-        commitExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    else if (['pull_request', 'pull_request_target'].includes(context.eventName)) {
+        const payload = context.payload;
+        commitExecArgs.push('-C', payload.pull_request.head.sha);
     }
     if (overridePr) {
-        commitExecArgs.push('--pr', `${overridePr}`);
+        commitExecArgs.push('--pr', overridePr);
     }
-    else if (`${context.eventName}` == 'pull_request_target') {
-        commitExecArgs.push('--pr', `${context.payload.number}`);
+    else if (context.eventName === 'pull_request_target') {
+        const payload = context.payload;
+        commitExecArgs.push('--pr', payload.number.toString());
     }
     if (slug) {
-        commitExecArgs.push('--slug', `${slug}`);
+        commitExecArgs.push('--slug', slug);
     }
     if (failCi) {
         commitExecArgs.push('-Z');
@@ -32434,10 +32439,10 @@ const buildGeneralExec = () => {
     const verbose = isTrue(core.getInput('verbose'));
     const args = [];
     if (codecovYmlPath) {
-        args.push('--codecov-yml-path', `${codecovYmlPath}`);
+        args.push('--codecov-yml-path', codecovYmlPath);
     }
     if (url) {
-        args.push('--enterprise-url', `${url}`);
+        args.push('--enterprise-url', url);
     }
     if (verbose) {
         args.push('-v');
@@ -32466,22 +32471,23 @@ const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function
     if (token) {
         reportOptions.env.CODECOV_TOKEN = token;
     }
-    reportExecArgs.push('--git-service', `${gitService}`);
+    reportExecArgs.push('--git-service', gitService);
     if (overrideCommit) {
-        reportExecArgs.push('-C', `${overrideCommit}`);
+        reportExecArgs.push('-C', overrideCommit);
     }
-    else if (`${context.eventName}` == 'pull_request' ||
-        `${context.eventName}` == 'pull_request_target') {
-        reportExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    else if (['pull_request', 'pull_request_target'].includes(context.eventName)) {
+        const payload = context.payload;
+        reportExecArgs.push('-C', payload.pull_request.head.sha);
     }
     if (overridePr) {
-        reportExecArgs.push('-P', `${overridePr}`);
+        reportExecArgs.push('-P', overridePr);
     }
-    else if (`${context.eventName}` == 'pull_request_target') {
-        reportExecArgs.push('-P', `${context.payload.number}`);
+    else if (context.eventName == 'pull_request_target') {
+        const payload = context.payload;
+        reportExecArgs.push('-P', payload.number.toString());
     }
     if (slug) {
-        reportExecArgs.push('--slug', `${slug}`);
+        reportExecArgs.push('--slug', slug);
     }
     if (failCi) {
         reportExecArgs.push('-Z');
@@ -32559,83 +32565,94 @@ const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function
         uploadExecArgs.push('-e', envVarsArg.join(','));
     }
     if (exclude) {
-        uploadExecArgs.push('--exclude', `${exclude}`);
+        uploadExecArgs.push('--exclude', exclude);
     }
     if (failCi) {
         uploadExecArgs.push('-Z');
     }
     if (file) {
-        uploadExecArgs.push('-f', `${file}`);
+        uploadExecArgs.push('-f', file);
     }
     if (files) {
-        files.split(',').map((f) => f.trim()).forEach((f) => {
-            if (f.length > 0) { // this handles trailing commas
-                uploadExecArgs.push('-f', `${f}`);
+        files
+            .split(',')
+            .map((f) => f.trim())
+            .forEach((f) => {
+            if (f.length > 0) {
+                // this handles trailing commas
+                uploadExecArgs.push('-f', f);
             }
         });
     }
     if (flags) {
-        flags.split(',').map((f) => f.trim()).forEach((f) => {
-            uploadExecArgs.push('-F', `${f}`);
+        flags
+            .split(',')
+            .map((f) => f.trim())
+            .forEach((f) => {
+            uploadExecArgs.push('-F', f);
         });
     }
-    uploadExecArgs.push('--git-service', `${gitService}`);
+    uploadExecArgs.push('--git-service', gitService);
     if (handleNoReportsFound) {
         uploadExecArgs.push('--handle-no-reports-found');
     }
     if (jobCode) {
-        uploadExecArgs.push('--job-code', `${jobCode}`);
+        uploadExecArgs.push('--job-code', jobCode);
     }
     if (name) {
-        uploadExecArgs.push('-n', `${name}`);
+        uploadExecArgs.push('-n', name);
     }
     if (networkFilter) {
-        uploadExecArgs.push('--network-filter', `${networkFilter}`);
+        uploadExecArgs.push('--network-filter', networkFilter);
     }
     if (networkPrefix) {
-        uploadExecArgs.push('--network-prefix', `${networkPrefix}`);
+        uploadExecArgs.push('--network-prefix', networkPrefix);
     }
     if (overrideBranch) {
-        uploadExecArgs.push('-B', `${overrideBranch}`);
+        uploadExecArgs.push('-B', overrideBranch);
     }
     if (overrideBuild) {
-        uploadExecArgs.push('-b', `${overrideBuild}`);
+        uploadExecArgs.push('-b', overrideBuild);
     }
     if (overrideBuildUrl) {
-        uploadExecArgs.push('--build-url', `${overrideBuildUrl}`);
+        uploadExecArgs.push('--build-url', overrideBuildUrl);
     }
     if (overrideCommit) {
-        uploadExecArgs.push('-C', `${overrideCommit}`);
+        uploadExecArgs.push('-C', overrideCommit);
     }
-    else if (`${context.eventName}` == 'pull_request' ||
-        `${context.eventName}` == 'pull_request_target') {
-        uploadExecArgs.push('-C', `${context.payload.pull_request.head.sha}`);
+    else if (['pull_request', 'pull_request_target'].includes(context.eventName)) {
+        const payload = context.payload;
+        uploadExecArgs.push('-C', payload.pull_request.head.sha);
     }
     if (overridePr) {
-        uploadExecArgs.push('-P', `${overridePr}`);
+        uploadExecArgs.push('-P', overridePr);
     }
-    else if (`${context.eventName}` == 'pull_request_target') {
-        uploadExecArgs.push('-P', `${context.payload.number}`);
+    else if (context.eventName == 'pull_request_target') {
+        const payload = context.payload;
+        uploadExecArgs.push('-P', payload.number.toString());
     }
     if (plugin) {
-        uploadExecArgs.push('--plugin', `${plugin}`);
+        uploadExecArgs.push('--plugin', plugin);
     }
     if (plugins) {
-        plugins.split(',').map((p) => p.trim()).forEach((p) => {
-            uploadExecArgs.push('--plugin', `${p}`);
+        plugins
+            .split(',')
+            .map((p) => p.trim())
+            .forEach((p) => {
+            uploadExecArgs.push('--plugin', p);
         });
     }
     if (reportCode) {
-        uploadExecArgs.push('--report-code', `${reportCode}`);
+        uploadExecArgs.push('--report-code', reportCode);
     }
     if (rootDir) {
-        uploadExecArgs.push('--network-root-folder', `${rootDir}`);
+        uploadExecArgs.push('--network-root-folder', rootDir);
     }
     if (searchDir) {
-        uploadExecArgs.push('-s', `${searchDir}`);
+        uploadExecArgs.push('-s', searchDir);
     }
     if (slug) {
-        uploadExecArgs.push('-r', `${slug}`);
+        uploadExecArgs.push('-r', slug);
     }
     if (workingDir) {
         uploadOptions.cwd = workingDir;
