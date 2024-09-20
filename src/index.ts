@@ -129,7 +129,7 @@ const run = async (): Promise<void> => {
             if (getSendNotifications()) {
               await sendNotifications();
               // don't perform an upload after sending notifications
-              return
+              return;
             }
 
             await exec.exec(

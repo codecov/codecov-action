@@ -66,7 +66,7 @@ const getToken = async (): Promise<string> => {
 
 const getSendNotifications = (): boolean => {
   return isTrue(
-    core.getInput('send-notifications'),
+      core.getInput('send-notifications'),
   );
 };
 
