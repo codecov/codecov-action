@@ -220,7 +220,11 @@ const buildReportExec = async (): Promise<{
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
-const buildSendNotificationsExec = async (): Promise<{}> => {
+const buildSendNotificationsExec = async (): Promise<{
+  sendNotificationsExecArgs: any[];
+  sendNotificationsOptions: any;
+  sendNotificationsCommand: string;
+}> => {
   const gitService = getGitService();
   const overrideCommit = core.getInput('override_commit');
   const overridePr = core.getInput('override_pr');
