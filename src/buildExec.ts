@@ -64,6 +64,12 @@ const getToken = async (): Promise<string> => {
   return token;
 };
 
+const getSendNotifications = (): boolean => {
+  return isTrue(
+    core.getInput('send-notifications'),
+  );
+};
+
 const getOverrideBranch = (token: string): string => {
   let overrideBranch = core.getInput('override_branch');
   if (!overrideBranch && !token && isPullRequestFromFork()) {
@@ -476,4 +482,5 @@ export {
   buildUploadExec,
   buildSendNotificationsExec,
   getToken,
+  getSendNotifications,
 };

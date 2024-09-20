@@ -8,7 +8,9 @@ import {
   buildCommitExec,
   buildGeneralExec,
   buildReportExec,
+  buildSendNotificationsExec,
   buildUploadExec,
+  getSendNotifications,
 } from './buildExec';
 import {
   getBaseUrl,
@@ -28,6 +30,11 @@ const run = async (): Promise<void> => {
   try {
     const {commitExecArgs, commitOptions, commitCommand} = await buildCommitExec();
     const {reportExecArgs, reportOptions, reportCommand} = await buildReportExec();
+    const {
+      sendNotificationsExecArgs,
+      sendNotificationsOptions,
+      sendNotificationsCommand,
+    } = await buildSendNotificationsExec();
     const {
       uploadExecArgs,
       uploadOptions,
@@ -101,6 +108,30 @@ const run = async (): Promise<void> => {
                     );
                   });
             };
+            const sendNotifications = async (): Promise<void> => {
+              await exec.exec(
+                  getCommand(filename, args, sendNotificationsCommand).join(' '),
+                  sendNotificationsExecArgs,
+                  sendNotificationsOptions)
+                  .then(async (exitCode) => {
+                    if (exitCode == 0) {
+                      // notifications sent
+                    }
+                  }).catch((err) => {
+                    setFailure(
+                        `Codecov:
+                        Failed to send notifications: ${err.message}`,
+                        failCi,
+                    );
+                  });
+            };
+
+            if (getSendNotifications()) {
+              await sendNotifications();
+              // don't perform an upload after sending notifications
+              return
+            }
+
             await exec.exec(
                 getCommand(
                     filename,
