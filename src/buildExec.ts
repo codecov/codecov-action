@@ -470,5 +470,6 @@ export {
   buildGeneralExec,
   buildReportExec,
   buildUploadExec,
+  buildSendNotificationsExec,
   getToken,
 };
