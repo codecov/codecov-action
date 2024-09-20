@@ -113,6 +113,9 @@ inputs:
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false
+  send-notifications:
+    description: 'Manually trigger the sending of notifications (does not upload coverage, requires codecov.notify.manual_trigger to be true)'
+    required: false
 branding:
   color: 'red'
   icon: 'umbrella'
