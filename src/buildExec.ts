@@ -220,6 +220,60 @@ const buildReportExec = async (): Promise<{
   return {reportExecArgs, reportOptions, reportCommand};
 };
 
+const buildSendNotificationsExec = async (): Promise<{}> => {
+  const gitService = getGitService();
+  const overrideCommit = core.getInput('override_commit');
+  const overridePr = core.getInput('override_pr');
+  const slug = core.getInput('slug');
+  const token = await getToken();
+  const failCi = isTrue(core.getInput('fail_ci_if_error'));
+  const workingDir = core.getInput('working-directory');
+
+  const sendNotificationsCommand = 'send-notifications';
+  const sendNotificationsExecArgs: string[] = [];
+
+  const sendNotificationsOptions: any = {};
+  sendNotificationsOptions.env = Object.assign(process.env, {
+    GITHUB_ACTION: process.env.GITHUB_ACTION,
+    GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+    GITHUB_REF: process.env.GITHUB_REF,
+    GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+    GITHUB_SHA: process.env.GITHUB_SHA,
+    GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
+  });
+
+  if (token) {
+    sendNotificationsOptions.env.CODECOV_TOKEN = token;
+  }
+  sendNotificationsExecArgs.push('--git-service', gitService);
+
+  if (overrideCommit) {
+    sendNotificationsExecArgs.push('-C', overrideCommit);
+  } else if (
+    ['pull_request', 'pull_request_target'].includes(context.eventName)
+  ) {
+    const payload = context.payload as PullRequestEvent;
+    sendNotificationsExecArgs.push('-C', payload.pull_request.head.sha);
+  }
+  if (overridePr) {
+    sendNotificationsExecArgs.push('-P', overridePr);
+  } else if (context.eventName == 'pull_request_target') {
+    const payload = context.payload as PullRequestEvent;
+    sendNotificationsExecArgs.push('-P', payload.number.toString());
+  }
+  if (slug) {
+    sendNotificationsExecArgs.push('--slug', slug);
+  }
+  if (failCi) {
+    sendNotificationsExecArgs.push('-Z');
+  }
+  if (workingDir) {
+    sendNotificationsOptions.cwd = workingDir;
+  }
+
+  return {sendNotificationsExecArgs, sendNotificationsOptions, sendNotificationsCommand};
+};
+
 const buildUploadExec = async (): Promise<{
   uploadExecArgs: any[];
   uploadOptions: any;
