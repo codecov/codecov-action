@@ -107,6 +107,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `plugins` | Comma-separated list of plugins for use during upload. | Optional
 | `report_code` | The code of the report. If unsure, do not include | Optional
 | `root_dir` | Used to specify the location of your   .git   root to identify project root directory | Optional
+| `send-notifications` | Send notifications (does not upload coverage, requires codecov.notify.manual_trigger to be true) | Optional
 | `slug` | Specify the slug manually (Enterprise use) | Optional
 | `url` | Specify the base url to upload (Enterprise use) | Optional
 | `use_legacy_upload_endpoint` | Use the legacy upload endpoint | Optional

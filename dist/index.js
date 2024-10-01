@@ -32340,7 +32340,7 @@ const getGitService = () => {
     return 'github';
 };
 const isPullRequestFromFork = () => {
-    core.info(`evenName: ${context.eventName}`);
+    core.info(`eventName: ${context.eventName}`);
     if (!['pull_request', 'pull_request_target'].includes(context.eventName)) {
         return false;
     }
@@ -32367,6 +32367,9 @@ const getToken = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     }
     return token;
 });
+const getSendNotifications = () => {
+    return isTrue(core.getInput('send-notifications'));
+};
 const getOverrideBranch = (token) => {
     let overrideBranch = core.getInput('override_branch');
     if (!overrideBranch && !token && isPullRequestFromFork()) {
@@ -32496,6 +32499,54 @@ const buildReportExec = () => buildExec_awaiter(void 0, void 0, void 0, function
         reportOptions.cwd = workingDir;
     }
     return { reportExecArgs, reportOptions, reportCommand };
+});
+const buildSendNotificationsExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
+    const gitService = getGitService();
+    const overrideCommit = core.getInput('override_commit');
+    const overridePr = core.getInput('override_pr');
+    const slug = core.getInput('slug');
+    const token = yield getToken();
+    const failCi = isTrue(core.getInput('fail_ci_if_error'));
+    const workingDir = core.getInput('working-directory');
+    const sendNotificationsCommand = 'send-notifications';
+    const sendNotificationsExecArgs = [];
+    const sendNotificationsOptions = {};
+    sendNotificationsOptions.env = Object.assign(process.env, {
+        GITHUB_ACTION: process.env.GITHUB_ACTION,
+        GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+        GITHUB_REF: process.env.GITHUB_REF,
+        GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+        GITHUB_SHA: process.env.GITHUB_SHA,
+        GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF || '',
+    });
+    if (token) {
+        sendNotificationsOptions.env.CODECOV_TOKEN = token;
+    }
+    sendNotificationsExecArgs.push('--git-service', gitService);
+    if (overrideCommit) {
+        sendNotificationsExecArgs.push('-C', overrideCommit);
+    }
+    else if (['pull_request', 'pull_request_target'].includes(context.eventName)) {
+        const payload = context.payload;
+        sendNotificationsExecArgs.push('-C', payload.pull_request.head.sha);
+    }
+    if (overridePr) {
+        sendNotificationsExecArgs.push('-P', overridePr);
+    }
+    else if (context.eventName == 'pull_request_target') {
+        const payload = context.payload;
+        sendNotificationsExecArgs.push('-P', payload.number.toString());
+    }
+    if (slug) {
+        sendNotificationsExecArgs.push('--slug', slug);
+    }
+    if (failCi) {
+        sendNotificationsExecArgs.push('-Z');
+    }
+    if (workingDir) {
+        sendNotificationsOptions.cwd = workingDir;
+    }
+    return { sendNotificationsExecArgs, sendNotificationsOptions, sendNotificationsCommand };
 });
 const buildUploadExec = () => buildExec_awaiter(void 0, void 0, void 0, function* () {
     const disableFileFixes = isTrue(core.getInput('disable_file_fixes'));
@@ -32826,6 +32877,7 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
     try {
         const { commitExecArgs, commitOptions, commitCommand } = yield buildCommitExec();
         const { reportExecArgs, reportOptions, reportCommand } = yield buildReportExec();
+        const { sendNotificationsExecArgs, sendNotificationsOptions, sendNotificationsCommand, } = yield buildSendNotificationsExec();
         const { uploadExecArgs, uploadOptions, disableSafeDirectory, failCi, os, uploaderVersion, uploadCommand, } = yield buildUploadExec();
         const { args, verbose } = buildGeneralExec();
         const platform = getPlatform(os);
@@ -32870,6 +32922,22 @@ const run = () => src_awaiter(void 0, void 0, void 0, function* () {
                         Failed to properly create report: ${err.message}`, failCi);
                     });
                 });
+                const sendNotifications = () => src_awaiter(void 0, void 0, void 0, function* () {
+                    yield exec.exec(getCommand(filename, args, sendNotificationsCommand).join(' '), sendNotificationsExecArgs, sendNotificationsOptions)
+                        .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
+                        if (exitCode == 0) {
+                            // notifications sent
+                        }
+                    })).catch((err) => {
+                        setFailure(`Codecov:
+                        Failed to send notifications: ${err.message}`, failCi);
+                    });
+                });
+                if (getSendNotifications()) {
+                    yield sendNotifications();
+                    // don't perform an upload after sending notifications
+                    return;
+                }
                 yield exec.exec(getCommand(filename, args, commitCommand).join(' '), commitExecArgs, commitOptions)
                     .then((exitCode) => src_awaiter(void 0, void 0, void 0, function* () {
                     if (exitCode == 0) {
