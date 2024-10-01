@@ -12,10 +12,15 @@ const PLATFORMS = [
 type Platform = typeof PLATFORMS[number];
 
 const setFailure = (message: string, failCi: boolean): void => {
-    failCi ? core.setFailed(message) : core.warning(message);
-    if (failCi) {
-      process.exit();
-    }
+  if (failCi) {
+    core.setFailed(message);
+  } else {
+    core.warning(message);
+  }
+
+  if (failCi) {
+    process.exit();
+  }
 };
 
 const getUploaderName = (platform: string): string => {
