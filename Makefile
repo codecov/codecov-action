@@ -1,7 +1,7 @@
 deploy:
-	$(eval VERSION := $(shell cat package.json | grep '"version": ' | cut -d\" -f4))
-	git tag -d v4
-	git push origin :v4
-	git tag v4
+  $(eval VERSION := $(shell cat src/version | grep 'CODECOV_ACTION_VERSION=' | cut -d\" -f2))
+	git tag -d v5
+	git push origin :v5
+	git tag v5
 	git tag v$(VERSION) -s -m ""
 	git push origin --tags
