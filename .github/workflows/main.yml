@@ -1,5 +1,8 @@
 name: Workflow for Codecov Action
 on: [push, pull_request]
+permissions:
+  id-token: write
+  contents: read
 jobs:
   run:
     runs-on: ${{ matrix.os }}
@@ -10,14 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
+          use_oidc: true
           fail_ci_if_error: true
           files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.os }}
@@ -53,11 +55,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
@@ -96,11 +96,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
