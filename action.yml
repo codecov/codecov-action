@@ -16,15 +16,19 @@ inputs:
   disable_file_fixes:
     description: 'Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports'
     required: false
+    default: 'false'
   disable_search:
     description: 'Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option.'
     required: false
+    default: 'false'
   disable_safe_directory:
     description: 'Disable setting safe directory. Set to true to disable.'
     required: false
+    default: 'false'
   dry_run:
     description: "Don't upload files to Codecov"
     required: false
+    default: 'false'
   env_vars:
     description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
     required: false
@@ -34,6 +38,7 @@ inputs:
   fail_ci_if_error:
     description: 'Exit with non-zero code in case of error.'
     required: false
+    default: 'false'
   files:
     description: 'Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable-search to disable uploading other files.'
     required: false
@@ -43,12 +48,14 @@ inputs:
   git_service:
     description: 'Override the git_service (e.g. github_enterprise)'
     required: false
+    default: 'github'
   gcov_args:
     description: 'Extra arguments to pass to gcov'
     required: false
   gcov_executable:
     description: "gcov executable to run. Defaults to 'gcov'"
     required: false
+    default: 'gcov'
   gcov_ignore:
     description: 'Paths to ignore during gcov gathering'
     required: false
@@ -58,6 +65,7 @@ inputs:
   handle_no_reports_found:
     description: 'Raise no exceptions when no coverage reports are found.'
     required: false
+    default: 'false'
   job_code:
     description: ''
     required: false
@@ -103,6 +111,7 @@ inputs:
   skip_validation:
     description: 'Skip integrity checking of the CLI. This is NOT recommended.'
     required: false
+    default: 'false'
   slug:
     description: 'Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users.'
     required: false
@@ -118,15 +127,19 @@ inputs:
   use_legacy_upload_endpoint:
     description: 'Use the legacy upload endpoint.'
     required: false
+    default: 'false'
   use_oidc:
     description: 'Use OIDC instead of token. This will ignore any token supplied'
     required: false
+    default: 'false'
   verbose:
     description: 'Use verbose logging in the CLI'
     required: false
+    default: 'false'
   version:
     description: "Which version of the Codecov CLI to use (defaults to 'latest')"
     required: false
+    default: 'latest'
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false
