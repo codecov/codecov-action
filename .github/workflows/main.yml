@@ -100,14 +100,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - name: Submodule
-        run: |
-          git submodule init
-          git submodule update --remote
-      - name: Install dependencies
-        run: pip install -r src/scripts/app/requirements.txt
-      - name: Run tests and collect coverage
-        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
