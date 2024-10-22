@@ -152,7 +152,8 @@ runs:
       if: ${{ inputs.use_oidc == 'true' }}
       shell: bash
       run: |
-        echo "CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange")" >> $GITHUB_ENV
+        CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange")
+        echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
         echo $CODECOV_TOKEN
 
     - name: Upload coverage to Codecov
