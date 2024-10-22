@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.19"
+CC_WRAPPER_VERSION="0.0.20"
 say() {
   echo -e "$1"
 }
@@ -40,7 +40,6 @@ say "     _____          _
                                   "
 CC_VERSION="${CC_VERSION:-latest}"
 CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
-CC_OS="linux"
 if [ -n "$CC_BINARY" ];
 then
   if [ -f "$CC_BINARY" ];
@@ -55,6 +54,7 @@ else
     say "$g==>$x Overridden OS: $b${CC_OS}$x"
     export cc_os=${CC_OS}
   else
+    CC_OS="linux"
     family=$(uname -s | tr '[:upper:]' '[:lower:]')
     cc_os="windows"
     [[ $family == "darwin" ]] && cc_os="macos"
