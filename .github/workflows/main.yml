@@ -1,3 +1,4 @@
+---
 name: Workflow for Codecov Action
 on: [push, pull_request]
 permissions:
@@ -14,6 +15,9 @@ jobs:
         uses: actions/checkout@v4.2.2
         with:
           submodules: 'true'
+      # pip needs LaTeX? https://github.com/actions/setup-python/issues/821#issuecomment-2078641947
+      - name: Install LaTeX
+        run: sudo apt-get install -y texlive-full
       - name: Install dependencies
         run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
