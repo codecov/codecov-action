@@ -199,6 +199,6 @@ runs:
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
-        CC_TOKEN: ${{ inputs.token }}
+        CC_TOKEN: $CODECOV_TOKEN || ${{ inputs.token }}
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
