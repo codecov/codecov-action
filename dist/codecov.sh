@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.18"
+CC_WRAPPER_VERSION="0.0.19"
 say() {
   echo -e "$1"
 }
@@ -40,6 +40,7 @@ say "     _____          _
                                   "
 CC_VERSION="${CC_VERSION:-latest}"
 CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
+CC_OS="linux"
 if [ -n "$CC_BINARY" ];
 then
   if [ -f "$CC_BINARY" ];
@@ -49,16 +50,22 @@ then
     exit_if_error "Could not find binary file $CC_BINARY"
   fi
 else
-  family=$(uname -s | tr '[:upper:]' '[:lower:]')
-  cc_os="windows"
-  [[ $family == "darwin" ]] && cc_os="macos"
-  [[ $family == "linux" ]] && cc_os="linux"
-  [[ $cc_os == "linux" ]] && \
-    osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
-  [[ $osID == "alpine" ]] && cc_os="alpine"
-  [[ $(arch) == "aarch64" && $family == "linux" ]] && cc_os+="-arm64"
-  say "$g==>$x Detected $b${cc_os}$x"
-  export cc_os=${cc_os}
+  if [ -n "$CC_OS" ];
+  then
+    say "$g==>$x Overridden OS: $b${CC_OS}$x"
+    export cc_os=${CC_OS}
+  else
+    family=$(uname -s | tr '[:upper:]' '[:lower:]')
+    cc_os="windows"
+    [[ $family == "darwin" ]] && cc_os="macos"
+    [[ $family == "linux" ]] && cc_os="linux"
+    [[ $cc_os == "linux" ]] && \
+      osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
+    [[ $osID == "alpine" ]] && cc_os="alpine"
+    [[ $(arch) == "aarch64" && $family == "linux" ]] && cc_os+="-arm64"
+    say "$g==>$x Detected $b${cc_os}$x"
+    export cc_os=${cc_os}
+  fi
   export cc_version=${CC_VERSION}
   cc_filename="codecov"
   [[ $cc_os == "windows" ]] && cc_filename+=".exe"
