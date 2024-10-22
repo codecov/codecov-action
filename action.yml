@@ -156,11 +156,8 @@ runs:
         CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
         echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
         echo $CODECOV_TOKEN
-
     - name: Upload coverage to Codecov
-      run: |
-        echo $CODECOV_TOKEN
-        ./dist/codecov.sh
+      run: ./dist/codecov.sh
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
