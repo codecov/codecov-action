@@ -148,14 +148,21 @@ runs:
       run: |
         git config --global --add safe.directory ${{ github.workspace }}
 
-    - name: Get and set OIDC token
-      if: ${{ inputs.use_oidc == 'true' }}
+    - name: Get and set token
       shell: bash
       run: |
-        # {"count":1984,"value":"***"}
-        CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
-        echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
-        echo $CODECOV_TOKEN
+        if [ ${{ inputs.use_oidc }} == 'true' ];
+        then
+          # {"count":1984,"value":"***"}
+          CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
+          echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
+        else
+          if [ -n ${{ inputs.token }} ];
+          then
+            CODECOV_TOKEN=${{ inputs.token }}
+            echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
+          fi
+        fi
     - name: Upload coverage to Codecov
       run: ./dist/codecov.sh
       shell: bash
@@ -197,6 +204,6 @@ runs:
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
-        CC_TOKEN: $CODECOV_TOKEN || ${{ inputs.token }}
+        CC_TOKEN: $CODECOV_TOKEN
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
