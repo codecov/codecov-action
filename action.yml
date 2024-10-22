@@ -174,9 +174,9 @@ runs:
         CC_ENTERPRISE_URL: ${{ inputs.url }}
         CC_ENV: ${{ inputs.env_vars }}
         CC_EXCLUDES: ${{ inputs.exclude }}
-        CC_FAIL_ON_ERROR: ${{ inputs.fail_ci_if_error >>
-        CC_FILES: ${{ inputs.files >>
-        CC_FLAGS: ${{ inputs.flags >>
+        CC_FAIL_ON_ERROR: ${{ inputs.fail_ci_if_error }}
+        CC_FILES: ${{ inputs.files }}
+        CC_FLAGS: ${{ inputs.flags }}
         CC_GCOV_ARGS: ${{ inputs.gcov_args }}
         CC_GCOV_EXECUTABLE: ${{ inputs.gcov_executable }}
         CC_GCOV_IGNORE: ${{ inputs.gcov_ignore }}
@@ -199,5 +199,5 @@ runs:
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
         CC_TOKEN: ${{ inputs.token }}
-        CC_VERBOSE: ${{ inputs.verbose >>
-        CC_VERSION: ${{ inputs.version >>
+        CC_VERBOSE: ${{ inputs.verbose }}
+        CC_VERSION: ${{ inputs.version }}
