@@ -3,6 +3,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {type PullRequestEvent} from '@octokit/webhooks-types';
+import {glob} from 'tinyglobby';
 
 import {setFailure} from './helpers';
 
@@ -309,15 +310,15 @@ const buildUploadExec = async (): Promise<{
     uploadExecArgs.push('-f', file);
   }
   if (files) {
-    files
+    const globs = files
         .split(',')
         .map((f) => f.trim())
-        .forEach((f) => {
-          if (f.length > 0) {
-          // this handles trailing commas
-            uploadExecArgs.push('-f', f);
-          }
-        });
+        // This handles trailing commas.
+        .filter((f) => f.length > 0);
+    const globbed = await glob(globs);
+    globbed.map((f) => {
+      uploadExecArgs.push('-f', f);
+    });
   }
   if (flags) {
     flags

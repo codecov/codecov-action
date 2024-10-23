@@ -38,6 +38,7 @@ inputs:
   file:
     description: 'Path to coverage file to upload'
     required: false
+    deprecationMessage: 'Use the `files` input instead, it supports globs'
   files:
     description: 'Comma-separated list of files to upload'
     required: false
