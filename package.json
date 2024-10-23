@@ -26,6 +26,7 @@
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
+    "tinyglobby": "^0.2.9",
     "undici": "5.28.4"
   },
   "devDependencies": {
