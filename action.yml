@@ -36,7 +36,7 @@ inputs:
     description: 'Comma-separated list of folders to exclude from search.'
     required: false
   fail_ci_if_error:
-    description: 'Exit with non-zero code in case of error.'
+    description: 'On error, exit with non-zero code'
     required: false
     default: 'false'
   files:
