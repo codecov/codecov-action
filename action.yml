@@ -133,7 +133,7 @@ inputs:
     required: false
     default: 'false'
   verbose:
-    description: 'Use verbose logging in the CLI'
+    description: 'Enable verbose logging'
     required: false
     default: 'false'
   version:
