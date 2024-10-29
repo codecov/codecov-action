@@ -63,7 +63,7 @@ inputs:
     description: "Paths to include during gcov gathering"
     required: false
   handle_no_reports_found:
-    description: 'Raise no exceptions when no coverage reports are found.'
+    description: 'If no coverage reports are found, do not raise an exception.'
     required: false
     default: 'false'
   job_code:
