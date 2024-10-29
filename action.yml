@@ -113,7 +113,7 @@ inputs:
     required: false
     default: 'false'
   slug:
-    description: 'Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users.'
+    description: '[Required when using the org token] Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users.'
     required: false
   swift_project:
     description: 'Specify the swift project name. Useful for optimization.'
