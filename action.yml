@@ -82,7 +82,7 @@ inputs:
     description: 'Override the assumed OS. Options available at cli.codecov.io'
     required: false
   override_branch:
-    description: 'Branch to which this commit belongs'
+    description: 'Specify the branch to be displayed with this commit on Codecov'
     required: false
   override_build:
     description: 'Specify the build number manually'
