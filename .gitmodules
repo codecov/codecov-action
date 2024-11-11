@@ -1,0 +1,4 @@
+[submodule "src/scripts"]
+	path = src/scripts
+	url = https://github.com/codecov/wrapper
+	branch = main

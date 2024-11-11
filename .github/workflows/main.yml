@@ -1,5 +1,9 @@
+---
 name: Workflow for Codecov Action
 on: [push, pull_request]
+permissions:
+  id-token: write
+  contents: read
 jobs:
   run:
     runs-on: ${{ matrix.os }}
@@ -9,12 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+        with:
+          submodules: 'true'
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
@@ -42,7 +46,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.7.3
+          version: v0.8.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -52,12 +56,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+        with:
+          submodules: 'true'
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
+        run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
-        run: npm run test
+        run: pytest src/scripts/app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
@@ -91,16 +95,15 @@ jobs:
 
   run-container:
     runs-on: ubuntu-latest
-    container: node:18
+    container: python:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
-      - name: Run tests and collect coverage
-        run: npm run test
+        with:
+          submodules: 'true'
+      - name: Install deps
+        run: |
+          apt-get install git
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
