@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.20"
+CC_WRAPPER_VERSION="0.0.21"
 say() {
   echo -e "$1"
 }
@@ -96,11 +96,11 @@ CC_PUBLIC_PGP_KEY=$(curl https://keybase.io/codecovsecurity/pgp_keys.asc)
   say "$g ->$x Downloading $b${sha_url}$x"
   say "$g ->$x Downloading $b${sha_url}.sig$x"
   say " "
-  curl -Os "$sha_url"
-  curl -Os "${sha_url}.sig"
+  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "$sha_url"
+  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "${sha_url}.sig"
   if ! gpg --verify "${cc_filename}.SHA256SUM.sig" "${cc_filename}.SHA256SUM";
   then
-    exit_if_error "Could not verify SHASUM. Please contact security@codecov.io if problem continues"
+    exit_if_error "Could not verify signature. Please contact Codecov if problem continues"
   fi
   if ! (shasum -a 256 -c "${cc_filename}.SHA256SUM" || \
     sha256sum -c "${cc_filename}.SHA256SUM");
