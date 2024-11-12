@@ -5,6 +5,25 @@
 [![Workflow for Codecov Action](https://github.com/codecov/codecov-action/actions/workflows/main.yml/badge.svg)](https://github.com/codecov/codecov-action/actions/workflows/main.yml)
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
+## v5 Release
+`v5` of the Codecov GitHub Action will use the [Codecov Wrapper](https://github.com/codecov/wrapper) to encapsulate the [CLI](https://github.com/codecov/codecov-cli). This will help ensure that the Action gets updates quicker.
+
+### Migration Guide
+The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the repository settings page in codecov.io, you can set the ability for Codecov to receive a coverage report from ANY souce. This will allow contributors or other members of a repository to upload without needing access to the Codecov token.
+
+In order to maintain continuity, no arguments to the `v5` Action have been changed. However the following arguments have been added:
+
+- binary
+- gcov_args
+- gcov_executable
+- gcov_ignore
+- gcov_include
+- report_type
+- skip_validation
+- swift_project
+
+You can see their usage in the `action.yml` [file](https://github.com/codecov/codecov-action/blob/main/action.yml).
+
 ## v4 Release
 `v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov.
 
