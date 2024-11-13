@@ -147,14 +147,10 @@ inputs:
     description: 'Directory in which to execute codecov.sh'
     required: false
 
-steps:
-  - run:
-      name: Upload to Codecov
-      command: <<include(scripts/dist/codecov.sh)>>
-      when: << parameters.when >>
 branding:
   color: 'red'
   icon: 'umbrella'
+
 runs:
   using: "composite"
   steps:
@@ -180,7 +176,7 @@ runs:
           fi
         fi
     - name: Upload coverage to Codecov
-      run: ./dist/codecov.sh
+      run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
