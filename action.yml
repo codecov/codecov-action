@@ -150,7 +150,7 @@ inputs:
 steps:
   - run:
       name: Upload to Codecov
-      command: <<include(scripts/dist/codecov.sh)>>
+      command: <<include(dist/codecov.sh)>>
       when: << parameters.when >>
 branding:
   color: 'red'
