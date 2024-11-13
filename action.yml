@@ -176,7 +176,7 @@ runs:
           fi
         fi
     - name: Upload coverage to Codecov
-      run: ${{ github.action_path }}/dist/codecov.sh
+      run: ${{ github.action_path }}dist/codecov.sh
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
