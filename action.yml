@@ -7,6 +7,9 @@ inputs:
   binary:
     description: 'The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed.'
     required: false
+  codecov_yml_path:
+    description: 'The location of the codecov.yml file. This is crrently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml'
+    required: false
   commit_parent:
     description: 'SHA (with 40 chars) of what should be the parent of this commit.'
     required: false
@@ -105,7 +108,7 @@ inputs:
   report_type:
     description: 'The type of file to upload, coverage by default. Possible values are "testing", "coverage".'
     required: false
-  root_folder:
+  root_dir:
     description: 'Root folder from which to consider paths on the network section. Defaults to current working directory.'
     required: false
   skip_validation:
@@ -220,3 +223,4 @@ runs:
         CC_TOKEN: $CODECOV_TOKEN
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
+        CC_YML_PATH: ${{ inputs.codecov_yml_path }}
