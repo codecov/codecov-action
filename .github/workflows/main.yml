@@ -32,8 +32,7 @@ jobs:
         uses: ./
         with:
           fail_ci_if_error: true
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
           verbose: true
@@ -42,8 +41,7 @@ jobs:
         uses: ./
         with:
           fail_ci_if_error: true
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
           version: v0.8.0
@@ -75,8 +73,7 @@ jobs:
         uses: ./
         with:
           fail_ci_if_error: true
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: demo,macos-latest-xlarge
           name: codecov-demo
           verbose: true
@@ -85,11 +82,10 @@ jobs:
         uses: ./
         with:
           fail_ci_if_error: true
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,maxos-latest-xlarge
           name: codecov-version
-          version: v0.6.0
+          version: v0.8.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -115,8 +111,7 @@ jobs:
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
           verbose: true
@@ -124,10 +119,9 @@ jobs:
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
-          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json
-          file: ./coverage/coverage-final.json
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.6.0
+          version: v0.8.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
