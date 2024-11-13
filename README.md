@@ -11,16 +11,20 @@
 ### Migration Guide
 The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the repository settings page in codecov.io, you can set the ability for Codecov to receive a coverage report from ANY souce. This will allow contributors or other members of a repository to upload without needing access to the Codecov token.
 
-In order to maintain continuity, no arguments to the `v5` Action have been changed. However the following arguments have been added:
+**The following arguments have been changed**
+- `file` (this has been deprecated in favor of `files`)
+- `plugin` (this has been deprecated in favor of `plugins`)
+  
+The following arguments have been added:
 
-- binary
-- gcov_args
-- gcov_executable
-- gcov_ignore
-- gcov_include
-- report_type
-- skip_validation
-- swift_project
+- `binary`
+- `gcov_args`
+- `gcov_executable`
+- `gcov_ignore`
+- `gcov_include`
+- `report_type`
+- `skip_validation`
+- `swift_project`
 
 You can see their usage in the `action.yml` [file](https://github.com/codecov/codecov-action/blob/main/action.yml).
 
