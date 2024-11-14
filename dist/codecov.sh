@@ -204,35 +204,13 @@ then
   token_str+=" -t <redacted>"
   token_arg+=( " -t " "$token")
 fi
-say "$g==>$x Running create-commit"
-say "      $b./$cc_filename $(echo "${cc_cli_args[@]}") create-commit$token_str $(echo "${cc_cc_args[@]}")$x"
-if ! ./$cc_filename \
-  ${cc_cli_args[*]} \
-  create-commit \
-  ${token_arg[*]} \
-  ${cc_cc_args[*]};
-then
-  exit_if_error "Failed to create-commit"
-fi
-say " "
-say "$g==>$x Running create-report"
-say "      $b./$cc_filename $(echo "${cc_cli_args[@]}") create-report$token_str $(echo "${cc_cr_args[@]}")$x"
-if ! ./$cc_filename \
-  ${cc_cli_args[*]} \
-  create-report \
-  ${token_arg[*]} \
-  ${cc_cr_args[*]};
-then
-  exit_if_error "Failed to create-report"
-fi
-say " "
-say "$g==>$x Running do-upload"
-say "      $b./$cc_filename $(echo "${cc_cli_args[@]}") do-upload$token_str $(echo "${cc_du_args[@]}")$x"
+say "$g==>$x Running upload-process"
+say "      $b./$cc_filename $(echo "${cc_cli_args[@]}") upload-process$token_str $(echo "${cc_du_args[@]}")$x"
 if ! ./$cc_filename \
   ${cc_cli_args[*]} \
   do-upload \
   ${token_arg[*]} \
   ${cc_du_args[*]};
 then
-  exit_if_error "Failed to upload"
+  exit_if_error "Failed to upload coverage"
 fi
