@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.22"
+CC_WRAPPER_VERSION="0.0.23"
 set +u
 say() {
   echo -e "$1"
@@ -80,13 +80,16 @@ else
   say "$g ->$x Downloading $b${cc_url}$x"
   curl -Os $cc_url
   say "$g==>$x Finishing downloading $b${cc_os}:${CC_VERSION}$x"
+  version_url="https://cli.codecov.io/${cc_os}/${CC_VERSION}"
+  version=$(curl -s $version_url -H "Accept:application/json" | jq -r '.version')
+  say "      Version: $b$version$x"
   say " "
 fi
 if [ "$CC_SKIP_VALIDATION" = "true" ] || [ -n "$CC_BINARY" ];
 then
   say "$r==>$x Bypassing validation as requested by user"
 else
-CC_PUBLIC_PGP_KEY=$(curl https://keybase.io/codecovsecurity/pgp_keys.asc)
+CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   echo "${CC_PUBLIC_PGP_KEY}"  | \
     gpg --no-default-keyring --import
   # One-time step
