@@ -1,6 +1,6 @@
 # Codecov GitHub Action
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v4-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v5-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action?ref=badge_shield)
 [![Workflow for Codecov Action](https://github.com/codecov/codecov-action/actions/workflows/main.yml/badge.svg)](https://github.com/codecov/codecov-action/actions/workflows/main.yml)
 ### Easily upload coverage reports to Codecov from GitHub Actions
@@ -11,11 +11,11 @@
 ### Migration Guide
 The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the repository settings page in codecov.io, you can set the ability for Codecov to receive a coverage report from ANY souce. This will allow contributors or other members of a repository to upload without needing access to the Codecov token.
 
-> [!WARNING]  
+> [!WARNING]
 > **The following arguments have been changed**
 > - `file` (this has been deprecated in favor of `files`)
 > - `plugin` (this has been deprecated in favor of `plugins`)
-  
+
 The following arguments have been added:
 
 - `binary`
