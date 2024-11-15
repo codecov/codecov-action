@@ -185,8 +185,8 @@ runs:
         if [ -z $CC_BRANCH ] && [ -z $CODECOV_TOKEN ] && [ "$is_fork" == "true" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
-          TOKENLESS=${{ context.payload.pull_request.head.label }};
-          CC_BRANCH=${{ context.payload.pull_request.head.label }};
+          TOKENLESS=${{ github.event.pull_request.head.label }};
+          CC_BRANCH=${{ github.event.pull_request.head.label }};
           echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
           echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
         fi
