@@ -185,8 +185,9 @@ runs:
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           CC_BRANCH="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
-          echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
         fi
+
+        echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
       env:
         CC_BRANCH: ${{ inputs.override_branch }}
         CC_TOKEN: ${{ env.CODECOV_TOKEN }}
