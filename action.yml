@@ -194,6 +194,27 @@ runs:
         GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME: ${{ github.event.pull_request.repo.full_name }}
         GITHUB_REPOSITORY: ${{ github.repository }}
 
+    - name: Override commits and pr for pull requests
+      shell: bash
+      run: |
+        if [ -z "$CC_SHA" ];
+        then
+          CC_SHA="$GITHUB_EVENT_PULL_REQUEST_HEAD_SHA"
+        fi
+        if [ -z "$CC_PR" ] && [ "${GITHUB_EVENT_NAME}" == "pull_request_target" ];
+        then
+          CC_PR="$GITHUB_EVENT_NUMBER"
+        fi
+
+        echo "CC_SHA=$CC_SHA" >> $GITHUB_ENV
+        echo "CC_PR=$CC_PR" >> $GITHUB_ENV
+      env:
+        CC_PR: ${{ inputs.override_pr }}
+        CC_SHA: ${{ inputs.override_commit }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+        GITHUB_EVENT_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
       shell: bash
@@ -229,9 +250,9 @@ runs:
         CC_OS: ${{ inputs.os }}
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
-        CC_PR: ${{ inputs.override_pr }}
+        CC_PR: $CC_PR
         CC_REPORT_TYPE: ${{ inputs.report_type }}
-        CC_SHA: ${{ inputs.override_commit }}
+        CC_SHA: $CC_SHA
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
