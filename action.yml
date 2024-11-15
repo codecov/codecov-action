@@ -182,7 +182,7 @@ runs:
         CC_BRANCH=${{ inputs.override_branch }}
 
         is_Fork=$(${{ github.event.pull_request.head.repo.full_name }} != ${{ github.repository }})
-        if [ -z $CC_BRANCH ] && [ -z $CODECOV_TOKEN ] && [ "$is_fork" == "true" ];
+        if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "$is_fork" == "true" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
           TOKENLESS=${{ github.event.pull_request.head.label }};
