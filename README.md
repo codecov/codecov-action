@@ -9,7 +9,7 @@
 `v5` of the Codecov GitHub Action will use the [Codecov Wrapper](https://github.com/codecov/wrapper) to encapsulate the [CLI](https://github.com/codecov/codecov-cli). This will help ensure that the Action gets updates quicker.
 
 ### Migration Guide
-The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the repository settings page in codecov.io, you can set the ability for Codecov to receive a coverage report from ANY souce. This will allow contributors or other members of a repository to upload without needing access to the Codecov token.
+The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the `Global Upload Token` section of the settings page of an organization in codecov.io, you can set the ability for Codecov to receive a coverage reports from any source. This will allow contributors or other members of a repository to upload without needing access to the Codecov token. For more details see [how to upload without a token](https://docs.codecov.com/docs/codecov-tokens#uploading-without-a-token).
 
 > [!WARNING]
 > **The following arguments have been changed**
