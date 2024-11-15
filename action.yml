@@ -221,7 +221,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         CC_BINARY: ${{ inputs.binary }}
-        CC_BRANCH: ${CC_BRANCH}
+        CC_BRANCH: $CC_BRANCH
         CC_BUILD: ${{ inputs.override_build }}
         CC_BUILD_URL: ${{ inputs.override_build_url }}
         CC_CODE: ${{ inputs.report_code }}
@@ -250,14 +250,14 @@ runs:
         CC_OS: ${{ inputs.os }}
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
-        CC_PR: ${CC_PR}
+        CC_PR: $CC_PR
         CC_REPORT_TYPE: ${{ inputs.report_type }}
-        CC_SHA: ${CC_SHA}
+        CC_SHA: $CC_SHA
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
-        CC_TOKEN: ${CC_TOKEN}
+        CC_TOKEN: $CC_TOKEN
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
-        TOKENLESS: ${TOKENLESS}
+        TOKENLESS: $TOKENLESS
