@@ -137,7 +137,7 @@ tional
 | `override_commit` | Commit SHA (with 40 chars) | Optional
 | `override_pr` | Specify the pull request number manually. Used to override pre-existing CI environment variables. | Optional
 | `plugins` | Comma-separated list of plugins to run. Specify `noop` to turn off all plugins | Optional
-| `report_code` | The code of the report if using local upload. If unsure, leave default. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload | Optional
+| `report_code` | The code of the report if using local upload. If unsure, leave unset. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload | Optional
 | `report_type` | The type of file to upload, coverage by default. Possible values are "testing", "coverage". | Optional
 | `root_dir` | Root folder from which to consider paths on the network section. Defaults to current working directory. | Optional
 | `skip_validation` | Skip integrity checking of the CLI. This is NOT recommended. | Optional
