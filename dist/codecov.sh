@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.23"
+CC_WRAPPER_VERSION="0.0.24"
 set +u
 say() {
   echo -e "$1"
@@ -134,6 +134,7 @@ cc_cr_args+=( $(write_existing_args CC_PR) )
 cc_cr_args+=( $(write_existing_args CC_SHA) )
 cc_cr_args+=( $(write_existing_args CC_SLUG) )
 cc_du_args=()
+cc_du_args+=( $(write_existing_args CC_ENV) )
 OLDIFS=$IFS;IFS=,
 cc_du_args+=( $(write_existing_args CC_BRANCH) )
 cc_du_args+=( $(write_existing_args CC_BUILD) )
@@ -143,7 +144,6 @@ cc_du_args+=( $(write_existing_args CC_DIR) )
 cc_du_args+=( $(write_truthy_args CC_DISABLE_FILE_FIXES) )
 cc_du_args+=( $(write_truthy_args CC_DISABLE_SEARCH) )
 cc_du_args+=( $(write_truthy_args CC_DRY_RUN) )
-cc_du_args+=( $(write_existing_args CC_ENV) )
 if [ -n "$CC_EXCLUDES" ];
 then
   for directory in $CC_EXCLUDES; do
