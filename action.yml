@@ -179,17 +179,18 @@ runs:
     - name: Override branch for forks
       shell: bash
       run: |
-        CC_BRANCH="${{ inputs.override_branch }}"
-        PR_HEAD_LABEL="${{ github.event.pull_request.head.label }}"
-
         if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }} ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
-          TOKENLESS="$PR_HEAD_LABEL"
-          CC_BRANCH="$PR_HEAD_LABEL"
+          TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
+          CC_BRANCH="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
           echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
         fi
+      env:
+        GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL: ${{ github.event.pull_request.head.label }}
+        CC_BRANCH: ${{ inputs.override_branch }}
+        CC_TOKEN: ${{ env.CODECOV_TOKEN }}
 
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
@@ -197,7 +198,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         CC_BINARY: ${{ inputs.binary }}
-        CC_BRANCH: $CC_BRANCH
+        CC_BRANCH: ${{ env.CC_BRANCH }}
         CC_BUILD: ${{ inputs.override_build }}
         CC_BUILD_URL: ${{ inputs.override_build_url }}
         CC_CODE: ${{ inputs.report_code }}
