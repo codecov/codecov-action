@@ -167,12 +167,12 @@ runs:
         then
           # {"count":1984,"value":"***"}
           CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
-          echo "CC_TOKEN=$CC_TOKEN" >> $GITHUB_ENV
+          echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         else
           if [ -n ${{ inputs.token }} ];
           then
             CC_TOKEN=${{ inputs.token }}
-            echo "CC_TOKEN=$CC_TOKEN" >> $GITHUB_ENV
+            echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
           fi
         fi
 
@@ -184,10 +184,10 @@ runs:
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           CC_BRANCH="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
-          echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
+          echo "TOKENLESS=$TOKENLESS" >> "$GITHUB_ENV"
         fi
 
-        echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
+        echo "CC_BRANCH=$CC_BRANCH" >> "$GITHUB_ENV"
       env:
         CC_BRANCH: ${{ inputs.override_branch }}
         GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL: ${{ github.event.pull_request.head.label }}
@@ -206,8 +206,8 @@ runs:
           CC_PR="$GITHUB_EVENT_NUMBER"
         fi
 
-        echo "CC_SHA=$CC_SHA" >> $GITHUB_ENV
-        echo "CC_PR=$CC_PR" >> $GITHUB_ENV
+        echo "CC_SHA=$CC_SHA" >> "$GITHUB_ENV"
+        echo "CC_PR=$CC_PR" >> "$GITHUB_ENV"
       env:
         CC_PR: ${{ inputs.override_pr }}
         CC_SHA: ${{ inputs.override_commit }}
