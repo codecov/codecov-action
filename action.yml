@@ -180,13 +180,14 @@ runs:
       shell: bash
       run: |
         CC_BRANCH="${{ inputs.override_branch }}"
+        PR_HEAD_LABEL="${{ github.event.pull_request.head.label }}"
 
         is_Fork=$("${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}")
         if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "$is_fork" == "true" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
-          TOKENLESS="${{ github.event.pull_request.head.label }}"
-          CC_BRANCH="${{ github.event.pull_request.head.label }}"
+          TOKENLESS="$PR_HEAD_LABEL"
+          CC_BRANCH="$PR_HEAD_LABEL"
           echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
           echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
         fi
