@@ -166,33 +166,54 @@ runs:
         if [ ${{ inputs.use_oidc }} == 'true' ];
         then
           # {"count":1984,"value":"***"}
-          CODECOV_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
-          echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
+          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
+          echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         else
           if [ -n ${{ inputs.token }} ];
           then
-            CODECOV_TOKEN=${{ inputs.token }}
-            echo "CODECOV_TOKEN=$CODECOV_TOKEN" >> $GITHUB_ENV
+            CC_TOKEN=${{ inputs.token }}
+            echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
           fi
         fi
 
     - name: Override branch for forks
       shell: bash
       run: |
-        if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "${GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME}" != "$GITHUB_REPOSITORY" ];
+        if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ "${GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME}" != "$GITHUB_REPOSITORY" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           CC_BRANCH="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
-          echo "TOKENLESS=$TOKENLESS" >> $GITHUB_ENV
+          echo "TOKENLESS=$TOKENLESS" >> "$GITHUB_ENV"
         fi
 
-        echo "CC_BRANCH=$CC_BRANCH" >> $GITHUB_ENV
+        echo "CC_BRANCH=$CC_BRANCH" >> "$GITHUB_ENV"
       env:
         CC_BRANCH: ${{ inputs.override_branch }}
         GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL: ${{ github.event.pull_request.head.label }}
         GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME: ${{ github.event.pull_request.repo.full_name }}
         GITHUB_REPOSITORY: ${{ github.repository }}
+
+    - name: Override commits and pr for pull requests
+      shell: bash
+      run: |
+        if [ -z "$CC_SHA" ];
+        then
+          CC_SHA="$GITHUB_EVENT_PULL_REQUEST_HEAD_SHA"
+        fi
+        if [ -z "$CC_PR" ] && [ "${GITHUB_EVENT_NAME}" == "pull_request_target" ];
+        then
+          CC_PR="$GITHUB_EVENT_NUMBER"
+        fi
+
+        echo "CC_SHA=$CC_SHA" >> "$GITHUB_ENV"
+        echo "CC_PR=$CC_PR" >> "$GITHUB_ENV"
+      env:
+        CC_PR: ${{ inputs.override_pr }}
+        CC_SHA: ${{ inputs.override_commit }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+        GITHUB_EVENT_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
@@ -200,7 +221,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         CC_BINARY: ${{ inputs.binary }}
-        CC_BRANCH: $CC_BRANCH
         CC_BUILD: ${{ inputs.override_build }}
         CC_BUILD_URL: ${{ inputs.override_build_url }}
         CC_CODE: ${{ inputs.report_code }}
@@ -229,13 +249,10 @@ runs:
         CC_OS: ${{ inputs.os }}
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
-        CC_PR: ${{ inputs.override_pr }}
         CC_REPORT_TYPE: ${{ inputs.report_type }}
-        CC_SHA: ${{ inputs.override_commit }}
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
-        CC_TOKEN: $CODECOV_TOKEN
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
