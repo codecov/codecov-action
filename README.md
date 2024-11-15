@@ -114,7 +114,7 @@ d as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-f
 | `disable_search` | Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option. | Optional
 | `disable_safe_directory` | Disable setting safe directory. Set to true to disable. | Optional
 | `dry_run` | Don't upload files to Codecov | Optional
-| `env_vars` | Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON) | Optional
+| `env_vars` | Environment variables to tag the upload with (e.g. PYTHON \| OS,PYTHON) | Optional
 | `exclude` | Comma-separated list of folders to exclude from search. | Optional
 | `fail_ci_if_error` | On error, exit with non-zero code | Optional
 | `files` | Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable-search to disable uploading other files. | Op
