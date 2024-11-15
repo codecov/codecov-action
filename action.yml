@@ -179,7 +179,7 @@ runs:
     - name: Override branch for forks
       shell: bash
       run: |
-        if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }} ];
+        if [ -z "$CC_BRANCH" ] && [ -z "$CODECOV_TOKEN" ] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
