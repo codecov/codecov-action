@@ -155,7 +155,7 @@ runs:
   using: "composite"
   steps:
     - name: Set safe directory
-      if: ${{ inputs.set_safe_directory != 'true' }}
+      if: ${{ inputs.disable_safe_directory != 'true' }}
       shell: bash
       run: |
         git config --global --add safe.directory ${{ github.workspace }}
