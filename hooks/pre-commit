@@ -9,3 +9,5 @@ git diff --cached --name-only | if grep --quiet "src/version"
 then
     python changelog.py
 fi
+
+git add CHANGELOG.md

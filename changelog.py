@@ -15,14 +15,14 @@ def update_changelog():
     if previous == version:
         print(f"No changes to version {version}")
         return
-    print(f"Adding logs from {previous}..{version}")
+    print(f"Adding logs from {previous}..v{version}")
 
     raw_current_branch = subprocess.run([
         "git",
         "branch",
         "--show-current",
     ], capture_output=True)
-    current_branch = raw_current_branch.stdout.decode('utf-8')
+    current_branch = raw_current_branch.stdout.decode('utf-8').strip()
 
     raw_commits = subprocess.run([
         "git",
@@ -31,9 +31,12 @@ def update_changelog():
         "--oneline",
     ], capture_output=True)
     commits = [line[:7] for line in raw_commits.stdout.decode('utf-8').split('\n')]
+    print(commits)
 
     prs = set()
     for commit in commits:
+        if not commit:
+            continue
         commit_output = subprocess.run([
             'gh',
             'pr',
@@ -42,8 +45,16 @@ def update_changelog():
             'author,number,title,url',
             '--search',
             f'"{commit}"',
+            '--state',
+            'merged',
         ], capture_output=True)
-        commit_details = json.loads(commit_output.stdout.decode('utf-8'))[0]
+
+        commit_details = commit_output.stdout.decode('utf-8')
+        if not commit_details or not json.loads(commit_details):
+            continue
+        commit_details = json.loads(commit_details)[0]
+
+
         if not commit_details['number']:
             continue
         if commit_details['number'] in prs:
@@ -52,7 +63,7 @@ def update_changelog():
         changelog.append(f"* {commit_details['title']} by @{commit_details['author']['login']} in {commit_details['url']}")
 
     changelog.append('\n')
-    changelog.append(f"**Full Changelog**: https://github.com/codecov/codecov-action/compare/{previous}..{version}\n")
+    changelog.append(f"**Full Changelog**: https://github.com/codecov/codecov-action/compare/{previous}..v{version}\n")
 
     with open('CHANGELOG.md', 'r') as f:
         for line in f:
