@@ -1,3 +1,16 @@
+## v5.0.3
+### What's Changed
+* fix: update OIDC audience by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1675
+* fix: use double-quotes for OIDC by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1669
+* fix: prevent always setting tokenless to be true by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1673
+* fix: update CHANGELOG and automate by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1674
+* fix: bump to v5 and update README by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1655
+* build(deps): bump github/codeql-action from 3.27.0 to 3.27.4 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1665
+* fix: typo in `inputs.disable_safe_directory` by @mkroening in https://github.com/codecov/codecov-action/pull/1666
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.0.2..v5.0.3
+
 ## v5.0.2
 ### What's Changed
 * fix: override commit and pr values for PR cases by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1657
