@@ -266,3 +266,4 @@ runs:
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
+        CC_USE_PYTHON: ${{ inputs.use_python }}
