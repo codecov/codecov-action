@@ -163,7 +163,7 @@ runs:
     - name: Get and set token
       shell: bash
       run: |
-        if [ ${{ inputs.use_oidc }} == 'true' ];
+        if [ "${{ inputs.use_oidc }}" == 'true' ];
         then
           # {"count":1984,"value":"***"}
           echo "$ACTIONS_ID_TOKEN_REQUEST_URL"
