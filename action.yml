@@ -176,7 +176,7 @@ runs:
         else
           if [ -n ${{ inputs.token }} ];
           then
-            CC_TOKEN=${{ inputs.token }}
+            CC_TOKEN=$(echo ${{ inputs.token }} | tr -d '\n')
             echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
           fi
         fi
