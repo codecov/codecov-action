@@ -167,10 +167,10 @@ runs:
         then
           # {"count":1984,"value":"***"}
           echo "$ACTIONS_ID_TOKEN_REQUEST_URL"
-          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange"
-          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\" -f6)
-          echo $CC_TOKEN
-          echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
+          #curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange"
+            #CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\" -f6)
+            #echo $CC_TOKEN
+            #echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         else
           if [ -n ${{ inputs.token }} ];
           then
