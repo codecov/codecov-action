@@ -4,3 +4,8 @@ set -e
 
 cp src/scripts/dist/codecov.sh dist/codecov.sh
 git add dist/codecov.sh
+
+git diff --cached --name-only | if grep --quiet "src/version"
+then
+    python changelog.py
+fi
