@@ -290,3 +290,7 @@ for the full list.
 - #166 Bump requestretry from 4.1.1 to 4.1.2
 - #169 Bump typescript from 4.0.5 to 4.1.2
 - #178 Bump @types/jest from 26.0.15 to 26.0.19
+
+## 5.0.3
+### Features
+- Added an option to use Python to run `codecov-cli` in `action.yml` by introducing a new input `use_python`.

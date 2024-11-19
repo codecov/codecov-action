@@ -146,6 +146,10 @@ inputs:
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false
+  use_python:
+    description: 'Use Python to run codecov-cli instead of binary'
+    required: false
+    default: 'false'
 
 branding:
   color: 'red'
@@ -214,6 +218,12 @@ runs:
         GITHUB_EVENT_NAME: ${{ github.event_name }}
         GITHUB_EVENT_NUMBER: ${{ github.event.number }}
         GITHUB_EVENT_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+    - name: Install codecov-cli using Python
+      if: ${{ inputs.use_python == 'true' }}
+      shell: bash
+      run: |
+        pip install codecov-cli
 
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh

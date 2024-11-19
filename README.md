@@ -68,6 +68,7 @@ steps:
     name: codecov-umbrella # optional
     token: ${{ secrets.CODECOV_TOKEN }} # required
     verbose: true # optional (default = false)
+    use_python: true # optional (default = false)
 ```
 
 The Codecov token can also be passed in via environment variables:
@@ -82,6 +83,7 @@ steps:
     flags: unittests # optional
     name: codecov-umbrella # optional
     verbose: true # optional (default = false)
+    use_python: true # optional (default = false)
   env:
     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
@@ -138,6 +140,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `verbose` | Specify whether the Codecov output should be verbose | Optional
 | `version` | Specify which version of the Codecov CLI should be used. Defaults to `latest` | Optional
 | `working-directory` | Directory in which to execute codecov.sh | Optional
+| `use_python` | Use Python to run codecov-cli instead of binary | Optional
 
 ### Example `workflow.yml` with Codecov Action
 
@@ -175,6 +178,7 @@ jobs:
         name: codecov-umbrella
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
+        use_python: true
 ```
 ## Contributing
 
