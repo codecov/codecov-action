@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.24"
+CC_WRAPPER_VERSION="0.0.25"
 set +u
 say() {
   echo -e "$1"
@@ -171,7 +171,10 @@ cc_du_args+=( $(write_existing_args CC_GIT_SERVICE) )
 cc_du_args+=( $(write_truthy_args CC_HANDLE_NO_REPORTS_FOUND) )
 cc_du_args+=( $(write_existing_args CC_JOB_CODE) )
 cc_du_args+=( $(write_truthy_args CC_LEGACY) )
-cc_du_args+=( $(write_existing_args CC_NAME) )
+if [ -n "$CC_NAME" ];
+then
+  cc_du_args+=( "--name" "$CC_NAME" )
+fi
 cc_du_args+=( $(write_existing_args CC_NETWORK_FILTER) )
 cc_du_args+=( $(write_existing_args CC_NETWORK_PREFIX) )
 cc_du_args+=( $(write_existing_args CC_NETWORK_ROOT_FOLDER) )
@@ -232,7 +235,7 @@ if ! ./$cc_filename \
   ${cc_cli_args[*]} \
   do-upload \
   ${token_arg[*]} \
-  ${cc_du_args[*]};
+  "${cc_du_args[@]}";
 then
   exit_if_error "Failed to upload"
 fi
