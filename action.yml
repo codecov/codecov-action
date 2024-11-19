@@ -163,10 +163,10 @@ runs:
     - name: Get and set token
       shell: bash
       run: |
-        if [ ${{ inputs.use_oidc }} == 'true' ];
+        if [ "${{ inputs.use_oidc }}" == 'true' ];
         then
           # {"count":1984,"value":"***"}
-          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | cut -d\" -f6)
+          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://codecov.io" | cut -d\" -f6)
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         else
           if [ -n ${{ inputs.token }} ];
