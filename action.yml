@@ -157,7 +157,7 @@ runs:
     - name: Action version
       shell: bash
       run: |
-        CC_ACTION_VERSION=$(cat src/version | grep 'CODECOV_ACTION_VERSION=' cut -d\" -f2)
+        CC_ACTION_VERSION=$(cat ${GITHUB_ACTION_PATH}/src/version | grep 'CODECOV_ACTION_VERSION=' cut -d\" -f2)
         echo -e "\033[0;32m==>\033[0m Running Action version $$CC_ACTION_VERSION"
     - name: Set safe directory
       if: ${{ inputs.disable_safe_directory != 'true' }}
