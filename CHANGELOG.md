@@ -1,3 +1,10 @@
+## v5.0.5
+### What's Changed
+* chore(release): wrapper-0.0.27 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1685
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.0.4..v5.0.5
+
 ## v5.0.4
 ### What's Changed
 * chore(deps): bump wrapper to 0.0.26 by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1681
