@@ -187,7 +187,7 @@ runs:
     - name: Override branch for forks
       shell: bash
       run: |
-        if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ -n "$GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME" ] && [ "${GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME}" != "$GITHUB_REPOSITORY" ];
+        if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ -n "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" ] && [ "${GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME}" != "$GITHUB_REPOSITORY" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
@@ -199,7 +199,7 @@ runs:
       env:
         CC_BRANCH: ${{ inputs.override_branch }}
         GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL: ${{ github.event.pull_request.head.label }}
-        GITHUB_EVENT_PULL_REQUEST_REPO_FULL_NAME: ${{ github.event.pull_request.repo.full_name }}
+        GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
         GITHUB_REPOSITORY: ${{ github.repository }}
 
     - name: Override commits and pr for pull requests
