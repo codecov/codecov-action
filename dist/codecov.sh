@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.26"
+CC_WRAPPER_VERSION="0.0.27"
 set +u
 say() {
   echo -e "$1"
@@ -127,11 +127,11 @@ cc_cli_args+=( $(k_arg YML_PATH) $(v_arg YML_PATH))
 cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
 cc_cc_args=()
 cc_cc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
-cc_du_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
-cc_du_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
-cc_du_args+=( $(k_arg PR) $(v_arg PR))
-cc_du_args+=( $(k_arg SHA) $(v_arg SHA))
-cc_du_args+=( $(k_arg SLUG) $(v_arg SLUG))
+cc_cc_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_cc_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
+cc_cc_args+=( $(k_arg PR) $(v_arg PR))
+cc_cc_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_cc_args+=( $(k_arg SLUG) $(v_arg SLUG))
 cc_create_report_args=()
 cc_cr_args+=( $(k_arg CODE) $(v_arg CODE))
 cc_cr_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
