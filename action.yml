@@ -173,6 +173,9 @@ runs:
           # {"count":1984,"value":"***"}
           CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://codecov.io" | cut -d\" -f6)
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
+        elif [ -n "${{ env.CODECOV_TOKEN }}" ];
+        then
+            echo "CC_TOKEN=${{ env.CODECOV_TOKEN }}" >> "$GITHUB_ENV"
         else
           if [ -n ${{ inputs.token }} ];
           then
