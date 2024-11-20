@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.25"
+CC_WRAPPER_VERSION="0.0.26"
 set +u
 say() {
   echo -e "$1"
@@ -15,16 +15,22 @@ exit_if_error() {
 lower() {
   echo $(echo $1 | sed 's/CC//' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]')
 }
-write_existing_args() {
-  if [ -n "$(eval echo \$$1)" ];
+k_arg() {
+  if [ -n "$(eval echo \$"CC_$1")" ];
   then
-    echo " -$(lower "$1") $(eval echo \$$1)"
+    echo "--$(lower "$1")"
+  fi
+}
+v_arg() {
+  if [ -n "$(eval echo \$"CC_$1")" ];
+  then
+    echo "$(eval echo \$"CC_$1")"
   fi
 }
 write_truthy_args() {
   if [ "$(eval echo \$$1)" = "true" ] || [ "$(eval echo \$$1)" = "1" ];
   then
-    echo " -$(lower $1)"
+    echo "-$(lower $1)"
   fi
 }
 b="\033[0;36m"  # variables/constants
@@ -115,80 +121,80 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   say
 fi
 cc_cli_args=()
-cc_cli_args+=( $(write_existing_args CC_AUTO_LOAD_PARAMS_FROM) )
-cc_cli_args+=( $(write_existing_args CC_ENTERPRISE_URL) )
-cc_cli_args+=( $(write_existing_args CC_YML_PATH) )
+cc_cli_args+=( $(k_arg AUTO_LOAD_PARAMS_FROM) $(v_arg AUTO_LOAD_PARAMS_FROM))
+cc_cli_args+=( $(k_arg ENTERPRISE_URL) $(v_arg ENTERPRISE_URL))
+cc_cli_args+=( $(k_arg YML_PATH) $(v_arg YML_PATH))
 cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
 cc_cc_args=()
 cc_cc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
-cc_cc_args+=( $(write_existing_args CC_GIT_SERVICE) )
-cc_cc_args+=( $(write_existing_args CC_PARENT_SHA) )
-cc_cc_args+=( $(write_existing_args CC_PR) )
-cc_cc_args+=( $(write_existing_args CC_SHA) )
-cc_cc_args+=( $(write_existing_args CC_SLUG) )
+cc_du_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_du_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
+cc_du_args+=( $(k_arg PR) $(v_arg PR))
+cc_du_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_du_args+=( $(k_arg SLUG) $(v_arg SLUG))
 cc_create_report_args=()
-cc_cr_args+=( $(write_existing_args CC_CODE) )
+cc_cr_args+=( $(k_arg CODE) $(v_arg CODE))
 cc_cr_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
-cc_cr_args+=( $(write_existing_args CC_GIT_SERVICE) )
-cc_cr_args+=( $(write_existing_args CC_PR) )
-cc_cr_args+=( $(write_existing_args CC_SHA) )
-cc_cr_args+=( $(write_existing_args CC_SLUG) )
+cc_cr_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_cr_args+=( $(k_arg PR) $(v_arg PR))
+cc_cr_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_cr_args+=( $(k_arg SLUG) $(v_arg SLUG))
 cc_du_args=()
-cc_du_args+=( $(write_existing_args CC_ENV) )
+cc_du_args+=( $(k_arg ENV) $(v_arg ENV))
 OLDIFS=$IFS;IFS=,
-cc_du_args+=( $(write_existing_args CC_BRANCH) )
-cc_du_args+=( $(write_existing_args CC_BUILD) )
-cc_du_args+=( $(write_existing_args CC_BUILD_URL) )
-cc_du_args+=( $(write_existing_args CC_CODE) )
-cc_du_args+=( $(write_existing_args CC_DIR) )
+cc_du_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
+cc_du_args+=( $(k_arg BUILD) $(v_arg BUILD))
+cc_du_args+=( $(k_arg BUILD_URL) $(v_arg BUILD_URL))
+cc_du_args+=( $(k_arg CODE) $(v_arg CODE))
+cc_du_args+=( $(k_arg DIR) $(v_arg DIR))
 cc_du_args+=( $(write_truthy_args CC_DISABLE_FILE_FIXES) )
 cc_du_args+=( $(write_truthy_args CC_DISABLE_SEARCH) )
 cc_du_args+=( $(write_truthy_args CC_DRY_RUN) )
 if [ -n "$CC_EXCLUDES" ];
 then
   for directory in $CC_EXCLUDES; do
-    cc_du_args+=( " --exclude " "$directory" )
+    cc_du_args+=( "--exclude" "$directory" )
   done
 fi
 cc_du_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
 if [ -n "$CC_FILES" ];
 then
   for file in $CC_FILES; do
-    cc_du_args+=( " --file " "$file" )
+    cc_du_args+=( "--file" "$file" )
   done
 fi
 if [ -n "$CC_FLAGS" ];
 then
   for flag in $CC_FLAGS; do
-    cc_du_args+=( " --flag " "$flag" )
+    cc_du_args+=( "--flag" "$flag" )
   done
 fi
-cc_du_args+=( $(write_existing_args CC_GCOV_ARGS) )
-cc_du_args+=( $(write_existing_args CC_GCOV_EXECUTABLE) )
-cc_du_args+=( $(write_existing_args CC_GCOV_IGNORE) )
-cc_du_args+=( $(write_existing_args CC_GCOV_INCLUDE) )
-cc_du_args+=( $(write_existing_args CC_GIT_SERVICE) )
+cc_du_args+=( $(k_arg GCOV_ARGS) $(v_arg GCOV_ARGS))
+cc_du_args+=( $(k_arg GCOV_EXECUTABLE) $(v_arg GCOV_EXECUTABLE))
+cc_du_args+=( $(k_arg GCOV_IGNORE) $(v_arg GCOV_IGNORE))
+cc_du_args+=( $(k_arg GCOV_INCLUDE) $(v_arg GCOV_INCLUDE))
+cc_du_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
 cc_du_args+=( $(write_truthy_args CC_HANDLE_NO_REPORTS_FOUND) )
-cc_du_args+=( $(write_existing_args CC_JOB_CODE) )
+cc_du_args+=( $(k_arg JOB_CODE) $(v_arg JOB_CODE))
 cc_du_args+=( $(write_truthy_args CC_LEGACY) )
 if [ -n "$CC_NAME" ];
 then
   cc_du_args+=( "--name" "$CC_NAME" )
 fi
-cc_du_args+=( $(write_existing_args CC_NETWORK_FILTER) )
-cc_du_args+=( $(write_existing_args CC_NETWORK_PREFIX) )
-cc_du_args+=( $(write_existing_args CC_NETWORK_ROOT_FOLDER) )
+cc_du_args+=( $(k_arg NETWORK_FILTER) $(v_arg NETWORK_FILTER))
+cc_du_args+=( $(k_arg NETWORK_PREFIX) $(v_arg NETWORK_PREFIX))
+cc_du_args+=( $(k_arg NETWORK_ROOT_FOLDER) $(v_arg NETWORK_ROOT_FOLDER))
 if [ -n "$CC_PLUGINS" ];
 then
   for plugin in $CC_PLUGINS; do
-    cc_du_args+=( " --plugin " "$plugin" )
+    cc_du_args+=( "--plugin" "$plugin" )
   done
 fi
-cc_du_args+=( $(write_existing_args CC_PR) )
-cc_du_args+=( $(write_existing_args CC_REPORT_TYPE) )
-cc_du_args+=( $(write_existing_args CC_SHA) )
-cc_du_args+=( $(write_existing_args CC_SLUG) )
-cc_du_args+=( $(write_existing_args CC_SWIFT_PROJECT) )
+cc_du_args+=( $(k_arg PR) $(v_arg PR))
+cc_du_args+=( $(k_arg REPORT_TYPE) $(v_arg REPORT_TYPE))
+cc_du_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_du_args+=( $(k_arg SLUG) $(v_arg SLUG))
+cc_du_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
 IFS=$OLDIFS
 unset NODE_OPTIONS
 # See https://github.com/codecov/uploader/issues/475
@@ -213,7 +219,7 @@ if ! ./$cc_filename \
   ${cc_cli_args[*]} \
   create-commit \
   ${token_arg[*]} \
-  ${cc_cc_args[*]};
+  "${cc_cc_args[@]}";
 then
   exit_if_error "Failed to create-commit"
 fi
@@ -224,7 +230,7 @@ if ! ./$cc_filename \
   ${cc_cli_args[*]} \
   create-report \
   ${token_arg[*]} \
-  ${cc_cr_args[*]};
+  "${cc_cr_args[@]}";
 then
   exit_if_error "Failed to create-report"
 fi
