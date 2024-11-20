@@ -1,3 +1,10 @@
+## v5.0.6
+### What's Changed
+* fix: update CODECOV_TOKEN and fix tokenless by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1688
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.0.5..v5.0.6
+
 ## v5.0.5
 ### What's Changed
 * chore(release): wrapper-0.0.27 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1685
