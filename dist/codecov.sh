@@ -112,7 +112,7 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   then
     exit_if_error "Could not verify signature. Please contact Codecov if problem continues"
   fi
-  if ! (shasum -a 256 -c "${cc_filename}.SHA256SUM" || \
+  if ! (shasum -a 256 -c "${cc_filename}.SHA256SUM" 2>/dev/null || \
     sha256sum -c "${cc_filename}.SHA256SUM");
   then
     exit_if_error "Could not verify SHASUM. Please contact Codecov if problem continues"
