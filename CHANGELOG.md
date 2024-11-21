@@ -1,3 +1,10 @@
+## v5.0.7
+### What's Changed
+* fix: use HEAD_REPO by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1690
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.0.6..v5.0.7
+
 ## v5.0.6
 ### What's Changed
 * fix: update CODECOV_TOKEN and fix tokenless by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1688
