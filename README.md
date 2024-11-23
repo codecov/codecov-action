@@ -63,7 +63,7 @@ steps:
 - uses: codecov/codecov-action@v5
   with:
     fail_ci_if_error: true # optional (default = false)
-    files: ./coverage1.xml,./coverage2.xml # optional
+    file: coverage.xml
     flags: unittests # optional
     name: codecov-umbrella # optional
     token: ${{ secrets.CODECOV_TOKEN }}
@@ -78,7 +78,7 @@ steps:
 - uses: codecov/codecov-action@v5
   with:
     fail_ci_if_error: true # optional (default = false)
-    files: ./coverage1.xml,./coverage2.xml # optional
+    file: coverage.xml
     flags: unittests # optional
     name: codecov-umbrella # optional
     verbose: true # optional (default = false)
@@ -117,7 +117,7 @@ d as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-f
 | `env_vars` | Environment variables to tag the upload with (e.g. PYTHON \| OS,PYTHON) | Optional
 | `exclude` | Comma-separated list of folders to exclude from search. | Optional
 | `fail_ci_if_error` | On error, exit with non-zero code | Optional
-| `files` | Comma-separated explicit list of files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using "disable-search" to disable uploading other files. | Optional
+| `file` | File to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using "disable-search" to disable uploading other files. | Optional
 tional
 | `flags` | Comma-separated list of flags to upload to group coverage metrics. | Optional
 | `git_service` | Override the git_service (e.g. github_enterprise) | Optional
@@ -136,7 +136,7 @@ tional
 | `override_build_url` | The URL of the build where this is running | Optional
 | `override_commit` | Commit SHA (with 40 chars) | Optional
 | `override_pr` | Specify the pull request number manually. Used to override pre-existing CI environment variables. | Optional
-| `plugins` | Comma-separated list of plugins to run. Specify `noop` to turn off all plugins | Optional
+| `plugin` | Plugin to run. Specify `noop` to turn off all plugins | Optional
 | `report_code` | The code of the report if using local upload. If unsure, leave unset. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload | Optional
 | `report_type` | The type of file to upload, coverage by default. Possible values are "testing", "coverage". | Optional
 | `root_dir` | Root folder from which to consider paths on the network section. Defaults to current working directory. | Optional
@@ -182,7 +182,7 @@ jobs:
         directory: ./coverage/reports/
         env_vars: OS,PYTHON
         fail_ci_if_error: true
-        files: ./coverage1.xml,./coverage2.xml,!./cache
+        file: coverage.xml
         flags: unittests
         name: codecov-umbrella
         token: ${{ secrets.CODECOV_TOKEN }}
