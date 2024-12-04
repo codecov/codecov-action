@@ -112,7 +112,7 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   then
     exit_if_error "Could not verify signature. Please contact Codecov if problem continues"
   fi
-  if ! (shasum -a 256 -c "${cc_filename}.SHA256SUM" || \
+  if ! (shasum -a 256 -c "${cc_filename}.SHA256SUM" 2>/dev/null || \
     sha256sum -c "${cc_filename}.SHA256SUM");
   then
     exit_if_error "Could not verify SHASUM. Please contact Codecov if problem continues"
@@ -123,7 +123,11 @@ fi
 cc_cli_args=()
 cc_cli_args+=( $(k_arg AUTO_LOAD_PARAMS_FROM) $(v_arg AUTO_LOAD_PARAMS_FROM))
 cc_cli_args+=( $(k_arg ENTERPRISE_URL) $(v_arg ENTERPRISE_URL))
-cc_cli_args+=( $(k_arg YML_PATH) $(v_arg YML_PATH))
+if [ -n $CC_YML_PATH ]
+then
+  cc_cli_args+=( "--codecov-yml-path" )
+  cc_cli_args+=( "$CC_YML_PATH" )
+fi
 cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
 cc_uc_args=()
 # Args for create commit
