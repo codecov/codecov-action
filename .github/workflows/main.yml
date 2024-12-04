@@ -44,7 +44,7 @@ jobs:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.8.0
+          version: v9.1.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -93,7 +93,7 @@ jobs:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,maxos-latest-xlarge
           name: codecov-version
-          version: v0.8.0
+          version: v9.1.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -130,6 +130,6 @@ jobs:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
           flags: version,${{ matrix.os }}
           name: codecov-version
-          version: v0.8.0
+          version: v9.1.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
