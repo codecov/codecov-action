@@ -1,3 +1,12 @@
+## v5.1.0
+### What's Changed
+* fix: hide unnecessary error on shasum by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1692
+* build(deps): bump github/codeql-action from 3.27.4 to 3.27.5 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1701
+* chore(release): wrapper-0.0.29 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1713
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.0.7..v5.1.0
+
 ## v5.0.7
 ### What's Changed
 * fix: use HEAD_REPO by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1690
