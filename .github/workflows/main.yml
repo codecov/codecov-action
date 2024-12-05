@@ -24,7 +24,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/script/coverage-final.json
-          flags: script,${{ matrix.os }}
+          flags: script-${{ matrix.os }}
           name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -33,7 +33,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: demo,${{ matrix.os }}
+          flags: demo-${{ matrix.os }}
           name: codecov-demo
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: version,${{ matrix.os }}
+          flags: version-${{ matrix.os }}
           name: codecov-version
           version: v9.1.0
           verbose: true
@@ -65,7 +65,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/script/coverage-final.json
-          flags: script,macos-latest-xlarge
+          flags: script-macos-latest-xlarge
           name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: demo,macos-latest-xlarge
+          flags: demo-macos-latest-xlarge
           name: codecov-demo
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
-          flags: script,${{ matrix.os }}
+          flags: script-${{ matrix.os }}
           name: codecov-script
           use_oidc: true
           verbose: true
@@ -91,7 +91,7 @@ jobs:
         with:
           fail_ci_if_error: true
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: version,maxos-latest-xlarge
+          flags: version-maxos-latest-xlarge
           name: codecov-version
           version: v9.1.0
           verbose: true
@@ -112,7 +112,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
-          flags: script,${{ matrix.os }}
+          flags: script-${{ matrix.os }}
           name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -120,7 +120,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: demo,${{ matrix.os }}
+          flags: demo-${{ matrix.os }}
           name: codecov-demo
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -128,7 +128,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: version,${{ matrix.os }}
+          flags: version-${{ matrix.os }}
           name: codecov-version
           version: v9.1.0
           verbose: true

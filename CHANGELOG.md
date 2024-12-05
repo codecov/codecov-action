@@ -1,3 +1,9 @@
+## v5.1.1
+### What's Changed
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.1.0..v5.1.1
+
 ## v5.1.0
 ### What's Changed
 * fix: hide unnecessary error on shasum by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1692
