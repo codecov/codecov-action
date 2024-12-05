@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.29"
+CC_WRAPPER_VERSION="0.0.30"
 set +u
 say() {
   echo -e "$1"
@@ -86,7 +86,7 @@ else
   say "$g ->$x Downloading $b${cc_url}$x"
   curl -Os "$cc_url"
   say "$g==>$x Finishing downloading $b${cc_os}:${CC_VERSION}$x"
-  version_url="https://cli.codecov.io/${cc_os}/${CC_VERSION}"
+  version_url="https://cli.codecov.io/api/${cc_os}/${CC_VERSION}"
   version=$(curl -s "$version_url" -H "Accept:application/json" | jq -r '.version')
   say "      Version: $b$version$x"
   say " "
