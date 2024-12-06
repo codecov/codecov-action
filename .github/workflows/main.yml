@@ -22,15 +22,6 @@ jobs:
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
-          fail_ci_if_error: true
-          files: ./coverage/script/coverage-final.json
-          flags: script-${{ matrix.os }}
-          name: codecov-script
-          verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage to Codecov (script)
-        uses: ./
-        with:
           fail_ci_if_error: false
           files: ./coverage/script/coverage-final.json
           flags: script-${{ matrix.os }}
