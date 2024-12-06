@@ -264,3 +264,8 @@ runs:
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
+
+    - name: Gracefully exit
+      if: ${{ !cancelled() }} && ${{ inputs.fail_ci_if_error }} == "true"
+      shell: bash
+      run: exit 0
