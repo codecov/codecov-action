@@ -265,10 +265,6 @@ runs:
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
 
-    - name: fail
-      shell: bash
-      run: exit 1
-
     - name: Gracefully exit
       if: ${{ !cancelled() }} && "$CC_FAIL_CI_IF_ERROR" != "true"
       shell: bash
