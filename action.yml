@@ -266,7 +266,7 @@ runs:
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
 
     - name: Gracefully exit
-      if: ${{ !cancelled() && inputs.fail_ci_if_error != "true" }}
+      if: ${{ !cancelled() && inputs.fail_ci_if_error != 'true' }}
       shell: bash
       run: |
         echo -e "\033[0;32m==>\033[0m Exiting gracefully..."
