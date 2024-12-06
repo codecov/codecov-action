@@ -269,6 +269,8 @@ runs:
       run: exit 1
 
     - name: Gracefully exit
-      if: ${{ !cancelled() }} && ${{ inputs.fail_ci_if_error }} != "true"
+      if: ${{ !cancelled() }} && "$CC_FAIL_CI_IF_ERROR" != "true"
       shell: bash
       run: exit 0
+      env:
+        CC_FAIL_CI_IF_ERROR: ${{ inputs.fail_ci_if_error }}
