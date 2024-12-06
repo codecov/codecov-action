@@ -268,6 +268,8 @@ runs:
     - name: Gracefully exit
       if: ${{ !cancelled() }} && "$CC_FAIL_CI_IF_ERROR" != "true"
       shell: bash
-      run: exit 0
+      run: |
+        echo -e "\033[0;32m==>\033[0m Exiting gracefully..."
+        exit 0
       env:
         CC_FAIL_CI_IF_ERROR: ${{ inputs.fail_ci_if_error }}
