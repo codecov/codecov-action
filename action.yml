@@ -1,4 +1,6 @@
----
+-              - name: Codecov
+                uses: codecov/codecov-action@v5.1.1
+            --
 # yamllint disable rule:line-length
 name: 'Codecov'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
