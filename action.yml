@@ -177,9 +177,9 @@ runs:
         then
             echo "CC_TOKEN=${{ env.CODECOV_TOKEN }}" >> "$GITHUB_ENV"
         else
-          if [ -n ${{ inputs.token }} ];
+          if [ -n "${{ inputs.token }}" ];
           then
-            CC_TOKEN=$(echo ${{ inputs.token }} | tr -d '\n')
+            CC_TOKEN=$(echo "${{ inputs.token }}" | tr -d '\n')
             echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
           fi
         fi
