@@ -4,8 +4,7 @@ import subprocess
 
 def update_changelog():
     with open('src/version', 'r') as f:
-        raw_version = f.read()
-    version = re.search('\"(.*)\"', raw_version).groups()[0]
+        version = f.read()
     changelog = [f"## v{version}"]
     changelog.append("### What\'s Changed")
 
