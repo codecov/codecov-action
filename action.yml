@@ -168,12 +168,13 @@ runs:
     - name: Set fork
       shell: bash
       run: |
-        if [ -n "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" ] && [ "${GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME}" != "$GITHUB_REPOSITORY" ];
+        CC_FORK="false"
+        if [ -n "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" ] && [ "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" != "$GITHUB_REPOSITORY" ];
         then
           echo -e "\033[0;32m==>\033[0m Fork detected"
           CC_FORK="true"
-          echo "CC_FORK=$CC_FORK" >> "$GITHUB_ENV"
         fi
+        echo "CC_FORK=$CC_FORK" >> "$GITHUB_ENV"
       env:
         GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL: ${{ github.event.pull_request.head.label }}
         GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
@@ -183,10 +184,10 @@ runs:
     - name: Get and set token
       shell: bash
       run: |
-        if [ "${{ inputs.use_oidc }}" == 'true' && "$CC_FORK" != 'true' ];
+        if [ "${{ inputs.use_oidc }}" == 'true' ] && [ "$CC_FORK" != 'true' ];
         then
           # {"count":1984,"value":"***"}
-          echo -e "\033[0;32m==>\033[0m Requesting OIDC token from ${ACTION_ID_TOKEN_REQUEST_URL}"
+          echo -e "\033[0;32m==>\033[0m Requesting OIDC token from '$ACTIONS_ID_TOKEN_REQUEST_URL'"
           CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://codecov.io" | cut -d\" -f6)
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         elif [ -n "${{ env.CODECOV_TOKEN }}" ];
