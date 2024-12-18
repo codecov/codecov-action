@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.30"
+CC_WRAPPER_VERSION="0.0.31"
 set +u
 say() {
   echo -e "$1"
@@ -52,6 +52,7 @@ then
   if [ -f "$CC_BINARY" ];
   then
     cc_filename=$CC_BINARY
+    cc_command=$CC_BINARY
   else
     exit_if_error "Could not find binary file $CC_BINARY"
   fi
@@ -59,34 +60,30 @@ else
   if [ -n "$CC_OS" ];
   then
     say "$g==>$x Overridden OS: $b${CC_OS}$x"
-    export cc_os=${CC_OS}
   else
-    CC_OS="linux"
+    CC_OS="windows"
     family=$(uname -s | tr '[:upper:]' '[:lower:]')
-    cc_os="windows"
-    [[ $family == "darwin" ]] && cc_os="macos"
-    [[ $family == "linux" ]] && cc_os="linux"
-    [[ $cc_os == "linux" ]] && \
+    [[ $family == "darwin" ]] && CC_OS="macos"
+    [[ $family == "linux" ]] && CC_OS="linux"
+    [[ $CC_OS == "linux" ]] && \
       osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
-    [[ $osID == "alpine" ]] && cc_os="alpine"
-    [[ $(arch) == "aarch64" && $family == "linux" ]] && cc_os+="-arm64"
-    say "$g==>$x Detected $b${cc_os}$x"
-    export cc_os=${cc_os}
+    [[ $osID == "alpine" ]] && CC_OS="alpine"
+    [[ $(arch) == "aarch64" && $family == "linux" ]] && CC_OS+="-arm64"
+    say "$g==>$x Detected $b${CC_OS}$x"
   fi
-  export cc_version=${CC_VERSION}
   cc_filename="codecov"
-  [[ $cc_os == "windows" ]] && cc_filename+=".exe"
-  export cc_filename=${cc_filename}
-  [[ $cc_os == "macos" ]]  && \
+  [[ $CC_OS == "windows" ]] && cc_filename+=".exe"
+  cc_command="./$cc_filename"
+  [[ $CC_OS == "macos" ]]  && \
     ! command -v gpg 2>&1 >/dev/null && \
     HOMEBREW_NO_AUTO_UPDATE=1 brew install gpg
   cc_url="https://cli.codecov.io"
   cc_url="$cc_url/${CC_VERSION}"
-  cc_url="$cc_url/${cc_os}/${cc_filename}"
+  cc_url="$cc_url/${CC_OS}/${cc_filename}"
   say "$g ->$x Downloading $b${cc_url}$x"
   curl -Os "$cc_url"
-  say "$g==>$x Finishing downloading $b${cc_os}:${CC_VERSION}$x"
-  version_url="https://cli.codecov.io/api/${cc_os}/${CC_VERSION}"
+  say "$g==>$x Finishing downloading $b${CC_OS}:${CC_VERSION}$x"
+  version_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
   version=$(curl -s "$version_url" -H "Accept:application/json" | jq -r '.version')
   say "      Version: $b$version$x"
   say " "
@@ -101,7 +98,7 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   # One-time step
   say "$g==>$x Verifying GPG signature integrity"
   sha_url="https://cli.codecov.io"
-  sha_url="${sha_url}/${cc_version}/${cc_os}"
+  sha_url="${sha_url}/${CC_VERSION}/${CC_OS}"
   sha_url="${sha_url}/${cc_filename}.SHA256SUM"
   say "$g ->$x Downloading $b${sha_url}$x"
   say "$g ->$x Downloading $b${sha_url}.sig$x"
@@ -192,7 +189,7 @@ cc_uc_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
 IFS=$OLDIFS
 unset NODE_OPTIONS
 # See https://github.com/codecov/uploader/issues/475
-chmod +x $cc_filename
+chmod +x $cc_command
 if [ -n "$CC_TOKEN_VAR" ];
 then
   token="$(eval echo \$$CC_TOKEN_VAR)"
@@ -208,8 +205,8 @@ then
   token_arg+=( " -t " "$token")
 fi
 say "$g==>$x Running upload-coverage"
-say "      $b./$cc_filename $(echo "${cc_cli_args[@]}") upload-coverage$token_str $(echo "${cc_uc_args[@]}")$x"
-if ! ./$cc_filename \
+say "      $b$cc_command $(echo "${cc_cli_args[@]}") upload-coverage$token_str $(echo "${cc_uc_args[@]}")$x"
+if ! $cc_command \
   ${cc_cli_args[*]} \
   upload-coverage \
   ${token_arg[*]} \

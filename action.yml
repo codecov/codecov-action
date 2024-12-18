@@ -183,7 +183,7 @@ runs:
     - name: Get and set token
       shell: bash
       run: |
-        if [ "${{ inputs.use_oidc }}" == 'true' && "$CC_FORK" != 'true'];
+        if [ "${{ inputs.use_oidc }}" == 'true' && "$CC_FORK" != 'true' ];
         then
           # {"count":1984,"value":"***"}
           echo -e "\033[0;32m==>\033[0m Requesting OIDC token from ${ACTION_ID_TOKEN_REQUEST_URL}"
@@ -191,7 +191,7 @@ runs:
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         elif [ -n "${{ env.CODECOV_TOKEN }}" ];
         then
-          echo -e "\033[0;32m==>\033[0m Token from from env"
+          echo -e "\033[0;32m==>\033[0m Token set from env"
             echo "CC_TOKEN=${{ env.CODECOV_TOKEN }}" >> "$GITHUB_ENV"
         else
           if [ -n "${{ inputs.token }}" ];
