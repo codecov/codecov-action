@@ -208,7 +208,7 @@ runs:
       run: |
         if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ "$CC_FORK" == 'true' ]
         then
-          echo -e "\033[0;32m==>\033[0m Fork detected, tokenless uploading used"
+          echo -e "\033[0;32m==>\033[0m Fork detected, setting branch to $GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           TOKENLESS="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           CC_BRANCH="$GITHUB_EVENT_PULL_REQUEST_HEAD_LABEL"
           echo "TOKENLESS=$TOKENLESS" >> "$GITHUB_ENV"
