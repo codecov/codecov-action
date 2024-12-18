@@ -1,3 +1,19 @@
+## v5.1.2
+
+### What's Changed
+* fix: update statment by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1726
+* fix: update action script by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1725
+* fix: prevent oidc on tokenless due to permissioning by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1724
+* chore(release): wrapper-0.0.31 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1723
+* Put quotes around `${{ inputs.token }}` in `action.yml` by @jwodder in https://github.com/codecov/codecov-action/pull/1721
+* build(deps): bump github/codeql-action from 3.27.6 to 3.27.9 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1722
+* Remove mistake from options table by @Acconut in https://github.com/codecov/codecov-action/pull/1718
+* build(deps): bump github/codeql-action from 3.27.5 to 3.27.6 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1717
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.1.1..v5.1.2
+
+
 ## v5.1.1
 ### What's Changed
 
