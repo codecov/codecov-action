@@ -28,6 +28,10 @@ inputs:
     description: 'Disable setting safe directory. Set to true to disable.'
     required: false
     default: 'false'
+  disable_telem:
+    description: 'Disable sending telemetry data to Codecov. Set to true to disable.'
+    required: false
+    default: 'false'
   dry_run:
     description: "Don't upload files to Codecov"
     required: false
@@ -254,6 +258,7 @@ runs:
         CC_DIR: ${{ inputs.directory }}
         CC_DISABLE_FILE_FIXES: ${{ inputs.disable_file_fixes }}
         CC_DISABLE_SEARCH: ${{ inputs.disable_search }}
+        CC_DISABLE_TELEM: ${{ inputs.disable_telem }}
         CC_DRY_RUN: ${{ inputs.dry_run }}
         CC_ENTERPRISE_URL: ${{ inputs.url }}
         CC_ENV: ${{ inputs.env_vars }}
