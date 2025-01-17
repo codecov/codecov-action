@@ -27,6 +27,7 @@ jobs:
           flags: script-${{ matrix.os }}
           name: codecov-script
           verbose: true
+          skip_validation: true
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Codecov (demo)
         uses: ./
