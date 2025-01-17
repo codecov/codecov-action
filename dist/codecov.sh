@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.31"
+CC_WRAPPER_VERSION="0.0.32"
 set +u
 say() {
   echo -e "$1"
@@ -117,6 +117,15 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   say "$g==>$x CLI integrity verified"
   say
 fi
+if [ -n "$CC_BINARY_LOCATION" ];
+then
+  mkdir -p "$CC_BINARY_LOCATION" && mv "$cc_filename" $_
+  say "$g==>$x Codecov binary moved to ${CC_BINARY_LOCATION}"
+fi
+if [ "$CC_DOWNLOAD_ONLY" = "true" ];
+then
+  say "$g==>$x Codecov download only called. Exiting..."
+fi
 cc_cli_args=()
 cc_cli_args+=( $(k_arg AUTO_LOAD_PARAMS_FROM) $(v_arg AUTO_LOAD_PARAMS_FROM))
 cc_cli_args+=( $(k_arg ENTERPRISE_URL) $(v_arg ENTERPRISE_URL))
@@ -125,6 +134,7 @@ then
   cc_cli_args+=( "--codecov-yml-path" )
   cc_cli_args+=( "$CC_YML_PATH" )
 fi
+cc_cli_args+=( $(write_truthy_args CC_DISABLE_TELEM) )
 cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
 cc_uc_args=()
 # Args for create commit
