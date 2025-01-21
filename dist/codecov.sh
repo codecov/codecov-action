@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.33"
+CC_WRAPPER_VERSION="0.0.34"
 set +u
 say() {
   echo -e "$1"
@@ -232,6 +232,9 @@ cc_run_args+=( $(k_arg SHA) $(v_arg SHA))
 cc_run_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
 cc_run_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
 cc_run_args+=( $(k_arg SLUG) $(v_arg SLUG))
+else
+  exit_if_error "Invalid run command specified: $CC_RUN_COMMAND"
+  exit
 fi
 unset NODE_OPTIONS
 # See https://github.com/codecov/uploader/issues/475
