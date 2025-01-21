@@ -4,6 +4,9 @@ name: 'Codecov'
 description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
 author: 'Thomas Hu <@thomasrockhu-codecov> | Codecov'
 inputs:
+  base_sha:
+    description: 'The base SHA to select. This is only used in the "pr-base-picking" run command'
+    required: false
   binary:
     description: 'The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed.'
     required: false
@@ -51,6 +54,9 @@ inputs:
     required: false
   flags:
     description: 'Comma-separated list of flags to upload to group coverage metrics.'
+    required: false
+  force:
+    description: 'Only used for empty-upload run command'
     required: false
   git_service:
     description: 'Override the git_service (e.g. github_enterprise)'
@@ -115,6 +121,10 @@ inputs:
   root_dir:
     description: 'Root folder from which to consider paths on the network section. Defaults to current working directory.'
     required: false
+  run_command:
+    description: 'Choose which CLI command to run. Options are "upload-coverage", "empty-upload", "pr-base-picking", "send-notifications". "upload-coverage" is run by default.'
+    required: false
+    default: 'upload-coverage'
   skip_validation:
     description: 'Skip integrity checking of the CLI. This is NOT recommended.'
     required: false
@@ -253,6 +263,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
+        CC_BASE_SHA: ${{ inputs.base_sha }}
         CC_BINARY: ${{ inputs.binary }}
         CC_BUILD: ${{ inputs.override_build }}
         CC_BUILD_URL: ${{ inputs.override_build_url }}
@@ -268,6 +279,7 @@ runs:
         CC_FAIL_ON_ERROR: ${{ inputs.fail_ci_if_error }}
         CC_FILES: ${{ inputs.files }}
         CC_FLAGS: ${{ inputs.flags }}
+        CC_FORCE: ${{ inputs.force }}
         CC_GCOV_ARGS: ${{ inputs.gcov_args }}
         CC_GCOV_EXECUTABLE: ${{ inputs.gcov_executable }}
         CC_GCOV_IGNORE: ${{ inputs.gcov_ignore }}
@@ -284,6 +296,8 @@ runs:
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
         CC_REPORT_TYPE: ${{ inputs.report_type }}
+        CC_RUN_COMMAND: ${{ inputs.run_command }}
+        CC_SERVICE: ${{ inputs.git_service }}
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
