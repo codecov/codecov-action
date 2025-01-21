@@ -207,7 +207,7 @@ runs:
           fi
         fi
       env:
-        AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
+        CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
 
     - name: Override branch for forks
       shell: bash
