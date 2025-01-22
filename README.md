@@ -45,6 +45,9 @@ You can see their usage in the `action.yml` [file](https://github.com/codecov/co
 
 To integrate Codecov with your Actions pipeline, specify the name of this repository with a tag number (`@v5` is recommended) as a `step` within your `workflow.yml` file.
 
+> [!WARNING]
+> In order for the Action to work seamlessly, you will need to have `curl` and `git` installed on your runner. You will also need to run the [actions/checkout](https://github.com/actions/checkout) before calling the Codecov action.
+
 This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, [store it](https://docs.codecov.com/docs/adding-the-codecov-token#github-actions) as a `secret`).
 
 Currently, the Action will identify linux, macos, and windows runners. However, the Action may misidentify other architectures. The OS can be specified as
