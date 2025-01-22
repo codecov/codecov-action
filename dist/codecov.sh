@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.0.32"
+CC_WRAPPER_VERSION="0.0.34"
 set +u
 say() {
   echo -e "$1"
@@ -47,6 +47,7 @@ say "     _____          _
                                   "
 CC_VERSION="${CC_VERSION:-latest}"
 CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
+CC_RUN_COMMAND="${CC_RUN_COMMAND:-upload-coverage}"
 if [ -n "$CC_BINARY" ];
 then
   if [ -f "$CC_BINARY" ];
@@ -84,7 +85,7 @@ else
   curl -Os "$cc_url"
   say "$g==>$x Finishing downloading $b${CC_OS}:${CC_VERSION}$x"
   version_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
-  version=$(curl -s "$version_url" -H "Accept:application/json" | jq -r '.version')
+  version=$(curl -s "$version_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
   say "      Version: $b$version$x"
   say " "
 fi
@@ -136,70 +137,6 @@ then
 fi
 cc_cli_args+=( $(write_truthy_args CC_DISABLE_TELEM) )
 cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
-cc_uc_args=()
-# Args for create commit
-cc_uc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
-cc_uc_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
-cc_uc_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
-cc_uc_args+=( $(k_arg PR) $(v_arg PR))
-cc_uc_args+=( $(k_arg SHA) $(v_arg SHA))
-cc_uc_args+=( $(k_arg SLUG) $(v_arg SLUG))
-# Args for create report
-cc_uc_args+=( $(k_arg CODE) $(v_arg CODE))
-# Args for do upload
-cc_uc_args+=( $(k_arg ENV) $(v_arg ENV))
-OLDIFS=$IFS;IFS=,
-cc_uc_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
-cc_uc_args+=( $(k_arg BUILD) $(v_arg BUILD))
-cc_uc_args+=( $(k_arg BUILD_URL) $(v_arg BUILD_URL))
-cc_uc_args+=( $(k_arg DIR) $(v_arg DIR))
-cc_uc_args+=( $(write_truthy_args CC_DISABLE_FILE_FIXES) )
-cc_uc_args+=( $(write_truthy_args CC_DISABLE_SEARCH) )
-cc_uc_args+=( $(write_truthy_args CC_DRY_RUN) )
-if [ -n "$CC_EXCLUDES" ];
-then
-  for directory in $CC_EXCLUDES; do
-    cc_uc_args+=( "--exclude" "$directory" )
-  done
-fi
-if [ -n "$CC_FILES" ];
-then
-  for file in $CC_FILES; do
-    cc_uc_args+=( "--file" "$file" )
-  done
-fi
-if [ -n "$CC_FLAGS" ];
-then
-  for flag in $CC_FLAGS; do
-    cc_uc_args+=( "--flag" "$flag" )
-  done
-fi
-cc_uc_args+=( $(k_arg GCOV_ARGS) $(v_arg GCOV_ARGS))
-cc_uc_args+=( $(k_arg GCOV_EXECUTABLE) $(v_arg GCOV_EXECUTABLE))
-cc_uc_args+=( $(k_arg GCOV_IGNORE) $(v_arg GCOV_IGNORE))
-cc_uc_args+=( $(k_arg GCOV_INCLUDE) $(v_arg GCOV_INCLUDE))
-cc_uc_args+=( $(write_truthy_args CC_HANDLE_NO_REPORTS_FOUND) )
-cc_uc_args+=( $(k_arg JOB_CODE) $(v_arg JOB_CODE))
-cc_uc_args+=( $(write_truthy_args CC_LEGACY) )
-if [ -n "$CC_NAME" ];
-then
-  cc_uc_args+=( "--name" "$CC_NAME" )
-fi
-cc_uc_args+=( $(k_arg NETWORK_FILTER) $(v_arg NETWORK_FILTER))
-cc_uc_args+=( $(k_arg NETWORK_PREFIX) $(v_arg NETWORK_PREFIX))
-cc_uc_args+=( $(k_arg NETWORK_ROOT_FOLDER) $(v_arg NETWORK_ROOT_FOLDER))
-if [ -n "$CC_PLUGINS" ];
-then
-  for plugin in $CC_PLUGINS; do
-    cc_uc_args+=( "--plugin" "$plugin" )
-  done
-fi
-cc_uc_args+=( $(k_arg REPORT_TYPE) $(v_arg REPORT_TYPE))
-cc_uc_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
-IFS=$OLDIFS
-unset NODE_OPTIONS
-# See https://github.com/codecov/uploader/issues/475
-chmod +x $cc_command
 if [ -n "$CC_TOKEN_VAR" ];
 then
   token="$(eval echo \$$CC_TOKEN_VAR)"
@@ -214,13 +151,101 @@ then
   token_str+=" -t <redacted>"
   token_arg+=( " -t " "$token")
 fi
-say "$g==>$x Running upload-coverage"
-say "      $b$cc_command $(echo "${cc_cli_args[@]}") upload-coverage$token_str $(echo "${cc_uc_args[@]}")$x"
+if [ "$CC_RUN_COMMAND" == "upload-coverage" ]; then
+cc_run_args=()
+# Args for create commit
+cc_run_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
+cc_run_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_run_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
+cc_run_args+=( $(k_arg PR) $(v_arg PR))
+cc_run_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_run_args+=( $(k_arg SLUG) $(v_arg SLUG))
+# Args for create report
+cc_run_args+=( $(k_arg CODE) $(v_arg CODE))
+# Args for do upload
+cc_run_args+=( $(k_arg ENV) $(v_arg ENV))
+OLDIFS=$IFS;IFS=,
+cc_run_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
+cc_run_args+=( $(k_arg BUILD) $(v_arg BUILD))
+cc_run_args+=( $(k_arg BUILD_URL) $(v_arg BUILD_URL))
+cc_run_args+=( $(k_arg DIR) $(v_arg DIR))
+cc_run_args+=( $(write_truthy_args CC_DISABLE_FILE_FIXES) )
+cc_run_args+=( $(write_truthy_args CC_DISABLE_SEARCH) )
+cc_run_args+=( $(write_truthy_args CC_DRY_RUN) )
+if [ -n "$CC_EXCLUDES" ];
+then
+  for directory in $CC_EXCLUDES; do
+    cc_run_args+=( "--exclude" "$directory" )
+  done
+fi
+if [ -n "$CC_FILES" ];
+then
+  for file in $CC_FILES; do
+    cc_run_args+=( "--file" "$file" )
+  done
+fi
+if [ -n "$CC_FLAGS" ];
+then
+  for flag in $CC_FLAGS; do
+    cc_run_args+=( "--flag" "$flag" )
+  done
+fi
+cc_run_args+=( $(k_arg GCOV_ARGS) $(v_arg GCOV_ARGS))
+cc_run_args+=( $(k_arg GCOV_EXECUTABLE) $(v_arg GCOV_EXECUTABLE))
+cc_run_args+=( $(k_arg GCOV_IGNORE) $(v_arg GCOV_IGNORE))
+cc_run_args+=( $(k_arg GCOV_INCLUDE) $(v_arg GCOV_INCLUDE))
+cc_run_args+=( $(write_truthy_args CC_HANDLE_NO_REPORTS_FOUND) )
+cc_run_args+=( $(k_arg JOB_CODE) $(v_arg JOB_CODE))
+cc_run_args+=( $(write_truthy_args CC_LEGACY) )
+if [ -n "$CC_NAME" ];
+then
+  cc_run_args+=( "--name" "$CC_NAME" )
+fi
+cc_run_args+=( $(k_arg NETWORK_FILTER) $(v_arg NETWORK_FILTER))
+cc_run_args+=( $(k_arg NETWORK_PREFIX) $(v_arg NETWORK_PREFIX))
+cc_run_args+=( $(k_arg NETWORK_ROOT_FOLDER) $(v_arg NETWORK_ROOT_FOLDER))
+if [ -n "$CC_PLUGINS" ];
+then
+  for plugin in $CC_PLUGINS; do
+    cc_run_args+=( "--plugin" "$plugin" )
+  done
+fi
+cc_run_args+=( $(k_arg REPORT_TYPE) $(v_arg REPORT_TYPE))
+cc_run_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
+IFS=$OLDIFS
+elif [ "$CC_RUN_COMMAND" == "empty-upload" ]; then
+cc_run_args=()
+cc_run_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
+cc_run_args+=( $(write_truthy_args CC_FORCE) )
+cc_run_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_run_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_run_args+=( $(k_arg SLUG) $(v_arg SLUG))
+elif [ "$CC_RUN_COMMAND" == "pr-base-picking" ]; then
+cc_run_args=()
+cc_run_args+=( $(k_arg BASE_SHA) $(v_arg BASE_SHA))
+cc_run_args+=( $(k_arg PR) $(v_arg PR))
+cc_run_args+=( $(k_arg SLUG) $(v_arg SLUG))
+cc_run_args+=( $(k_arg SERVICE) $(v_arg SERVICE))
+elif [ "$CC_RUN_COMMAND" == "send-notifications" ]; then
+cc_run_args=()
+cc_run_args+=( $(k_arg SHA) $(v_arg SHA))
+cc_run_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
+cc_run_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
+cc_run_args+=( $(k_arg SLUG) $(v_arg SLUG))
+else
+  exit_if_error "Invalid run command specified: $CC_RUN_COMMAND"
+  exit
+fi
+unset NODE_OPTIONS
+# See https://github.com/codecov/uploader/issues/475
+chmod +x "$cc_command"
+say "$g==>$x Running $CC_RUN_COMMAND"
+say "      $b$cc_command $(echo "${cc_cli_args[@]}")$CC_RUN_COMMAND$token_str $(echo "${cc_run_args[@]}")$x"
 if ! $cc_command \
   ${cc_cli_args[*]} \
-  upload-coverage \
+  ${CC_RUN_COMMAND} \
   ${token_arg[*]} \
-  "${cc_uc_args[@]}";
+  "${cc_run_args[@]}";
 then
-  exit_if_error "Failed to upload coverage"
+  exit_if_error "Failed to run $CC_RUN_COMMAND"
 fi
