@@ -1,3 +1,19 @@
+## v5.2.0
+
+### What's Changed
+* Fix typo in README by @tserg in https://github.com/codecov/codecov-action/pull/1747
+* Th/add commands by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1745
+* use correct audience when requesting oidc token by @juho9000 in https://github.com/codecov/codecov-action/pull/1744
+* build(deps): bump github/codeql-action from 3.27.9 to 3.28.1 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1742
+* build(deps): bump actions/upload-artifact from 4.4.3 to 4.6.0 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1743
+* chore(deps): bump wrapper to 0.0.32 by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1740
+* feat: add disable-telem feature by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1739
+* fix: remove erroneous linebreak in readme by @Vampire in https://github.com/codecov/codecov-action/pull/1734
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.1.2..v5.2.0
+
+
 ## v5.1.2
 
 ### What's Changed
