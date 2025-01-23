@@ -149,6 +149,10 @@ inputs:
     description: 'Use OIDC instead of token. This will ignore any token supplied'
     required: false
     default: 'false'
+  use_pypi:
+    description: 'Use the pypi version of the CLI instead of from cli.codecov.io'
+    required: false
+    default: 'false'
   verbose:
     description: 'Enable verbose logging'
     required: false
@@ -296,11 +300,12 @@ runs:
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
         CC_REPORT_TYPE: ${{ inputs.report_type }}
-        CC_RUN_COMMAND: ${{ inputs.run_command }}
+        CC_RUN_CMD: ${{ inputs.run_command }}
         CC_SERVICE: ${{ inputs.git_service }}
         CC_SKIP_VALIDATION: ${{ inputs.skip_validation }}
         CC_SLUG: ${{ inputs.slug }}
         CC_SWIFT_PROJECT: ${{ inputs.swift_project }}
+        CC_USE_PYPI: ${{ inputs.use_pypi }}
         CC_VERBOSE: ${{ inputs.verbose }}
         CC_VERSION: ${{ inputs.version }}
         CC_YML_PATH: ${{ inputs.codecov_yml_path }}
