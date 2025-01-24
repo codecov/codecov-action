@@ -108,6 +108,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 
 | Input  | Description | Required |
 | :---       |     :---     |    :---:   |
+| `base_sha` | 'The base SHA to select. This is only used in the "pr-base-picking" run command' | Optional
 | `binary` | The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed. | Optional
 | `codecov_yml_path` | The location of the codecov.yml file. This is currently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml | Optional
 | `commit_parent` | SHA (with 40 chars) of what should be the parent of this commit. | Optional
@@ -115,12 +116,14 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `disable_file_fixes` | Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports | Optional
 | `disable_search` | Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option. | Optional
 | `disable_safe_directory` | Disable setting safe directory. Set to true to disable. | Optional
+| `disable_telem` | Disable sending telemetry data to Codecov. Set to true to disable. | Optional
 | `dry_run` | Don't upload files to Codecov | Optional
 | `env_vars` | Environment variables to tag the upload with (e.g. PYTHON \| OS,PYTHON) | Optional
 | `exclude` | Comma-separated list of folders to exclude from search. | Optional
 | `fail_ci_if_error` | On error, exit with non-zero code | Optional
 | `files` | Comma-separated explicit list of files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using "disable-search" to disable uploading other files. | Optional
 | `flags` | Comma-separated list of flags to upload to group coverage metrics. | Optional
+| `force` | Only used for empty-upload run command | Optional
 | `git_service` | Override the git_service (e.g. github_enterprise) | Optional
 | `gcov_args` | Extra arguments to pass to gcov | Optional
 | `gcov_executable` | gcov executable to run. Defaults to 'gcov' | Optional
@@ -141,6 +144,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `report_code` | The code of the report if using local upload. If unsure, leave unset. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload | Optional
 | `report_type` | The type of file to upload, coverage by default. Possible values are "testing", "coverage". | Optional
 | `root_dir` | Root folder from which to consider paths on the network section. Defaults to current working directory. | Optional
+| `run_command` | Choose which CLI command to run. Options are "upload-coverage", "empty-upload", "pr-base-picking", "send-notifications". "upload-coverage" is run by default.' | Optional
 | `skip_validation` | Skip integrity checking of the CLI. This is NOT recommended. | Optional
 | `slug` | [Required when using the org token] Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users. | Optional
 | `swift_project` | Specify the swift project name. Useful for optimization. | Optional
@@ -148,6 +152,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `url` | Set to the Codecov instance URl. Used by Dedicated Enterprise Cloud customers. | Optional
 | `use_legacy_upload_endpoint` | Use the legacy upload endpoint. | Optional
 | `use_oidc` | Use OIDC instead of token. This will ignore any token supplied | Optional
+| `use_pypi` | Use the pypi version of the CLI instead of from cli.codecov.io | Optional
 | `verbose` | Enable verbose logging | Optional
 | `version` | Which version of the Codecov CLI to use (defaults to 'latest') | Optional
 | `working-directory` | Directory in which to execute codecov.sh | Optional
