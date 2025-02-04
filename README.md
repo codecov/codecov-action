@@ -176,7 +176,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@main
       with:
-        python-version: 3.10
+        python-version: '3.10'
     - name: Generate coverage report
       run: |
         pip install pytest
