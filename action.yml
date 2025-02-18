@@ -182,7 +182,7 @@ runs:
       shell: bash
       run: |
         git config --global --add safe.directory "${{ github.workspace }}"
-        git config --global --add safe.directory "${{ GITHUB_WORKSPACE }}"
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Set fork
       shell: bash
