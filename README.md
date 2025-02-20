@@ -152,7 +152,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `url` | Set to the Codecov instance URl. Used by Dedicated Enterprise Cloud customers. | Optional
 | `use_legacy_upload_endpoint` | Use the legacy upload endpoint. | Optional
 | `use_oidc` | Use OIDC instead of token. This will ignore any token supplied | Optional
-| `use_pypi` | Use the pypi version of the CLI instead of from cli.codecov.io | Optional
+| `use_pypi` | Use the pypi version of the CLI instead of from cli.codecov.io. If specified, integrity checking will be bypassed. | Optional
 | `verbose` | Enable verbose logging | Optional
 | `version` | Which version of the Codecov CLI to use (defaults to 'latest') | Optional
 | `working-directory` | Directory in which to execute codecov.sh | Optional
