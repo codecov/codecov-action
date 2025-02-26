@@ -112,6 +112,9 @@ inputs:
   plugins:
     description: 'Comma-separated list of plugins to run. Specify `noop` to turn off all plugins'
     required: false
+  recurse_submodules:
+    description: 'Whether to enumerate files inside of submodules for path-fixing purposes. Off by default.'
+    default: 'false'
   report_code:
     description: 'The code of the report if using local upload. If unsure, leave default. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload'
     required: false
@@ -300,6 +303,7 @@ runs:
         CC_OS: ${{ inputs.os }}
         CC_PARENT_SHA: ${{ inputs.commit_parent }}
         CC_PLUGINS: ${{ inputs.plugins }}
+        CC_RECURSE_SUBMODULES: ${{ inputs.recurse_submodules }}
         CC_REPORT_TYPE: ${{ inputs.report_type }}
         CC_RUN_CMD: ${{ inputs.run_command }}
         CC_SERVICE: ${{ inputs.git_service }}
