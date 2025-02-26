@@ -1,3 +1,22 @@
+## v5.4.0
+
+### What's Changed
+* update wrapper submodule to 0.2.0, add recurse_submodules arg by @matt-codecov in https://github.com/codecov/codecov-action/pull/1780
+* build(deps): bump actions/upload-artifact from 4.6.0 to 4.6.1 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1775
+* build(deps): bump ossf/scorecard-action from 2.4.0 to 2.4.1 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1776
+* build(deps): bump github/codeql-action from 3.28.9 to 3.28.10 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1777
+* Clarify in README that `use_pypi` bypasses integrity checks too by @webknjaz in https://github.com/codecov/codecov-action/pull/1773
+* Fix use of safe.directory inside containers by @Flamefire in https://github.com/codecov/codecov-action/pull/1768
+* Fix description for report_type input by @craigscott-crascit in https://github.com/codecov/codecov-action/pull/1770
+* build(deps): bump github/codeql-action from 3.28.8 to 3.28.9 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1765
+*  Fix a typo in the example by @miranska in https://github.com/codecov/codecov-action/pull/1758
+* build(deps): bump github/codeql-action from 3.28.5 to 3.28.8 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1757
+* build(deps): bump github/codeql-action from 3.28.1 to 3.28.5 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1753
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.3.1..v5.4.0
+
+
 ## v5.3.1
 
 ### What's Changed
