@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.1.0"
+CC_WRAPPER_VERSION="0.2.0"
 set +u
 say() {
   echo -e "$1"
@@ -27,7 +27,7 @@ v_arg() {
     echo "$(eval echo \$"CC_$1")"
   fi
 }
-write_truthy_args() {
+write_bool_args() {
   if [ "$(eval echo \$$1)" = "true" ] || [ "$(eval echo \$$1)" = "1" ];
   then
     echo "-$(lower $1)"
@@ -143,8 +143,8 @@ then
   cc_cli_args+=( "--codecov-yml-path" )
   cc_cli_args+=( "$CC_YML_PATH" )
 fi
-cc_cli_args+=( $(write_truthy_args CC_DISABLE_TELEM) )
-cc_cli_args+=( $(write_truthy_args CC_VERBOSE) )
+cc_cli_args+=( $(write_bool_args CC_DISABLE_TELEM) )
+cc_cli_args+=( $(write_bool_args CC_VERBOSE) )
 if [ -n "$CC_TOKEN_VAR" ];
 then
   token="$(eval echo \$$CC_TOKEN_VAR)"
@@ -162,7 +162,7 @@ fi
 if [ "$CC_RUN_CMD" == "upload-coverage" ]; then
 cc_args=()
 # Args for create commit
-cc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
+cc_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
 cc_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
 cc_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
 cc_args+=( $(k_arg PR) $(v_arg PR))
@@ -177,9 +177,9 @@ cc_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
 cc_args+=( $(k_arg BUILD) $(v_arg BUILD))
 cc_args+=( $(k_arg BUILD_URL) $(v_arg BUILD_URL))
 cc_args+=( $(k_arg DIR) $(v_arg DIR))
-cc_args+=( $(write_truthy_args CC_DISABLE_FILE_FIXES) )
-cc_args+=( $(write_truthy_args CC_DISABLE_SEARCH) )
-cc_args+=( $(write_truthy_args CC_DRY_RUN) )
+cc_args+=( $(write_bool_args CC_DISABLE_FILE_FIXES) )
+cc_args+=( $(write_bool_args CC_DISABLE_SEARCH) )
+cc_args+=( $(write_bool_args CC_DRY_RUN) )
 if [ -n "$CC_EXCLUDES" ];
 then
   for directory in $CC_EXCLUDES; do
@@ -202,9 +202,10 @@ cc_args+=( $(k_arg GCOV_ARGS) $(v_arg GCOV_ARGS))
 cc_args+=( $(k_arg GCOV_EXECUTABLE) $(v_arg GCOV_EXECUTABLE))
 cc_args+=( $(k_arg GCOV_IGNORE) $(v_arg GCOV_IGNORE))
 cc_args+=( $(k_arg GCOV_INCLUDE) $(v_arg GCOV_INCLUDE))
-cc_args+=( $(write_truthy_args CC_HANDLE_NO_REPORTS_FOUND) )
+cc_args+=( $(write_bool_args CC_HANDLE_NO_REPORTS_FOUND) )
+cc_args+=( $(write_bool_args CC_RECURSE_SUBMODULES) )
 cc_args+=( $(k_arg JOB_CODE) $(v_arg JOB_CODE))
-cc_args+=( $(write_truthy_args CC_LEGACY) )
+cc_args+=( $(write_bool_args CC_LEGACY) )
 if [ -n "$CC_NAME" ];
 then
   cc_args+=( "--name" "$CC_NAME" )
@@ -223,8 +224,8 @@ cc_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
 IFS=$OLDIFS
 elif [ "$CC_RUN_CMD" == "empty-upload" ]; then
 cc_args=()
-cc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
-cc_args+=( $(write_truthy_args CC_FORCE) )
+cc_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
+cc_args+=( $(write_bool_args CC_FORCE) )
 cc_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
 cc_args+=( $(k_arg SHA) $(v_arg SHA))
 cc_args+=( $(k_arg SLUG) $(v_arg SLUG))
@@ -237,7 +238,7 @@ cc_args+=( $(k_arg SERVICE) $(v_arg SERVICE))
 elif [ "$CC_RUN_CMD" == "send-notifications" ]; then
 cc_args=()
 cc_args+=( $(k_arg SHA) $(v_arg SHA))
-cc_args+=( $(write_truthy_args CC_FAIL_ON_ERROR) )
+cc_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
 cc_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
 cc_args+=( $(k_arg SLUG) $(v_arg SLUG))
 else
@@ -245,9 +246,9 @@ else
   exit
 fi
 unset NODE_OPTIONS
-# See https://github.com/codecov/uploader/issues/475
+# https://github.com/codecov/uploader/issues/475
 say "$g==>$x Running $CC_RUN_CMD"
-say "      $b$cc_command $(echo "${cc_cli_args[@]}")$CC_RUN_CMD$token_str $(echo "${cc_args[@]}")$x"
+say "      $b$cc_command $(echo "${cc_cli_args[@]}") $CC_RUN_CMD$token_str $(echo "${cc_args[@]}")$x"
 if ! $cc_command \
   ${cc_cli_args[*]} \
   ${CC_RUN_CMD} \
