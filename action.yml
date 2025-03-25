@@ -210,7 +210,7 @@ runs:
         then
           # {"count":1984,"value":"***"}
           echo -e "\033[0;32m==>\033[0m Requesting OIDC token from '$ACTIONS_ID_TOKEN_REQUEST_URL'"
-          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$CC_OIDC_AUDIENCE" | cut -d\" -f6)
+          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$CC_OIDC_AUDIENCE" | cut -d\" -f4)
           echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
         elif [ -n "${{ env.CODECOV_TOKEN }}" ];
         then
