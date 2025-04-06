@@ -1,3 +1,13 @@
+## v5.5.0
+
+### What's Changed
+* chore(release): wrapper -0.2.1 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1788
+* build(deps): bump github/codeql-action from 3.28.10 to 3.28.11 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1786
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.4.0..v5.5.0
+
+
 ## v5.4.0
 
 ### What's Changed
