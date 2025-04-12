@@ -202,16 +202,23 @@ runs:
         GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
         GITHUB_REPOSITORY: ${{ github.repository }}
 
+    - name: Get OIDC token
+      if: ${{ inputs.use_oidc }}
+      uses: actions/github-script@v7
+      id: oidc
+      with:
+        script: |
+          const id_token = await core.getIDToken(process.env.CC_OIDC_AUDIENCE)
+          return id_token
+      env:
+        CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
 
     - name: Get and set token
       shell: bash
       run: |
         if [ "${{ inputs.use_oidc }}" == 'true' ] && [ "$CC_FORK" != 'true' ];
         then
-          # {"count":1984,"value":"***"}
-          echo -e "\033[0;32m==>\033[0m Requesting OIDC token from '$ACTIONS_ID_TOKEN_REQUEST_URL'"
-          CC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$CC_OIDC_AUDIENCE" | cut -d\" -f6)
-          echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
+          echo "CC_TOKEN=$CC_OIDC_TOKEN" >> "$GITHUB_ENV"
         elif [ -n "${{ env.CODECOV_TOKEN }}" ];
         then
           echo -e "\033[0;32m==>\033[0m Token set from env"
@@ -225,6 +232,7 @@ runs:
           fi
         fi
       env:
+        CC_OIDC_TOKEN: ${{ steps.oidc.outputs.result }}
         CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
 
     - name: Override branch for forks
