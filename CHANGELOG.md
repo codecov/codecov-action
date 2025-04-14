@@ -1,3 +1,17 @@
+## v5.4.1
+
+### What's Changed
+* fix: use the github core methods by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1807
+* build(deps): bump github/codeql-action from 3.28.12 to 3.28.13 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1803
+* build(deps): bump github/codeql-action from 3.28.11 to 3.28.12 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1797
+* build(deps): bump actions/upload-artifact from 4.6.1 to 4.6.2 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1798
+* chore(release): wrapper -0.2.1 by @app/codecov-releaser-app in https://github.com/codecov/codecov-action/pull/1788
+* build(deps): bump github/codeql-action from 3.28.10 to 3.28.11 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1786
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.4.0..v5.4.1
+
+
 ## v5.4.0
 
 ### What's Changed
