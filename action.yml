@@ -203,7 +203,7 @@ runs:
         GITHUB_REPOSITORY: ${{ github.repository }}
 
     - name: Get OIDC token
-      if: ${{ inputs.use_oidc }}
+      if: ${{ inputs.use_oidc == 'true' }}
       uses: actions/github-script@v7
       id: oidc
       with:
