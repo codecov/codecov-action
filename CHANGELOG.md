@@ -1,3 +1,13 @@
+## v6.0.0
+
+### What's Changed
+* build(deps): bump github/codeql-action from 3.28.13 to 3.28.17 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1822
+* fix: OIDC on forks by @joseph-sentry in https://github.com/codecov/codecov-action/pull/1823
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.4.2..v6.0.0
+
+
 ## v5.4.2
 
 ### What's Changed
