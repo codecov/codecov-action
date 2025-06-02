@@ -175,20 +175,33 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Detect shell
+      shell: sh
+      run: |
+        if [ -f /etc/os-release ]; then
+          . /etc/os-release
+          if [ "$ID" = "alpine" ]; then
+            echo "CC_SHELL=ash" >> "$GITHUB_ENV"
+          else
+            echo "CC_SHELL=bash" >> "$GITHUB_ENV"
+          fi
+        else
+          echo "CC_SHELL=bash" >> "$GITHUB_ENV"
+        fi
     - name: Action version
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         CC_ACTION_VERSION=$(cat ${GITHUB_ACTION_PATH}/src/version)
         echo -e "\033[0;32m==>\033[0m Running Action version $CC_ACTION_VERSION"
     - name: Set safe directory
       if: ${{ inputs.disable_safe_directory != 'true' }}
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         git config --global --add safe.directory "${{ github.workspace }}"
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Set fork
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         CC_FORK="false"
         if [ -n "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" ] && [ "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" != "$GITHUB_REPOSITORY" ];
@@ -216,7 +229,7 @@ runs:
         CC_USE_OIDC: ${{ inputs.use_oidc }}
 
     - name: Get and set token
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ "${{ inputs.use_oidc }}" == 'true' ] && [ "$CC_FORK" != 'true' ];
         then
@@ -238,7 +251,7 @@ runs:
         CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
 
     - name: Override branch for forks
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ "$CC_FORK" == 'true' ]
         then
@@ -256,7 +269,7 @@ runs:
         GITHUB_REPOSITORY: ${{ github.repository }}
 
     - name: Override commits and pr for pull requests
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ -z "$CC_SHA" ];
         then
@@ -278,7 +291,7 @@ runs:
 
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       working-directory: ${{ inputs.working-directory }}
       env:
         CC_BASE_SHA: ${{ inputs.base_sha }}

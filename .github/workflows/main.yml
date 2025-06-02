@@ -133,3 +133,40 @@ jobs:
           version: v9.1.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  run-alpine:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: "true"
+      - name: Install deps
+        run: |
+          apk add git
+      - name: Upload coverage to Codecov (script)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script-${{ matrix.os }}
+          name: codecov-script
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (demo)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
+          flags: demo-${{ matrix.os }}
+          name: codecov-demo
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
+          flags: version-${{ matrix.os }}
+          name: codecov-version
+          version: v9.1.0
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
