@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install dependencies
         run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
@@ -55,7 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install dependencies
         run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
@@ -104,7 +104,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install deps
         run: |
           apt-get install git
