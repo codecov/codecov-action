@@ -118,8 +118,7 @@ permissions:
   id-token: write
 ```
 
-This can be set at either the workflow or job level. See GitHub's (docs)[https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-
-openid-connect] for more details.
+This can be set at either the workflow or job level. See GitHub's [docs](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) for more details.
 
 ## Arguments
 
