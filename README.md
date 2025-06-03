@@ -3,16 +3,19 @@
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-v5-undefined.svg?logo=github&logoColor=white&style=flat)](https://github.com/marketplace/actions/codecov)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcodecov%2Fcodecov-action?ref=badge_shield)
 [![Workflow for Codecov Action](https://github.com/codecov/codecov-action/actions/workflows/main.yml/badge.svg)](https://github.com/codecov/codecov-action/actions/workflows/main.yml)
+
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
 ## v5 Release
+
 `v5` of the Codecov GitHub Action will use the [Codecov Wrapper](https://github.com/codecov/wrapper) to encapsulate the [CLI](https://github.com/codecov/codecov-cli). This will help ensure that the Action gets updates quicker.
 
 ### Migration Guide
+
 The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the `Global Upload Token` section of the settings page of an organization in codecov.io, you can set the ability for Codecov to receive a coverage reports from any source. This will allow contributors or other members of a repository to upload without needing access to the Codecov token. For more details see [how to upload without a token](https://docs.codecov.com/docs/codecov-tokens#uploading-without-a-token).
 
-> [!WARNING]
-> **The following arguments have been changed**
+> [!WARNING] > **The following arguments have been changed**
+>
 > - `file` (this has been deprecated in favor of `files`)
 > - `plugin` (this has been deprecated in favor of `plugins`)
 
@@ -30,13 +33,16 @@ The following arguments have been added:
 You can see their usage in the `action.yml` [file](https://github.com/codecov/codecov-action/blob/main/action.yml).
 
 ## v4 Release
+
 `v4` of the Codecov GitHub Action will use the [Codecov CLI](https://github.com/codecov/codecov-cli) to upload coverage reports to Codecov.
 
 ### Breaking Changes
+
 - Tokenless uploading is unsupported. However, PRs made from forks to the upstream public repos will support tokenless (e.g. contributors to OSS projects do not need the upstream repo's Codecov token). For details, [see our docs](https://docs.codecov.com/docs/codecov-uploader#supporting-token-less-uploads-for-forks-of-open-source-repos-using-codecov)
 - Various arguments to the Action have been removed
 
 ### Dependabot
+
 - For repositories using `Dependabot`, users will need to ensure that it has access to the Codecov token for PRs from Dependabot to upload coverage. To do this, please add your `CODECOV_TOKEN` as a Dependabot Secret. For more information, see ["Configuring access to private registries for Dependabot."](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-access-to-private-registries-for-dependabot#storing-credentials-for-dependabot-to-use)
 
 `v3` versions and below will not have access to CLI features (e.g. global upload token, ATS).
@@ -51,6 +57,7 @@ To integrate Codecov with your Actions pipeline, specify the name of this reposi
 This Action also requires you to [provide an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) from [codecov.io](https://www.codecov.io) (tip: in order to avoid exposing your token, [store it](https://docs.codecov.com/docs/adding-the-codecov-token#github-actions) as a `secret`).
 
 Currently, the Action will identify linux, macos, and windows runners. However, the Action may misidentify other architectures. The OS can be specified as
+
 - alpine
 - alpine-arm64
 - linux
@@ -62,37 +69,39 @@ Inside your `.github/workflows/workflow.yml` file:
 
 ```yaml
 steps:
-- uses: actions/checkout@main
-- uses: codecov/codecov-action@v5
-  with:
-    fail_ci_if_error: true # optional (default = false)
-    files: ./coverage1.xml,./coverage2.xml # optional
-    flags: unittests # optional
-    name: codecov-umbrella # optional
-    token: ${{ secrets.CODECOV_TOKEN }}
-    verbose: true # optional (default = false)
+  - uses: actions/checkout@main
+  - uses: codecov/codecov-action@v5
+    with:
+      fail_ci_if_error: true # optional (default = false)
+      files: ./coverage1.xml,./coverage2.xml # optional
+      flags: unittests # optional
+      name: codecov-umbrella # optional
+      token: ${{ secrets.CODECOV_TOKEN }}
+      verbose: true # optional (default = false)
 ```
 
 The Codecov token can also be passed in via environment variables:
 
 ```yaml
 steps:
-- uses: actions/checkout@main
-- uses: codecov/codecov-action@v5
-  with:
-    fail_ci_if_error: true # optional (default = false)
-    files: ./coverage1.xml,./coverage2.xml # optional
-    flags: unittests # optional
-    name: codecov-umbrella # optional
-    verbose: true # optional (default = false)
-  env:
-    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  - uses: actions/checkout@main
+  - uses: codecov/codecov-action@v5
+    with:
+      fail_ci_if_error: true # optional (default = false)
+      files: ./coverage1.xml,./coverage2.xml # optional
+      flags: unittests # optional
+      name: codecov-umbrella # optional
+      verbose: true # optional (default = false)
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
+
 > [!NOTE]
-> This assumes that you've set your Codecov token inside *Settings > Secrets* as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are *not* available to forks of repositories.
+> This assumes that you've set your Codecov token inside _Settings > Secrets_ as `CODECOV_TOKEN`. If not, you can [get an upload token](https://docs.codecov.io/docs/frequently-asked-questions#section-where-is-the-repository-upload-token-found-) for your specific repo on [codecov.io](https://www.codecov.io). Keep in mind that secrets are _not_ available to forks of repositories.
 
 ### Using OIDC
-For users with [OpenID Connect(OIDC) enabled](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect), the Codecov token is not necessary. You can use OIDC with the `use_oidc` argument as following.
+
+As an alternative to Codecov upload tokens, you can choose to use OIDC as your upload authentication method by setting the `use_oidc` argument:
 
 ```yaml
 - uses: codecov/codecov-action@v5
@@ -101,6 +110,16 @@ For users with [OpenID Connect(OIDC) enabled](https://docs.github.com/en/actions
 ```
 
 Any token supplied will be ignored, as Codecov will default to the OIDC token for verification.
+
+Note that the codecov action must have write permission for `id-token` for this to work:
+
+```yaml
+permissions:
+  id-token: write
+```
+
+This can be set at either the workflow or job level. See GitHub's [docs](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-
+openid-connect) for more details.
 
 ## Arguments
 
@@ -171,30 +190,31 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     env:
       OS: ${{ matrix.os }}
-      PYTHON: '3.10'
+      PYTHON: "3.10"
     steps:
-    - uses: actions/checkout@main
-    - name: Setup Python
-      uses: actions/setup-python@main
-      with:
-        python-version: '3.10'
-    - name: Generate coverage report
-      run: |
-        pip install pytest
-        pip install pytest-cov
-        pytest --cov=./ --cov-report=xml
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        directory: ./coverage/reports/
-        env_vars: OS,PYTHON
-        fail_ci_if_error: true
-        files: ./coverage1.xml,./coverage2.xml,!./cache
-        flags: unittests
-        name: codecov-umbrella
-        token: ${{ secrets.CODECOV_TOKEN }}
-        verbose: true
+      - uses: actions/checkout@main
+      - name: Setup Python
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.10"
+      - name: Generate coverage report
+        run: |
+          pip install pytest
+          pip install pytest-cov
+          pytest --cov=./ --cov-report=xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          directory: ./coverage/reports/
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          files: ./coverage1.xml,./coverage2.xml,!./cache
+          flags: unittests
+          name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
 ```
+
 ## Contributing
 
 Contributions are welcome! Check out the [Contribution Guide](CONTRIBUTING.md).
