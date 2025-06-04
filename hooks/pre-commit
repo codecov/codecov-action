@@ -2,6 +2,19 @@
 
 set -e
 
+if ! command -v prettier &> /dev/null; then
+    echo "prettier could not be found"
+    echo "View install instructions at: https://prettier.io/docs/install"
+    exit 1
+fi
+
+if ! prettier --check --no-error-on-unmatched-pattern "**/*.yml"; then
+    echo "prettier found formatting issues"
+    prettier --write --no-error-on-unmatched-pattern "**/*.yml"
+    git add "**/*.yml"
+    exit 1
+fi
+
 cp src/scripts/dist/codecov.sh dist/codecov.sh
 git add dist/codecov.sh
 

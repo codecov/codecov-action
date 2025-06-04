@@ -1,194 +1,207 @@
 ---
 # yamllint disable rule:line-length
-name: 'Codecov'
-description: 'GitHub Action that uploads coverage reports for your repository to codecov.io'
-author: 'Thomas Hu <@thomasrockhu-codecov> | Codecov'
+name: "Codecov"
+description: "GitHub Action that uploads coverage reports for your repository to codecov.io"
+author: "Thomas Hu <@thomasrockhu-codecov> | Codecov"
 inputs:
   base_sha:
     description: 'The base SHA to select. This is only used in the "pr-base-picking" run command'
     required: false
   binary:
-    description: 'The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed.'
+    description: "The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed."
     required: false
   codecov_yml_path:
-    description: 'The location of the codecov.yml file. This is crrently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml'
+    description: "The location of the codecov.yml file. This is crrently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml"
     required: false
   commit_parent:
-    description: 'SHA (with 40 chars) of what should be the parent of this commit.'
+    description: "SHA (with 40 chars) of what should be the parent of this commit."
     required: false
   directory:
-    description: 'Folder to search for coverage files. Default to the current working directory'
+    description: "Folder to search for coverage files. Default to the current working directory"
     required: false
   disable_file_fixes:
-    description: 'Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports'
+    description: "Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports"
     required: false
-    default: 'false'
+    default: "false"
   disable_search:
-    description: 'Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option.'
+    description: "Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option."
     required: false
-    default: 'false'
+    default: "false"
   disable_safe_directory:
-    description: 'Disable setting safe directory. Set to true to disable.'
+    description: "Disable setting safe directory. Set to true to disable."
     required: false
-    default: 'false'
+    default: "false"
   disable_telem:
-    description: 'Disable sending telemetry data to Codecov. Set to true to disable.'
+    description: "Disable sending telemetry data to Codecov. Set to true to disable."
     required: false
-    default: 'false'
+    default: "false"
   dry_run:
     description: "Don't upload files to Codecov"
     required: false
-    default: 'false'
+    default: "false"
   env_vars:
-    description: 'Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)'
+    description: "Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)"
     required: false
   exclude:
-    description: 'Comma-separated list of folders to exclude from search.'
+    description: "Comma-separated list of folders to exclude from search."
     required: false
   fail_ci_if_error:
-    description: 'On error, exit with non-zero code'
+    description: "On error, exit with non-zero code"
     required: false
-    default: 'false'
+    default: "false"
   files:
-    description: 'Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable-search to disable uploading other files.'
+    description: "Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable-search to disable uploading other files."
     required: false
   flags:
-    description: 'Comma-separated list of flags to upload to group coverage metrics.'
+    description: "Comma-separated list of flags to upload to group coverage metrics."
     required: false
   force:
-    description: 'Only used for empty-upload run command'
+    description: "Only used for empty-upload run command"
     required: false
   git_service:
-    description: 'Override the git_service (e.g. github_enterprise)'
+    description: "Override the git_service (e.g. github_enterprise)"
     required: false
-    default: 'github'
+    default: "github"
   gcov_args:
-    description: 'Extra arguments to pass to gcov'
+    description: "Extra arguments to pass to gcov"
     required: false
   gcov_executable:
     description: "gcov executable to run. Defaults to 'gcov'"
     required: false
-    default: 'gcov'
+    default: "gcov"
   gcov_ignore:
-    description: 'Paths to ignore during gcov gathering'
+    description: "Paths to ignore during gcov gathering"
     required: false
   gcov_include:
     description: "Paths to include during gcov gathering"
     required: false
   handle_no_reports_found:
-    description: 'If no coverage reports are found, do not raise an exception.'
+    description: "If no coverage reports are found, do not raise an exception."
     required: false
-    default: 'false'
+    default: "false"
   job_code:
-    description: ''
+    description: ""
     required: false
   name:
-    description: 'Custom defined name of the upload. Visible in the Codecov UI'
+    description: "Custom defined name of the upload. Visible in the Codecov UI"
     required: false
   network_filter:
-    description: 'Specify a filter on the files listed in the network section of the Codecov report. This will only add files whose path begin with the specified filter. Useful for upload-specific path fixing.'
+    description: "Specify a filter on the files listed in the network section of the Codecov report. This will only add files whose path begin with the specified filter. Useful for upload-specific path fixing."
     required: false
   network_prefix:
-    description: 'Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing.'
+    description: "Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing."
     required: false
   os:
-    description: 'Override the assumed OS. Options available at cli.codecov.io'
+    description: "Override the assumed OS. Options available at cli.codecov.io"
     required: false
   override_branch:
-    description: 'Specify the branch to be displayed with this commit on Codecov'
+    description: "Specify the branch to be displayed with this commit on Codecov"
     required: false
   override_build:
-    description: 'Specify the build number manually'
+    description: "Specify the build number manually"
     required: false
   override_build_url:
-    description: 'The URL of the build where this is running'
+    description: "The URL of the build where this is running"
     required: false
   override_commit:
-    description: 'Commit SHA (with 40 chars)'
+    description: "Commit SHA (with 40 chars)"
     required: false
   override_pr:
-    description: 'Specify the pull request number manually. Used to override pre-existing CI environment variables.'
+    description: "Specify the pull request number manually. Used to override pre-existing CI environment variables."
     required: false
   plugins:
-    description: 'Comma-separated list of plugins to run. Specify `noop` to turn off all plugins'
+    description: "Comma-separated list of plugins to run. Specify `noop` to turn off all plugins"
     required: false
   recurse_submodules:
-    description: 'Whether to enumerate files inside of submodules for path-fixing purposes. Off by default.'
-    default: 'false'
+    description: "Whether to enumerate files inside of submodules for path-fixing purposes. Off by default."
+    default: "false"
   report_code:
-    description: 'The code of the report if using local upload. If unsure, leave default. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload'
+    description: "The code of the report if using local upload. If unsure, leave default. Read more here https://docs.codecov.com/docs/the-codecov-cli#how-to-use-local-upload"
     required: false
   report_type:
     description: 'The type of file to upload, coverage by default. Possible values are "test_results", "coverage".'
     required: false
   root_dir:
-    description: 'Root folder from which to consider paths on the network section. Defaults to current working directory.'
+    description: "Root folder from which to consider paths on the network section. Defaults to current working directory."
     required: false
   run_command:
     description: 'Choose which CLI command to run. Options are "upload-coverage", "empty-upload", "pr-base-picking", "send-notifications". "upload-coverage" is run by default.'
     required: false
-    default: 'upload-coverage'
+    default: "upload-coverage"
   skip_validation:
-    description: 'Skip integrity checking of the CLI. This is NOT recommended.'
+    description: "Skip integrity checking of the CLI. This is NOT recommended."
     required: false
-    default: 'false'
+    default: "false"
   slug:
-    description: '[Required when using the org token] Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users.'
+    description: "[Required when using the org token] Set to the owner/repo slug used instead of the private repo token. Only applicable to some Enterprise users."
     required: false
   swift_project:
-    description: 'Specify the swift project name. Useful for optimization.'
+    description: "Specify the swift project name. Useful for optimization."
     required: false
   token:
-    description: 'Repository Codecov token. Used to authorize report uploads'
+    description: "Repository Codecov token. Used to authorize report uploads"
     required: false
   url:
-    description: 'Set to the Codecov instance URl. Used by Dedicated Enterprise Cloud customers.'
+    description: "Set to the Codecov instance URl. Used by Dedicated Enterprise Cloud customers."
     required: false
   use_legacy_upload_endpoint:
-    description: 'Use the legacy upload endpoint.'
+    description: "Use the legacy upload endpoint."
     required: false
-    default: 'false'
+    default: "false"
   use_oidc:
-    description: 'Use OIDC instead of token. This will ignore any token supplied'
+    description: "Use OIDC instead of token. This will ignore any token supplied"
     required: false
-    default: 'false'
+    default: "false"
   use_pypi:
-    description: 'Use the pypi version of the CLI instead of from cli.codecov.io'
+    description: "Use the pypi version of the CLI instead of from cli.codecov.io"
     required: false
-    default: 'false'
+    default: "false"
   verbose:
-    description: 'Enable verbose logging'
+    description: "Enable verbose logging"
     required: false
-    default: 'false'
+    default: "false"
   version:
     description: "Which version of the Codecov CLI to use (defaults to 'latest')"
     required: false
-    default: 'latest'
+    default: "latest"
   working-directory:
-    description: 'Directory in which to execute codecov.sh'
+    description: "Directory in which to execute codecov.sh"
     required: false
 
 branding:
-  color: 'red'
-  icon: 'umbrella'
+  color: "red"
+  icon: "umbrella"
 
 runs:
   using: "composite"
   steps:
+    - name: Detect shell
+      shell: sh
+      run: |
+        if [ -f /etc/os-release ]; then
+          . /etc/os-release
+          if [ "$ID" = "alpine" ]; then
+            echo "CC_SHELL=ash" >> "$GITHUB_ENV"
+          else
+            echo "CC_SHELL=bash" >> "$GITHUB_ENV"
+          fi
+        else
+          echo "CC_SHELL=bash" >> "$GITHUB_ENV"
+        fi
     - name: Action version
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         CC_ACTION_VERSION=$(cat ${GITHUB_ACTION_PATH}/src/version)
         echo -e "\033[0;32m==>\033[0m Running Action version $CC_ACTION_VERSION"
     - name: Set safe directory
       if: ${{ inputs.disable_safe_directory != 'true' }}
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         git config --global --add safe.directory "${{ github.workspace }}"
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Set fork
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         CC_FORK="false"
         if [ -n "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" ] && [ "$GITHUB_EVENT_PULL_REQUEST_HEAD_REPO_FULL_NAME" != "$GITHUB_REPOSITORY" ];
@@ -216,7 +229,7 @@ runs:
         CC_USE_OIDC: ${{ inputs.use_oidc }}
 
     - name: Get and set token
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ "${{ inputs.use_oidc }}" == 'true' ] && [ "$CC_FORK" != 'true' ];
         then
@@ -238,7 +251,7 @@ runs:
         CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
 
     - name: Override branch for forks
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ -z "$CC_BRANCH" ] && [ -z "$CC_TOKEN" ] && [ "$CC_FORK" == 'true' ]
         then
@@ -256,7 +269,7 @@ runs:
         GITHUB_REPOSITORY: ${{ github.repository }}
 
     - name: Override commits and pr for pull requests
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       run: |
         if [ -z "$CC_SHA" ];
         then
@@ -278,7 +291,7 @@ runs:
 
     - name: Upload coverage to Codecov
       run: ${GITHUB_ACTION_PATH}/dist/codecov.sh
-      shell: bash
+      shell: ${{ env.CC_SHELL }}
       working-directory: ${{ inputs.working-directory }}
       env:
         CC_BASE_SHA: ${{ inputs.base_sha }}
