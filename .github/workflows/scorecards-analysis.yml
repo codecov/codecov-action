@@ -3,9 +3,9 @@ on:
   # Only the default branch is supported.
   branch_protection_rule:
   schedule:
-    - cron: '43 20 * * 1'
+    - cron: "43 20 * * 1"
   push:
-    branches: [ main ]
+    branches: [main]
 
 # Declare default permissions as read only.
 permissions: read-all

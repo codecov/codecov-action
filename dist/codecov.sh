@@ -1,30 +1,29 @@
-#!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.2.1"
+#!/bin/sh
 set +u
 say() {
   echo -e "$1"
 }
 exit_if_error() {
   say "$r==> $1$x"
-  if [ "$CC_FAIL_ON_ERROR" = true ];
+  if [ "$CODECOV_FAIL_ON_ERROR" = true ];
   then
      say "$r    Exiting...$x"
      exit 1;
   fi
 }
 lower() {
-  echo $(echo $1 | sed 's/CC//' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]')
+  echo $(echo $1 | sed 's/CODECOV//' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]')
 }
 k_arg() {
-  if [ -n "$(eval echo \$"CC_$1")" ];
+  if [ -n "$(eval echo \$"CODECOV_$1")" ];
   then
     echo "--$(lower "$1")"
   fi
 }
 v_arg() {
-  if [ -n "$(eval echo \$"CC_$1")" ];
+  if [ -n "$(eval echo \$"CODECOV_$1")" ];
   then
-    echo "$(eval echo \$"CC_$1")"
+    echo "$(eval echo \$"CODECOV_$1")"
   fi
 }
 write_bool_args() {
@@ -33,227 +32,276 @@ write_bool_args() {
     echo "-$(lower $1)"
   fi
 }
+add_cli_arg() { [ -n "$1" ] && CODECOV_CLI_ARGS="${CODECOV_CLI_ARGS:+$CODECOV_CLI_ARGS }$1"; }
+add_arg() { [ -n "$1" ] && CODECOV_ARGS="${CODECOV_ARGS:+$CODECOV_ARGS }$1"; }
 b="\033[0;36m"  # variables/constants
 g="\033[0;32m"  # info/debug
 r="\033[0;31m"  # errors
 x="\033[0m"
+retry="--retry 5 --retry-delay 2"
+CODECOV_WRAPPER_VERSION="0.2.6"
+CODECOV_VERSION="${CODECOV_VERSION:-latest}"
+CODECOV_FAIL_ON_ERROR="${CODECOV_FAIL_ON_ERROR:-false}"
+CODECOV_RUN_CMD="${CODECOV_RUN_CMD:-upload-coverage}"
+CODECOV_CLI_TYPE=${CODECOV_CLI_TYPE:-"codecov-cli"}
 say "     _____          _
     / ____|        | |
    | |     ___   __| | ___  ___ _____   __
    | |    / _ \\ / _\` |/ _ \\/ __/ _ \\ \\ / /
    | |___| (_) | (_| |  __/ (_| (_) \\ V /
     \\_____\\___/ \\__,_|\\___|\\___\\___/ \\_/
-                           $r Wrapper-$CC_WRAPPER_VERSION$x
-                                  "
-CC_VERSION="${CC_VERSION:-latest}"
-CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
-CC_RUN_CMD="${CC_RUN_CMD:-upload-coverage}"
-if [ -n "$CC_BINARY" ];
+                           $r Wrapper-$CODECOV_WRAPPER_VERSION$x
+                           "
+if [ "$CODECOV_CLI_TYPE" != "codecov-cli" ] && [ "$CODECOV_CLI_TYPE" != "sentry-prevent-cli" ]; then
+  echo "Invalid CODECOV_CLI_TYPE: '$CODECOV_CLI_TYPE'. Must be 'codecov-cli' or 'sentry-prevent-cli'"
+  exit 1
+fi
+if [ -n "$CODECOV_BINARY" ];
 then
-  if [ -f "$CC_BINARY" ];
+  if [ -f "$CODECOV_BINARY" ];
   then
-    c_filename=$CC_BINARY
-    c_command=$CC_BINARY
+    CODECOV_FILENAME=$CODECOV_BINARY
+    CODECOV_COMMAND=$CODECOV_BINARY
   else
-    exit_if_error "Could not find binary file $CC_BINARY"
+    exit_if_error "Could not find binary file $CODECOV_BINARY"
   fi
-elif [ "$CC_USE_PYPI" == "true" ];
+elif [ "$CODECOV_USE_PYPI" = "true" ];
 then
-  if ! pip install codecov-cli"$([ "$CC_VERSION" == "latest" ] && echo "" || echo "==$CC_VERSION" )"; then
+  if ! pip install "${CODECOV_CLI_TYPE}$([ "$CODECOV_VERSION" = "latest" ] && echo "" || echo "==$CODECOV_VERSION")"; then
     exit_if_error "Could not install via pypi."
     exit
   fi
-  c_command="codecovcli"
+  CODECOV_COMMAND="${CODECOV_CLI_TYPE}"
 else
-  if [ -n "$CC_OS" ];
+  if [ -n "$CODECOV_OS" ];
   then
-    say "$g==>$x Overridden OS: $b${CC_OS}$x"
+    say "$g==>$x Overridden OS: $b${CODECOV_OS}$x"
   else
-    CC_OS="windows"
+    CODECOV_OS="windows"
     family=$(uname -s | tr '[:upper:]' '[:lower:]')
-    [[ $family == "darwin" ]] && CC_OS="macos"
-    [[ $family == "linux" ]] && CC_OS="linux"
-    [[ $CC_OS == "linux" ]] && \
+    [ "$family" = "darwin" ] && CODECOV_OS="macos"
+    [ "$family" = "linux" ] && CODECOV_OS="linux"
+    [ "$CODECOV_OS" = "linux" ] && \
       osID=$(grep -e "^ID=" /etc/os-release | cut -c4-)
-    [[ $osID == "alpine" ]] && CC_OS="alpine"
-    [[ $(arch) == "aarch64" && $family == "linux" ]] && CC_OS+="-arm64"
-    say "$g==>$x Detected $b${CC_OS}$x"
+    [ "$osID" = "alpine" ] && CODECOV_OS="alpine"
+    [ "$(arch)" = "aarch64" ] && [ "$family" = "linux" ] && CODECOV_OS="${CODECOV_OS}-arm64"
+    say "$g==>$x Detected $b${CODECOV_OS}$x"
   fi
-  c_filename="codecov"
-  [[ $CC_OS == "windows" ]] && c_filename+=".exe"
-  c_command="./$c_filename"
-  [[ $CC_OS == "macos" ]]  && \
+  CODECOV_FILENAME="${CODECOV_CLI_TYPE%-cli}"
+  [ "$CODECOV_OS" = "windows" ] && CODECOV_FILENAME="${CODECOV_FILENAME}.exe"
+  CODECOV_COMMAND="./$CODECOV_FILENAME"
+  [ "$CODECOV_OS" = "macos" ] && \
     ! command -v gpg 2>&1 >/dev/null && \
     HOMEBREW_NO_AUTO_UPDATE=1 brew install gpg
-  c_url="https://cli.codecov.io"
-  c_url="$c_url/${CC_VERSION}"
-  c_url="$c_url/${CC_OS}/${c_filename}"
-  say "$g ->$x Downloading $b${c_url}$x"
-  curl -O --retry 5 --retry-delay 2 "$c_url"
-  say "$g==>$x Finishing downloading $b${CC_OS}:${CC_VERSION}$x"
-  version_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
-  version=$(curl -s "$version_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
-  say "      Version: $b$version$x"
+  CODECOV_URL="${CODECOV_CLI_URL:-https://cli.codecov.io}"
+  CODECOV_URL="$CODECOV_URL/${CODECOV_VERSION}"
+  CODECOV_URL="$CODECOV_URL/${CODECOV_OS}/${CODECOV_FILENAME}"
+  say "$g ->$x Downloading $b${CODECOV_URL}$x"
+  curl -O $retry "$CODECOV_URL"
+  say "$g==>$x Finishing downloading $b${CODECOV_OS}:${CODECOV_VERSION}$x"
+  v_url="https://cli.codecov.io/api/${CODECOV_OS}/${CODECOV_VERSION}"
+  v=$(curl $retry --retry-all-errors -s "$v_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
+  say "      Version: $b$v$x"
   say " "
 fi
-if [ "$CC_SKIP_VALIDATION" == "true" ] || [ -n "$CC_BINARY" ] || [ "$CC_USE_PYPI" == "true" ];
+if [ "$CODECOV_SKIP_VALIDATION" == "true" ] || [ -n "$CODECOV_BINARY" ] || [ "$CODECOV_USE_PYPI" == "true" ];
 then
   say "$r==>$x Bypassing validation..."
 else
-CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
-  echo "${CC_PUBLIC_PGP_KEY}"  | \
+  echo "$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)" | \
     gpg --no-default-keyring --import
   # One-time step
   say "$g==>$x Verifying GPG signature integrity"
   sha_url="https://cli.codecov.io"
-  sha_url="${sha_url}/${CC_VERSION}/${CC_OS}"
-  sha_url="${sha_url}/${c_filename}.SHA256SUM"
+  sha_url="${sha_url}/${CODECOV_VERSION}/${CODECOV_OS}"
+  sha_url="${sha_url}/${CODECOV_FILENAME}.SHA256SUM"
   say "$g ->$x Downloading $b${sha_url}$x"
   say "$g ->$x Downloading $b${sha_url}.sig$x"
   say " "
-  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "$sha_url"
-  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "${sha_url}.sig"
-  if ! gpg --verify "${c_filename}.SHA256SUM.sig" "${c_filename}.SHA256SUM";
+  curl -Os $retry --connect-timeout 2 "$sha_url"
+  curl -Os $retry --connect-timeout 2 "${sha_url}.sig"
+  if ! gpg --verify "${CODECOV_FILENAME}.SHA256SUM.sig" "${CODECOV_FILENAME}.SHA256SUM";
   then
     exit_if_error "Could not verify signature. Please contact Codecov if problem continues"
   fi
-  if ! (shasum -a 256 -c "${c_filename}.SHA256SUM" 2>/dev/null || \
-    sha256sum -c "${c_filename}.SHA256SUM");
+  if ! (shasum -a 256 -c "${CODECOV_FILENAME}.SHA256SUM" 2>/dev/null || \
+    sha256sum -c "${CODECOV_FILENAME}.SHA256SUM");
   then
     exit_if_error "Could not verify SHASUM. Please contact Codecov if problem continues"
   fi
   say "$g==>$x CLI integrity verified"
   say
-  chmod +x "$c_command"
+  chmod +x "$CODECOV_COMMAND"
 fi
-if [ -n "$CC_BINARY_LOCATION" ];
+if [ -n "$CODECOV_BINARY_LOCATION" ];
 then
-  mkdir -p "$CC_BINARY_LOCATION" && mv "$c_filename" $_
-  say "$g==>$x Codecov binary moved to ${CC_BINARY_LOCATION}"
+  mkdir -p "$CODECOV_BINARY_LOCATION" && mv "$CODECOV_FILENAME" $_
+  say "$g==>$x ${CODECOV_CLI_TYPE} binary moved to ${CODECOV_BINARY_LOCATION}"
 fi
-if [ "$CC_DOWNLOAD_ONLY" = "true" ];
+if [ "$CODECOV_DOWNLOAD_ONLY" = "true" ];
 then
-  say "$g==>$x Codecov download only called. Exiting..."
+  say "$g==>$x ${CODECOV_CLI_TYPE} download only called. Exiting..."
 fi
-c_cli_args=()
-c_cli_args+=( $(k_arg AUTO_LOAD_PARAMS_FROM) $(v_arg AUTO_LOAD_PARAMS_FROM))
-c_cli_args+=( $(k_arg ENTERPRISE_URL) $(v_arg ENTERPRISE_URL))
-if [ -n "$CC_YML_PATH" ]
+CODECOV_CLI_ARGS=""
+add_cli_arg "$(k_arg AUTO_LOAD_PARAMS_FROM)"
+add_cli_arg "$(v_arg AUTO_LOAD_PARAMS_FROM)"
+add_cli_arg "$(k_arg ENTERPRISE_URL)"
+add_cli_arg "$(v_arg ENTERPRISE_URL)"
+if [ -n "$CODECOV_YML_PATH" ]
 then
-  c_cli_args+=( "--codecov-yml-path" )
-  c_cli_args+=( "$CC_YML_PATH" )
+  add_cli_arg "--codecov-yml-path"
+  add_cli_arg "$CODECOV_YML_PATH"
 fi
-c_cli_args+=( $(write_bool_args CC_DISABLE_TELEM) )
-c_cli_args+=( $(write_bool_args CC_VERBOSE) )
-if [ -n "$CC_TOKEN_VAR" ];
-then
-  token="$(eval echo \$$CC_TOKEN_VAR)"
-else
-  token="$(eval echo $CC_TOKEN)"
-fi
-say "$g ->$x Token of length ${#token} detected"
-token_str=""
-token_arg=()
-if [ -n "$token" ];
-then
-  token_str+=" -t <redacted>"
-  token_arg+=( " -t " "$token")
-fi
-c_args=()
-if [ "$CC_RUN_CMD" == "upload-coverage" ]; then
+add_cli_arg "$(write_bool_args CODECOV_DISABLE_TELEM)"
+add_cli_arg "$(write_bool_args CODECOV_VERBOSE)"
+CODECOV_ARGS=""
+if [ "$CODECOV_RUN_CMD" = "upload-coverage" ]; then
 # Args for create commit
-c_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
-c_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
-c_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
-c_args+=( $(k_arg PR) $(v_arg PR))
-c_args+=( $(k_arg SHA) $(v_arg SHA))
-c_args+=( $(k_arg SLUG) $(v_arg SLUG))
+add_arg "$(write_bool_args CODECOV_FAIL_ON_ERROR)"
+add_arg "$(k_arg GIT_SERVICE)"
+add_arg "$(v_arg GIT_SERVICE)"
+add_arg "$(k_arg PARENT_SHA)"
+add_arg "$(v_arg PARENT_SHA)"
+add_arg "$(k_arg PR)"
+add_arg "$(v_arg PR)"
+add_arg "$(k_arg SHA)"
+add_arg "$(v_arg SHA)"
+add_arg "$(k_arg SLUG)"
+add_arg "$(v_arg SLUG)"
 # Args for create report
-c_args+=( $(k_arg CODE) $(v_arg CODE))
+add_arg "$(k_arg CODE)"
+add_arg "$(v_arg CODE)"
 # Args for do upload
-c_args+=( $(k_arg ENV) $(v_arg ENV))
+add_arg "$(k_arg ENV)"
+add_arg "$(v_arg ENV)"
 OLDIFS=$IFS;IFS=,
-c_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
-c_args+=( $(k_arg BUILD) $(v_arg BUILD))
-c_args+=( $(k_arg BUILD_URL) $(v_arg BUILD_URL))
-c_args+=( $(k_arg DIR) $(v_arg DIR))
-c_args+=( $(write_bool_args CC_DISABLE_FILE_FIXES) )
-c_args+=( $(write_bool_args CC_DISABLE_SEARCH) )
-c_args+=( $(write_bool_args CC_DRY_RUN) )
-if [ -n "$CC_EXCLUDES" ];
+add_arg "$(k_arg BRANCH)"
+add_arg "$(v_arg BRANCH)"
+add_arg "$(k_arg BUILD)"
+add_arg "$(v_arg BUILD)"
+add_arg "$(k_arg BUILD_URL)"
+add_arg "$(v_arg BUILD_URL)"
+add_arg "$(k_arg DIR)"
+add_arg "$(v_arg DIR)"
+add_arg "$(write_bool_args CODECOV_DISABLE_FILE_FIXES)"
+add_arg "$(write_bool_args CODECOV_DISABLE_SEARCH)"
+add_arg "$(write_bool_args CODECOV_DRY_RUN)"
+if [ -n "$CODECOV_EXCLUDES" ];
 then
-  for directory in $CC_EXCLUDES; do
-    c_args+=( "--exclude" "$directory" )
+  for directory in $CODECOV_EXCLUDES; do
+    add_arg "--exclude"
+    add_arg "$directory"
   done
 fi
-if [ -n "$CC_FILES" ];
+if [ -n "$CODECOV_FILES" ];
 then
-  for file in $CC_FILES; do
-    c_args+=( "--file" "$file" )
+  for file in $CODECOV_FILES; do
+    add_arg "--file"
+    add_arg "$file"
   done
 fi
-if [ -n "$CC_FLAGS" ];
+if [ -n "$CODECOV_FLAGS" ];
 then
-  for flag in $CC_FLAGS; do
-    c_args+=( "--flag" "$flag" )
+  for flag in $CODECOV_FLAGS; do
+    add_arg "--flag"
+    add_arg "$flag"
   done
 fi
-c_args+=( $(k_arg GCOV_ARGS) $(v_arg GCOV_ARGS))
-c_args+=( $(k_arg GCOV_EXECUTABLE) $(v_arg GCOV_EXECUTABLE))
-c_args+=( $(k_arg GCOV_IGNORE) $(v_arg GCOV_IGNORE))
-c_args+=( $(k_arg GCOV_INCLUDE) $(v_arg GCOV_INCLUDE))
-c_args+=( $(write_bool_args CC_HANDLE_NO_REPORTS_FOUND) )
-c_args+=( $(write_bool_args CC_RECURSE_SUBMODULES) )
-c_args+=( $(k_arg JOB_CODE) $(v_arg JOB_CODE))
-c_args+=( $(write_bool_args CC_LEGACY) )
-if [ -n "$CC_NAME" ];
+add_arg "$(k_arg GCOV_ARGS)"
+add_arg "$(v_arg GCOV_ARGS)"
+add_arg "$(k_arg GCOV_EXECUTABLE)"
+add_arg "$(v_arg GCOV_EXECUTABLE)"
+add_arg "$(k_arg GCOV_IGNORE)"
+add_arg "$(v_arg GCOV_IGNORE)"
+add_arg "$(k_arg GCOV_INCLUDE)"
+add_arg "$(v_arg GCOV_INCLUDE)"
+add_arg "$(write_bool_args CODECOV_HANDLE_NO_REPORTS_FOUND)"
+add_arg "$(write_bool_args CODECOV_RECURSE_SUBMODULES)"
+add_arg "$(k_arg JOB_CODE)"
+add_arg "$(v_arg JOB_CODE)"
+add_arg "$(write_bool_args CODECOV_LEGACY)"
+if [ -n "$CODECOV_NAME" ];
 then
-  c_args+=( "--name" "$CC_NAME" )
+  add_arg "--name"
+  add_arg "$CODECOV_NAME"
 fi
-c_args+=( $(k_arg NETWORK_FILTER) $(v_arg NETWORK_FILTER))
-c_args+=( $(k_arg NETWORK_PREFIX) $(v_arg NETWORK_PREFIX))
-c_args+=( $(k_arg NETWORK_ROOT_FOLDER) $(v_arg NETWORK_ROOT_FOLDER))
-if [ -n "$CC_PLUGINS" ];
+add_arg "$(k_arg NETWORK_FILTER)"
+add_arg "$(v_arg NETWORK_FILTER)"
+add_arg "$(k_arg NETWORK_PREFIX)"
+add_arg "$(v_arg NETWORK_PREFIX)"
+add_arg "$(k_arg NETWORK_ROOT_FOLDER)"
+add_arg "$(v_arg NETWORK_ROOT_FOLDER)"
+if [ -n "$CODECOV_PLUGINS" ];
 then
-  for plugin in $CC_PLUGINS; do
-    c_args+=( "--plugin" "$plugin" )
+  for plugin in $CODECOV_PLUGINS; do
+    add_arg "--plugin"
+    add_arg "$plugin"
   done
 fi
-c_args+=( $(k_arg REPORT_TYPE) $(v_arg REPORT_TYPE))
-c_args+=( $(k_arg SWIFT_PROJECT) $(v_arg SWIFT_PROJECT))
+add_arg "$(k_arg REPORT_TYPE)"
+add_arg "$(v_arg REPORT_TYPE)"
+add_arg "$(k_arg SWIFT_PROJECT)"
+add_arg "$(v_arg SWIFT_PROJECT)"
 IFS=$OLDIFS
-elif [ "$CC_RUN_CMD" == "empty-upload" ]; then
-c_args+=( $(k_arg BRANCH) $(v_arg BRANCH))
-c_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
-c_args+=( $(write_bool_args CC_FORCE) )
-c_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
-c_args+=( $(k_arg PARENT_SHA) $(v_arg PARENT_SHA))
-c_args+=( $(k_arg PR) $(v_arg PR))
-c_args+=( $(k_arg SHA) $(v_arg SHA))
-c_args+=( $(k_arg SLUG) $(v_arg SLUG))
-elif [ "$CC_RUN_CMD" == "pr-base-picking" ]; then
-c_args+=( $(k_arg BASE_SHA) $(v_arg BASE_SHA))
-c_args+=( $(k_arg PR) $(v_arg PR))
-c_args+=( $(k_arg SLUG) $(v_arg SLUG))
-c_args+=( $(k_arg SERVICE) $(v_arg SERVICE))
-elif [ "$CC_RUN_CMD" == "send-notifications" ]; then
-c_args+=( $(k_arg SHA) $(v_arg SHA))
-c_args+=( $(write_bool_args CC_FAIL_ON_ERROR) )
-c_args+=( $(k_arg GIT_SERVICE) $(v_arg GIT_SERVICE))
-c_args+=( $(k_arg SLUG) $(v_arg SLUG))
+elif [ "$CODECOV_RUN_CMD" = "empty-upload" ]; then
+add_arg "$(k_arg BRANCH)"
+add_arg "$(v_arg BRANCH)"
+add_arg "$(write_bool_args CODECOV_FAIL_ON_ERROR)"
+add_arg "$(write_bool_args CODECOV_FORCE)"
+add_arg "$(k_arg GIT_SERVICE)"
+add_arg "$(v_arg GIT_SERVICE)"
+add_arg "$(k_arg PARENT_SHA)"
+add_arg "$(v_arg PARENT_SHA)"
+add_arg "$(k_arg PR)"
+add_arg "$(v_arg PR)"
+add_arg "$(k_arg SHA)"
+add_arg "$(v_arg SHA)"
+add_arg "$(k_arg SLUG)"
+add_arg "$(v_arg SLUG)"
+elif [ "$CODECOV_RUN_CMD" = "pr-base-picking" ]; then
+add_arg "$(k_arg BASE_SHA)"
+add_arg "$(v_arg BASE_SHA)"
+add_arg "$(k_arg PR)"
+add_arg "$(v_arg PR)"
+add_arg "$(k_arg SLUG)"
+add_arg "$(v_arg SLUG)"
+add_arg "$(k_arg SERVICE)"
+add_arg "$(v_arg SERVICE)"
+elif [ "$CODECOV_RUN_CMD" = "send-notifications" ]; then
+add_arg "$(k_arg SHA)"
+add_arg "$(v_arg SHA)"
+add_arg "$(write_bool_args CODECOV_FAIL_ON_ERROR)"
+add_arg "$(k_arg GIT_SERVICE)"
+add_arg "$(v_arg GIT_SERVICE)"
+add_arg "$(k_arg SLUG)"
+add_arg "$(v_arg SLUG)"
 else
-  exit_if_error "Invalid run command specified: $CC_RUN_CMD"
+  exit_if_error "Invalid run command specified: $CODECOV_RUN_CMD"
   exit
 fi
 unset NODE_OPTIONS
 # github.com/codecov/uploader/issues/475
-say "$g==>$x Running $CC_RUN_CMD"
-say "      $b$c_command $(echo "${c_cli_args[@]}") $CC_RUN_CMD$token_str $(echo "${c_args[@]}")$x"
-if ! $c_command \
-  ${c_cli_args[*]} \
-  ${CC_RUN_CMD} \
-  ${token_arg[*]} \
-  "${c_args[@]}";
+if [ -n "$CODECOV_TOKEN_VAR" ];
 then
-  exit_if_error "Failed to run $CC_RUN_CMD"
+  token="$(eval echo \$$CODECOV_TOKEN_VAR)"
+else
+  token="$(eval echo $CODECOV_TOKEN)"
+fi
+say "$g ->$x Token length: ${#token}"
+token_str=""
+token_arg=""
+if [ -n "$token" ];
+then
+  token_str=" -t <redacted>"
+  token_arg=" -t $token"
+fi
+say "$g==>$x Running $CODECOV_RUN_CMD"
+say "      $b$CODECOV_COMMAND $CODECOV_CLI_ARGS $CODECOV_RUN_CMD$token_str $CODECOV_ARGS$x"
+if [ -n "$token" ]; then
+  eval "$CODECOV_COMMAND $CODECOV_CLI_ARGS $CODECOV_RUN_CMD $token_arg $CODECOV_ARGS"
+else
+  eval "$CODECOV_COMMAND $CODECOV_CLI_ARGS $CODECOV_RUN_CMD $CODECOV_ARGS"
+fi
+if [ $? -ne 0 ]; then
+  exit_if_error "Failed to run $CODECOV_RUN_CMD"
 fi
