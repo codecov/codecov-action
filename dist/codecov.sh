@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 CC_WRAPPER_VERSION="0.2.1"
 set +u
 say() {
