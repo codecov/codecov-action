@@ -181,7 +181,7 @@ runs:
         if [ -f /etc/os-release ]; then
           . /etc/os-release
           if [ "$ID" = "alpine" ]; then
-            echo "CC_SHELL=ash" >> "$GITHUB_ENV"
+            echo "CC_SHELL=sh" >> "$GITHUB_ENV"
           else
             echo "CC_SHELL=bash" >> "$GITHUB_ENV"
           fi
