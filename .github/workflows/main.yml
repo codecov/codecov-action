@@ -140,6 +140,9 @@ jobs:
     runs-on: ubuntu-latest
     container: alpine:latest
     steps:
+      - name: Install only some deps (missing gpg and bash)
+        run: |
+          apk add git
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
