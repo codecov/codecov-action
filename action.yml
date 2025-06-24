@@ -175,6 +175,26 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Check system dependencies
+      shell: sh
+      run: |
+        missing_deps=""
+
+        # Check for required commands
+        for cmd in bash git curl gpg; do
+          if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing_deps="$missing_deps $cmd"
+          fi
+        done
+
+        # Report missing required dependencies
+        if [ -n "$missing_deps" ]; then
+          echo "Error: The following required dependencies are missing:$missing_deps"
+          echo "Please install these dependencies before using this action."
+          exit 1
+        fi
+
+        echo "All required system dependencies are available."
     - name: Action version
       shell: bash
       run: |
