@@ -14,11 +14,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install dependencies
         run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
         run: pytest src/scripts/app/ --cov
+
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
@@ -55,7 +56,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install dependencies
         run: pip install -r src/scripts/app/requirements.txt
       - name: Run tests and collect coverage
@@ -104,15 +105,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install deps
         run: |
-          apt-get install git
+          apt-get update && apt-get install -y git
+
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
-          flags: script-${{ matrix.os }}
+          flags: script-container
           name: codecov-script
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -120,7 +122,7 @@ jobs:
         uses: ./
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: demo-${{ matrix.os }}
+          flags: demo-container
           name: codecov-demo
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -128,8 +130,107 @@ jobs:
         uses: ./
         with:
           files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
-          flags: version-${{ matrix.os }}
+          flags: version-container
           name: codecov-version
           version: v9.1.0
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  run-alpine-missing-deps:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Install only some deps (missing gpg and bash)
+        run: |
+          apk add git
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: "true"
+      - name: Upload coverage to Codecov (should fail due to missing dependencies)
+        id: codecov-upload
+        continue-on-error: true
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script-alpine-missing-deps
+          name: codecov-script
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Verify dependency check failed
+        run: |
+          if [ "${{ steps.codecov-upload.outcome }}" = "failure" ]; then
+            echo "✓ Action correctly failed due to missing dependencies"
+            exit 0
+          else
+            echo "✗ Action should have failed but didn't"
+            exit 1
+          fi
+
+  run-alpine-success:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Install all required deps
+        run: |
+          apk add git curl gnupg bash
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: "true"
+      - name: Upload coverage to Codecov (should succeed)
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script-alpine-success
+          name: codecov-script
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (demo)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
+          flags: demo-alpine-success
+          name: codecov-demo
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov (version)
+        uses: ./
+        with:
+          files: ./coverage/calculator/coverage-final.json,./coverage/coverage-test/coverage-final.json,./coverage/coverage-final.json
+          flags: version-alpine-success
+          name: codecov-version
+          version: v9.1.0
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  run-alpine-partial-deps:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Install only some deps (missing gpg and bash)
+        run: |
+          apk add git curl
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: "true"
+      - name: Upload coverage to Codecov (should fail due to missing gpg and bash)
+        id: codecov-upload
+        continue-on-error: true
+        uses: ./
+        with:
+          files: ./coverage/script/coverage-final.json
+          flags: script-alpine-partial-deps
+          name: codecov-script
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Verify dependency check failed
+        run: |
+          if [ "${{ steps.codecov-upload.outcome }}" = "failure" ]; then
+            echo "✓ Action correctly failed due to missing dependencies (gpg and bash)"
+            exit 0
+          else
+            echo "✗ Action should have failed but didn't"
+            exit 1
+          fi
