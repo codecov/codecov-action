@@ -154,7 +154,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `use_oidc` | Use OIDC instead of token. This will ignore any token supplied | Optional
 | `use_pypi` | Use the pypi version of the CLI instead of from cli.codecov.io. If specified, integrity checking will be bypassed. | Optional
 | `verbose` | Enable verbose logging | Optional
-| `version` | Which version of the Codecov CLI to use (defaults to 'latest', must start with a leading ''; example: `v10.0.1`) | Optional
+| `version` | Which version of the Codecov CLI to use (defaults to 'latest', must start with a leading 'v'; example: `v10.0.1`) | Optional
 | `working-directory` | Directory in which to execute codecov.sh | Optional
 
 ### Example `workflow.yml` with Codecov Action
