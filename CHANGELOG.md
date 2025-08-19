@@ -1,3 +1,17 @@
+## v5.5.0
+
+### What's Changed
+* feat: upgrade wrapper to 0.2.4 by @jviall in https://github.com/codecov/codecov-action/pull/1864
+* Pin actions/github-script by Git SHA by @martincostello in https://github.com/codecov/codecov-action/pull/1859
+* fix: check reqs exist by @joseph-sentry in https://github.com/codecov/codecov-action/pull/1835
+* fix: Typo in README by @spalmurray in https://github.com/codecov/codecov-action/pull/1838
+* docs: Refine OIDC docs by @spalmurray in https://github.com/codecov/codecov-action/pull/1837
+* build(deps): bump github/codeql-action from 3.28.17 to 3.28.18 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1829
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.4.3..v5.5.0
+
+
 ## v5.4.3
 
 ### What's Changed
