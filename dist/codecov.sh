@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-CC_WRAPPER_VERSION="0.2.1"
 set +u
 say() {
   echo -e "$1"
@@ -37,6 +36,11 @@ b="\033[0;36m"  # variables/constants
 g="\033[0;32m"  # info/debug
 r="\033[0;31m"  # errors
 x="\033[0m"
+retry="--retry 5 --retry-delay 2"
+CC_WRAPPER_VERSION="0.2.4"
+CC_VERSION="${CC_VERSION:-latest}"
+CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
+CC_RUN_CMD="${CC_RUN_CMD:-upload-coverage}"
 say "     _____          _
     / ____|        | |
    | |     ___   __| | ___  ___ _____   __
@@ -44,10 +48,7 @@ say "     _____          _
    | |___| (_) | (_| |  __/ (_| (_) \\ V /
     \\_____\\___/ \\__,_|\\___|\\___\\___/ \\_/
                            $r Wrapper-$CC_WRAPPER_VERSION$x
-                                  "
-CC_VERSION="${CC_VERSION:-latest}"
-CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
-CC_RUN_CMD="${CC_RUN_CMD:-upload-coverage}"
+                           "
 if [ -n "$CC_BINARY" ];
 then
   if [ -f "$CC_BINARY" ];
@@ -85,22 +86,22 @@ else
   [[ $CC_OS == "macos" ]]  && \
     ! command -v gpg 2>&1 >/dev/null && \
     HOMEBREW_NO_AUTO_UPDATE=1 brew install gpg
-  c_url="https://cli.codecov.io"
+  c_url="${CC_CLI_URL:-https://cli.codecov.io}"
   c_url="$c_url/${CC_VERSION}"
   c_url="$c_url/${CC_OS}/${c_filename}"
   say "$g ->$x Downloading $b${c_url}$x"
-  curl -O --retry 5 --retry-delay 2 "$c_url"
+  curl -O $retry "$c_url"
   say "$g==>$x Finishing downloading $b${CC_OS}:${CC_VERSION}$x"
-  version_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
-  version=$(curl -s "$version_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
-  say "      Version: $b$version$x"
+  v_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
+  v=$(curl $retry --retry-all-errors -s "$v_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
+  say "      Version: $b$v$x"
   say " "
 fi
 if [ "$CC_SKIP_VALIDATION" == "true" ] || [ -n "$CC_BINARY" ] || [ "$CC_USE_PYPI" == "true" ];
 then
   say "$r==>$x Bypassing validation..."
 else
-CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
+  CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   echo "${CC_PUBLIC_PGP_KEY}"  | \
     gpg --no-default-keyring --import
   # One-time step
@@ -111,8 +112,8 @@ CC_PUBLIC_PGP_KEY=$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)
   say "$g ->$x Downloading $b${sha_url}$x"
   say "$g ->$x Downloading $b${sha_url}.sig$x"
   say " "
-  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "$sha_url"
-  curl -Os --retry 5 --retry-delay 2 --connect-timeout 2 "${sha_url}.sig"
+  curl -Os $retry --connect-timeout 2 "$sha_url"
+  curl -Os $retry --connect-timeout 2 "${sha_url}.sig"
   if ! gpg --verify "${c_filename}.SHA256SUM.sig" "${c_filename}.SHA256SUM";
   then
     exit_if_error "Could not verify signature. Please contact Codecov if problem continues"
@@ -151,7 +152,7 @@ then
 else
   token="$(eval echo $CC_TOKEN)"
 fi
-say "$g ->$x Token of length ${#token} detected"
+say "$g ->$x Token length: ${#token}"
 token_str=""
 token_arg=()
 if [ -n "$token" ];
