@@ -14,8 +14,8 @@
 
 The `v5` release also coincides with the opt-out feature for tokens for public repositories. In the `Global Upload Token` section of the settings page of an organization in codecov.io, you can set the ability for Codecov to receive a coverage reports from any source. This will allow contributors or other members of a repository to upload without needing access to the Codecov token. For more details see [how to upload without a token](https://docs.codecov.com/docs/codecov-tokens#uploading-without-a-token).
 
-> [!WARNING] > **The following arguments have been changed**
->
+> [!WARNING]
+> **The following arguments have been changed**
 > - `file` (this has been deprecated in favor of `files`)
 > - `plugin` (this has been deprecated in favor of `plugins`)
 
