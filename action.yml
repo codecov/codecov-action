@@ -282,7 +282,7 @@ runs:
         then
           CC_SHA="$GITHUB_EVENT_PULL_REQUEST_HEAD_SHA"
         fi
-        if [ -z "$CC_PR" ] && [ "${GITHUB_EVENT_NAME}" == "pull_request_target" ];
+        if [ -z "$CC_PR" ] && [ "$CC_FORK" == 'true' ];
         then
           CC_PR="$GITHUB_EVENT_NUMBER"
         fi
