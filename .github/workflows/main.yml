@@ -50,7 +50,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   run-macos-latest-xlarge:
-    if: github.head.repo.full_name == 'codecov/codecov-action'
+    if: github.event.pull_request.head.repo.full_name == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
     steps:
       - name: Checkout
