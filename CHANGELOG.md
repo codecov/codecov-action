@@ -1,3 +1,19 @@
+## v5.5.1
+
+### What's Changed
+* fix: overwrite pr number on fork by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1871
+* build(deps): bump actions/checkout from 4.2.2 to 5.0.0 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1868
+* build(deps): bump github/codeql-action from 3.29.9 to 3.29.11 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1867
+* fix: update to use local app/ dir by @thomasrockhu-codecov in https://github.com/codecov/codecov-action/pull/1872
+* docs: fix typo in README by @datalater in https://github.com/codecov/codecov-action/pull/1866
+* Document a `codecov-cli` version reference example by @webknjaz in https://github.com/codecov/codecov-action/pull/1774
+* build(deps): bump github/codeql-action from 3.28.18 to 3.29.9 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1861
+* build(deps): bump ossf/scorecard-action from 2.4.1 to 2.4.2 by @app/dependabot in https://github.com/codecov/codecov-action/pull/1833
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.5.0..v5.5.1
+
+
 ## v5.5.0
 
 ### What's Changed
