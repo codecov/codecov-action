@@ -93,3 +93,6 @@ public/
 
 # macOS Finder metadata
 .DS_Store
+
+# pycache dirs
+__pycache__/

@@ -16,9 +16,9 @@ jobs:
         with:
           submodules: "true"
       - name: Install dependencies
-        run: pip install -r src/scripts/app/requirements.txt
+        run: pip install -r app/requirements.txt
       - name: Run tests and collect coverage
-        run: pytest src/scripts/app/ --cov
+        run: pytest app/ --cov
 
       - name: Upload coverage to Codecov (script)
         uses: ./
@@ -50,7 +50,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   run-macos-latest-xlarge:
-    if: github.head.repo.full_name == 'codecov/codecov-action'
+    if: github.event.pull_request.head.repo.full_name == 'codecov/codecov-action'
     runs-on: macos-latest-xlarge
     steps:
       - name: Checkout
@@ -58,9 +58,9 @@ jobs:
         with:
           submodules: "true"
       - name: Install dependencies
-        run: pip install -r src/scripts/app/requirements.txt
+        run: pip install -r app/requirements.txt
       - name: Run tests and collect coverage
-        run: pytest src/scripts/app/ --cov
+        run: pytest app/ --cov
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
