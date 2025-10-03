@@ -140,7 +140,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `env_vars` | Environment variables to tag the upload with (e.g. PYTHON \| OS,PYTHON) | Optional
 | `exclude` | Comma-separated list of folders to exclude from search. | Optional
 | `fail_ci_if_error` | On error, exit with non-zero code | Optional
-| `files` | Comma-separated explicit list of files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using "disable-search" to disable uploading other files. | Optional
+| `files` | Comma-separated explicit list of files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using "disable_search" to disable uploading other files. | Optional
 | `flags` | Comma-separated list of flags to upload to group coverage metrics. | Optional
 | `force` | Only used for empty-upload run command | Optional
 | `git_service` | Override the git_service (e.g. github_enterprise) | Optional
