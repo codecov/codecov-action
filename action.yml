@@ -207,6 +207,7 @@ runs:
 
     - name: Check if repository is checked out
       id: check_repo
+      shell: bash
       run: |
         if [ -d ".git" ]; then
           echo "Repository is checked out."
