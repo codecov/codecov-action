@@ -19,6 +19,10 @@ inputs:
   directory:
     description: 'Folder to search for coverage files. Default to the current working directory'
     required: false
+  disable_checkout:
+    description: 'Disable checking out the repository. This is not recommended as it can cause unwanted side effects in coverage processing'
+    required: false
+    default: 'false'
   disable_file_fixes:
     description: 'Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports'
     required: false
@@ -200,6 +204,23 @@ runs:
       run: |
         CC_ACTION_VERSION=$(cat ${GITHUB_ACTION_PATH}/src/version)
         echo -e "\033[0;32m==>\033[0m Running Action version $CC_ACTION_VERSION"
+
+    - name: Check if repository is checked out
+      id: check_repo
+      run: |
+        if [ -d ".git" ]; then
+          echo "Repository is checked out."
+          echo "repo_checked_out=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "Repository is NOT checked out."
+          echo "repo_checked_out=false" >> "$GITHUB_OUTPUT"
+        fi
+    - name: Checkout repository
+      if: ${{ steps.check_repo.outputs.repo_checked_out == 'false' && inputs.disable_checkout != 'true' }}
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 2
+
     - name: Set safe directory
       if: ${{ inputs.disable_safe_directory != 'true' }}
       shell: bash
