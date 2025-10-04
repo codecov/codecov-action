@@ -132,6 +132,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | `codecov_yml_path` | The location of the codecov.yml file. This is currently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml | Optional
 | `commit_parent` | SHA (with 40 chars) of what should be the parent of this commit. | Optional
 | `directory` | Folder to search for coverage files. Default to the current working directory | Optional
+| `disable_checkout` | Disable checking out the repository. This is not recommended as it can cause unwanted side effects in coverage processing | Optional
 | `disable_file_fixes` | Disable file fixes to ignore common lines from coverage (e.g. blank lines or empty brackets). Read more here https://docs.codecov.com/docs/fixing-reports | Optional
 | `disable_search` | Disable search for coverage files. This is helpful when specifying what files you want to upload with the files option. | Optional
 | `disable_safe_directory` | Disable setting safe directory. Set to true to disable. | Optional
