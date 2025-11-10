@@ -180,12 +180,19 @@ runs:
       run: |
         missing_deps=""
 
-        # Check for required commands
-        for cmd in bash git curl gpg; do
+        # Check for always-required commands
+        for cmd in bash git curl; do
           if ! command -v "$cmd" >/dev/null 2>&1; then
             missing_deps="$missing_deps $cmd"
           fi
         done
+
+        # Check for gpg only if validation is not being skipped
+        if [ "${{ inputs.skip_validation }}" != "true" ]; then
+          if ! command -v gpg >/dev/null 2>&1; then
+            missing_deps="$missing_deps gpg"
+          fi
+        fi
 
         # Report missing required dependencies
         if [ -n "$missing_deps" ]; then
