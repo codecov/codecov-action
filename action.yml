@@ -50,7 +50,7 @@ inputs:
     required: false
     default: 'false'
   files:
-    description: 'Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable-search to disable uploading other files.'
+    description: 'Comma-separated list of explicit files to upload. These will be added to the coverage files found for upload. If you wish to only upload the specified files, please consider using disable_search to disable uploading other files.'
     required: false
   flags:
     description: 'Comma-separated list of flags to upload to group coverage metrics.'
