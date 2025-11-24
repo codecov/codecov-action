@@ -12,7 +12,7 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Install dependencies
@@ -54,7 +54,7 @@ jobs:
     runs-on: macos-latest-xlarge
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Install dependencies
@@ -103,7 +103,7 @@ jobs:
     container: python:latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Install deps
@@ -144,7 +144,7 @@ jobs:
         run: |
           apk add git
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Upload coverage to Codecov (should fail due to missing dependencies)
@@ -175,7 +175,7 @@ jobs:
         run: |
           apk add git curl gnupg bash
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Upload coverage to Codecov (should succeed)
@@ -212,7 +212,7 @@ jobs:
         run: |
           apk add git curl
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           submodules: "true"
       - name: Upload coverage to Codecov (should fail due to missing gpg and bash)
