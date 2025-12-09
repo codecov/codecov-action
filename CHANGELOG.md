@@ -1,3 +1,11 @@
+## v5.5.2
+
+### What's Changed
+
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.5.1..v5.5.2
+
+
 ## v5.5.1
 
 ### What's Changed
