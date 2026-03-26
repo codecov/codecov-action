@@ -6,6 +6,10 @@
 
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
+## v6 Release
+
+`v6` of the Codecov GitHub Action support node24
+
 ## v5 Release
 
 `v5` of the Codecov GitHub Action will use the [Codecov Wrapper](https://github.com/codecov/wrapper) to encapsulate the [CLI](https://github.com/codecov/codecov-cli). This will help ensure that the Action gets updates quicker.
