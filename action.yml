@@ -79,6 +79,9 @@ inputs:
     description: 'If no coverage reports are found, do not raise an exception.'
     required: false
     default: 'false'
+  http_headers:
+    description: 'Extra HTTP headers to send with every request, one per line (format: Header-Name:Value).'
+    required: false
   job_code:
     description: ''
     required: false
@@ -331,6 +334,7 @@ runs:
         CC_GCOV_INCLUDE: ${{ inputs.gcov_include }}
         CC_GIT_SERVICE: ${{ inputs.git_service }}
         CC_HANDLE_NO_REPORTS_FOUND: ${{ inputs.handle_no_reports_found }}
+        CC_HTTP_HEADERS: ${{ inputs.http_headers }}
         CC_JOB_CODE: ${{ inputs.job_code }}
         CC_LEGACY: ${{ inputs.use_legacy_upload_endpoint }}
         CC_NAME: ${{ inputs.name }}
