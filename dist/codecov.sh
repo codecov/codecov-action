@@ -91,14 +91,15 @@ else
   [[ $CC_OS == "macos" ]]  && \
     ! command -v gpg 2>&1 >/dev/null && \
     HOMEBREW_NO_AUTO_UPDATE=1 brew install gpg
+  v_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
+  v=$(curl $retry --retry-all-errors -s "$v_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
+  CC_RESOLVED_VERSION="${v:-$CC_VERSION}"
   CC_URL="${CC_CLI_URL:-https://cli.codecov.io}"
-  CC_URL="$CC_URL/${CC_VERSION}"
+  CC_URL="$CC_URL/${CC_RESOLVED_VERSION}"
   CC_URL="$CC_URL/${CC_OS}/${CC_FILENAME}"
   say "$g ->$x Downloading $b${CC_URL}$x"
   curl -O $retry "$CC_URL"
-  say "$g==>$x Finishing downloading $b${CC_OS}:${CC_VERSION}$x"
-  v_url="https://cli.codecov.io/api/${CC_OS}/${CC_VERSION}"
-  v=$(curl $retry --retry-all-errors -s "$v_url" -H "Accept:application/json" | tr \{ '\n' | tr , '\n' | tr \} '\n' | grep "\"version\"" | awk  -F'"' '{print $4}' | tail -1)
+  say "$g==>$x Finishing downloading $b${CC_OS}:${CC_RESOLVED_VERSION}$x"
   say "      Version: $b$v$x"
   say " "
 fi
@@ -115,7 +116,7 @@ else
   # One-time step
   say "$g==>$x Verifying GPG signature integrity"
   sha_url="https://cli.codecov.io"
-  sha_url="${sha_url}/${CC_VERSION}/${CC_OS}"
+  sha_url="${sha_url}/${CC_RESOLVED_VERSION:-$CC_VERSION}/${CC_OS}"
   sha_url="${sha_url}/${CC_FILENAME}.SHA256SUM"
   say "$g ->$x Downloading $b${sha_url}$x"
   say "$g ->$x Downloading $b${sha_url}.sig$x"
