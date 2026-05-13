@@ -177,6 +177,8 @@ runs:
   steps:
     - name: Check system dependencies
       shell: sh
+      env:
+        INPUT_SKIP_VALIDATION: ${{ inputs.skip_validation }}
       run: |
         missing_deps=""
 
@@ -188,7 +190,7 @@ runs:
         done
 
         # Check for gpg only if validation is not being skipped
-        if [ "${{ inputs.skip_validation }}" != "true" ]; then
+        if [ "$INPUT_SKIP_VALIDATION" != "true" ]; then
           if ! command -v gpg >/dev/null 2>&1; then
             missing_deps="$missing_deps gpg"
           fi
@@ -245,24 +247,27 @@ runs:
     - name: Get and set token
       shell: bash
       run: |
-        if [ "${{ inputs.use_oidc }}" == 'true' ] && [ "$CC_FORK" != 'true' ];
+        if [ "$INPUT_USE_OIDC" == 'true' ] && [ "$CC_FORK" != 'true' ];
         then
           echo "CC_TOKEN=$CC_OIDC_TOKEN" >> "$GITHUB_ENV"
-        elif [ -n "${{ env.CODECOV_TOKEN }}" ];
+        elif [ -n "$INPUT_CODECOV_TOKEN" ];
         then
           echo -e "\033[0;32m==>\033[0m Token set from env"
-            echo "CC_TOKEN=${{ env.CODECOV_TOKEN }}" >> "$GITHUB_ENV"
+            echo "CC_TOKEN=$INPUT_CODECOV_TOKEN" >> "$GITHUB_ENV"
         else
-          if [ -n "${{ inputs.token }}" ];
+          if [ -n "$INPUT_TOKEN" ];
           then
             echo -e "\033[0;32m==>\033[0m Token set from input"
-            CC_TOKEN=$(echo "${{ inputs.token }}" | tr -d '\n')
+            CC_TOKEN=$(echo "$INPUT_TOKEN" | tr -d '\n')
             echo "CC_TOKEN=$CC_TOKEN" >> "$GITHUB_ENV"
           fi
         fi
       env:
         CC_OIDC_TOKEN: ${{ steps.oidc.outputs.result }}
         CC_OIDC_AUDIENCE: ${{ inputs.url || 'https://codecov.io' }}
+        INPUT_USE_OIDC: ${{ inputs.use_oidc }}
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_CODECOV_TOKEN: ${{ env.CODECOV_TOKEN }}
 
     - name: Override branch for forks
       shell: bash
