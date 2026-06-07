@@ -161,6 +161,12 @@ then
 fi
 CC_CLI_ARGS+=( $(write_bool_args CC_DISABLE_TELEM) )
 CC_CLI_ARGS+=( $(write_bool_args CC_VERBOSE) )
+if [ -n "$CC_HTTP_HEADERS" ]; then
+  while IFS= read -r header; do
+    [ -z "$header" ] && continue
+    CC_CLI_ARGS+=( "--http-header" "$header" )
+  done <<< "$CC_HTTP_HEADERS"
+fi
 CC_ARGS=()
 if [ "$CC_RUN_CMD" == "upload-coverage" ]; then
 # Args for create commit
