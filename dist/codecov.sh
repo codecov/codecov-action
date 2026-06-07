@@ -37,7 +37,7 @@ g="\033[0;32m"  # info/debug
 r="\033[0;31m"  # errors
 x="\033[0m"
 retry="--retry 5 --retry-delay 2"
-CC_WRAPPER_VERSION="0.2.7"
+CC_WRAPPER_VERSION="0.2.9"
 CC_VERSION="${CC_VERSION:-latest}"
 CC_FAIL_ON_ERROR="${CC_FAIL_ON_ERROR:-false}"
 CC_RUN_CMD="${CC_RUN_CMD:-upload-coverage}"
@@ -69,7 +69,13 @@ then
     exit_if_error "Could not install via pypi."
     exit
   fi
-  CC_COMMAND="${CC_CLI_TYPE}"
+  if [[ "$CC_CLI_TYPE" == "codecov-cli" ]]; then
+    CC_COMMAND="codecovcli"
+  elif [[ "$CC_CLI_TYPE" == "sentry-prevent-cli" ]]; then
+    CC_COMMAND="sentry-prevent-cli"
+  else
+    CC_COMMAND="${CC_CLI_TYPE}"
+  fi
 else
   if [ -n "$CC_OS" ];
   then
@@ -110,7 +116,7 @@ then
     chmod +x "$CC_COMMAND"
   fi
 else
-  echo "$(curl -s https://keybase.io/codecovsecurity/pgp_keys.asc)" | \
+  echo "$(curl -s https://keybase.io/codecovsecops/pgp_keys.asc)" | \
     gpg --no-default-keyring --import
   # One-time step
   say "$g==>$x Verifying GPG signature integrity"

@@ -6,6 +6,10 @@
 
 ### Easily upload coverage reports to Codecov from GitHub Actions
 
+## v7 Release
+
+`v7` of the Codecov GitHub Action bumps the [Codecov Wrapper](https://github.com/codecov/wrapper) submodule, which now fetches the Codecov Uploader PGP verification key from the `codecovsecops` Keybase account.
+
 ## v6 Release
 
 `v6` of the Codecov GitHub Action support node24
