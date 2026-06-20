@@ -12,7 +12,7 @@
 
 ## v6 Release
 
-`v6` of the Codecov GitHub Action support node24
+`v6` of the Codecov GitHub Action supports node24.
 
 ## v5 Release
 
