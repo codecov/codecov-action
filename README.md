@@ -10,6 +10,8 @@
 
 `v7` of the Codecov GitHub Action bumps the [Codecov Wrapper](https://github.com/codecov/wrapper) submodule, which now fetches the Codecov Uploader PGP verification key from the `codecovsecops` Keybase account.
 
+`v7.1.0` updates the wrapper to `0.3.0`, which adds an optional `cleanup` input to download the CLI into a temporary directory, and accepts CircleCI-style `1`/`0` values for `skip_validation` and `use_pypi`.
+
 ## v6 Release
 
 `v6` of the Codecov GitHub Action support node24
@@ -137,6 +139,7 @@ Codecov's Action supports inputs from the user. These inputs, along with their d
 | :---       |     :---     |    :---:   |
 | `base_sha` | 'The base SHA to select. This is only used in the "pr-base-picking" run command' | Optional
 | `binary` | The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed. | Optional
+| `cleanup` | If true, download the CLI into a temporary directory and clean it up after the run. Off by default. | Optional
 | `codecov_yml_path` | The location of the codecov.yml file. This is currently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml | Optional
 | `commit_parent` | SHA (with 40 chars) of what should be the parent of this commit. | Optional
 | `directory` | Folder to search for coverage files. Default to the current working directory | Optional
