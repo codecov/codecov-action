@@ -10,8 +10,6 @@
 
 `v7` of the Codecov GitHub Action bumps the [Codecov Wrapper](https://github.com/codecov/wrapper) submodule, which now fetches the Codecov Uploader PGP verification key from the `codecovsecops` Keybase account.
 
-`v7.1.0` updates the wrapper to `0.3.0`, which adds an optional `cleanup` input to download the CLI into a temporary directory, and accepts CircleCI-style `1`/`0` values for `skip_validation` and `use_pypi`.
-
 ## v6 Release
 
 `v6` of the Codecov GitHub Action support node24
