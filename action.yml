@@ -10,6 +10,10 @@ inputs:
   binary:
     description: 'The file location of a pre-downloaded version of the CLI. If specified, integrity checking will be bypassed.'
     required: false
+  cleanup:
+    description: 'If true, download the CLI into a temporary directory and clean it up after the run. Off by default to preserve legacy behavior of downloading into the current working directory.'
+    required: false
+    default: 'false'
   codecov_yml_path:
     description: 'The location of the codecov.yml file. This is crrently ONLY used for automated test selection (https://docs.codecov.com/docs/getting-started-with-ats). Note that for all other cases, the Codecov yaml will need to be located as described here: https://docs.codecov.com/docs/codecov-yaml#can-i-name-the-file-codecovyml'
     required: false
@@ -317,6 +321,7 @@ runs:
         CC_BINARY: ${{ inputs.binary }}
         CC_BUILD: ${{ inputs.override_build }}
         CC_BUILD_URL: ${{ inputs.override_build_url }}
+        CC_CLEANUP: ${{ inputs.cleanup }}
         CC_CODE: ${{ inputs.report_code }}
         CC_DIR: ${{ inputs.directory }}
         CC_DISABLE_FILE_FIXES: ${{ inputs.disable_file_fixes }}
